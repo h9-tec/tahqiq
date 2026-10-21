@@ -1,0 +1,13 @@
+audio/
+.env
+.venv/
+__pycache__/
+*.pyc
+dist/
+_site/
+.pytest_cache/
+.ruff_cache/
+*.wav
+*.flac
+*.mp3
+hf_cache/
