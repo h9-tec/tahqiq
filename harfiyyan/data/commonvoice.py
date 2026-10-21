@@ -39,7 +39,7 @@ def build(
         ds = load_dataset("parquet", data_files=str(Path(src) / "test-*.parquet"), split="train")
     else:
         ds = load_dataset(src, split="test")
-    ds = ds.cast_column("audio", Audio(sampling_rate=16_000, decode=True))
+    ds = ds.cast_column("audio", Audio(decode=False))
     utts: list[Utterance] = []
     seen_elm: set[str] = set()
     n = 0
@@ -47,14 +47,14 @@ def build(
         key = Path(str(row["path"])).stem
         rel = f"{NAME}/{make_id(NAME, key)}.wav"
         wav = audio_dir / rel
-        arr = np.asarray(row["audio"]["array"], dtype=np.float32)
+        arr, sr = hio.decode_audio_bytes(row["audio"]["bytes"])
         if not wav.exists():
-            hio.write_wav_16k(wav, arr, int(row["audio"]["sampling_rate"]))
+            hio.write_wav_16k(wav, arr, sr)
         in_elm = key in elm
         if in_elm:
             seen_elm.add(key)
         ref = elm[key]["text"] if in_elm else (row["sentence"] or "")
-        dur = len(arr) / 16_000
+        dur = len(arr) / sr
         utts.append(make_utt(NAME, key, wav, rel, ref, duration_s=dur, dialect_raw=(row.get("accent") or ""), in_elm=in_elm))
         n += 1
         if per_config_limit and n >= per_config_limit:

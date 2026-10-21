@@ -52,10 +52,11 @@ def build(
         ds = load_dataset("parquet", data_files=str(Path(src) / "test-*.parquet"), split="train")
     else:
         ds = load_dataset(src, split="test")
-    ds = ds.cast_column("audio", Audio(sampling_rate=16_000, decode=True))
+    ds = ds.cast_column("audio", Audio(decode=False))
 
-    elm_idx = {t: _elm_index(f"{n}_test" if False else {"c": "masc_test_clean", "n": "masc_test_noisy"}[t]) for t in NAMES}
-    elm_all = {t: elm_members({"c": "masc_test_clean", "n": "masc_test_noisy"}[t]) for t in NAMES}
+    elm_files = {"c": "masc_test_clean", "n": "masc_test_noisy"}
+    elm_idx = {t: _elm_index(elm_files[t]) for t in NAMES}
+    elm_all = {t: elm_members(elm_files[t]) for t in NAMES}
     utts: dict[str, list[Utterance]] = {n: [] for n in NAMES.values()}
     seen: dict[str, set[str]] = {n: set() for n in NAMES.values()}
     counts = {"c": 0, "n": 0}
@@ -69,8 +70,8 @@ def build(
             continue
         name = NAMES[t]
         video_id = str(row["video_id"])
-        arr = np.asarray(row["audio"]["array"], dtype=np.float32)
-        dur = float(row.get("duration") or 0.0) or len(arr) / 16_000
+        arr, sr = hio.decode_audio_bytes(row["audio"]["bytes"])
+        dur = float(row.get("duration") or 0.0) or len(arr) / sr
         text = row.get("text") or ""
         cands = [c for c in elm_idx[t].get((video_id, round(dur, 2)), []) if c[0] not in seen[name]]
         match = None
@@ -89,7 +90,7 @@ def build(
         rel = f"{name}/{make_id(name, source_id)}.wav"
         wav = audio_dir / rel
         if not wav.exists():
-            hio.write_wav_16k(wav, arr, 16_000)
+            hio.write_wav_16k(wav, arr, sr)
         utts[name].append(make_utt(name, source_id, wav, rel, ref, duration_s=dur, dialect_raw="", in_elm=in_elm))
         counts[t] += 1
 

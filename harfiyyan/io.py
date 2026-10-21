@@ -68,6 +68,26 @@ def load_audio_16k_mono(path: str | Path) -> tuple[np.ndarray, float]:
     return audio, duration
 
 
+def decode_audio_bytes(data: bytes) -> tuple[np.ndarray, int]:
+    """Decode wav/flac/ogg/mp3 bytes to float32 mono (sr unchanged).
+
+    Avoids the ``datasets`` torchcodec decoder: soundfile first (libsndfile
+    handles mp3 since 1.1), librosa/audioread as the fallback.
+    """
+    import io
+
+    try:
+        audio, sr = sf.read(io.BytesIO(data), dtype="float32", always_2d=False)
+    except Exception:
+        import librosa
+
+        audio, sr = librosa.load(io.BytesIO(data), sr=None, mono=True)
+        audio = np.asarray(audio, dtype=np.float32)
+    if audio.ndim == 2:
+        audio = audio.mean(axis=1)
+    return audio, int(sr)
+
+
 def write_wav_16k(path: Path, audio: np.ndarray, sr: int) -> None:
     """Write mono 16 kHz PCM16 wav, resampling from ``sr`` when needed."""
     if audio.ndim == 2:
