@@ -32,7 +32,10 @@ DIALECT_MAP = {
     "yemen": "yemeni", "yemeni": "yemeni",
     "iraq": "iraqi", "iraqi": "iraqi",
     "sudan": "sudanese", "sudanese": "sudanese",
-    "msa": "msa", "modern standard arabic": "msa",
+    "msa": "msa", "modern standard arabic": "msa", "modernstandardarabic": "msa",
+    # SADA labels
+    "shamali": "gulf",  # northern Saudi
+    "more than 1 speaker اكثر من متحدث": "unknown", "notapplicable": "unknown",
 }
 
 

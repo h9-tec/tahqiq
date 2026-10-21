@@ -24,6 +24,11 @@ REGISTRY: dict[str, Callable[[], ASRModel]] = {
     # Open models
     "whisper_large_v3": _open(".open.whisper_hf", "whisper_large_v3"),
     "whisper_large_v3_turbo": _open(".open.whisper_hf", "whisper_large_v3_turbo"),
+    "qwen3_asr_0.6b": _open(".open.qwen3_asr", "qwen3_asr_0_6b"),
+    "qwen3_asr_1.7b": _open(".open.qwen3_asr", "qwen3_asr_1_7b"),
+    "cohere_transcribe_arabic_07_2026": _open(".open.cohere_transcribe", "cohere_transcribe_arabic"),
+    "mms_1b_all": _open(".open.mms", "mms_1b_all"),
+    "seamless_m4t_v2_large": _open(".open.seamless", "seamless_m4t_v2_large"),
 }
 
 # Vendor API adapters exist under models/api/ and are tested, but are not on the

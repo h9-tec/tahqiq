@@ -1,8 +1,6 @@
-"""Casablanca (UBC-NLP/Casablanca, test split, 8 country configs).
+"""Casablanca (UBC-NLP/Casablanca, test split, 8 country configs, CC-BY-NC-ND 4.0).
 
-Gated on the Hub (CC-BY-NC-ND 4.0): accept the terms once with the HF
-account, then ``HF_TOKEN`` in ``.env``. Audio is never redistributed; only
-our per-utterance outputs are.
+Audio is never redistributed; only our per-utterance outputs are.
 """
 
 from __future__ import annotations
@@ -13,10 +11,8 @@ import numpy as np
 from tqdm import tqdm
 
 from .. import io as hio
-from ..manifest import Utterance, make_id, map_dialect, sha256_file, write_manifest
-from ..normalize.numbers import has_written_number
-from ..slices import assign_slices
-from . import AUDIO, MANIFESTS, elm_members
+from ..manifest import Utterance
+from . import AUDIO, MANIFESTS, elm_members, finalize, make_utt
 
 HF_ID = "UBC-NLP/Casablanca"
 CONFIGS = ["Algeria", "Egypt", "Jordan", "Mauritania", "Morocco", "Palestine", "UAE", "Yemen"]
@@ -42,43 +38,24 @@ def build(
         ds = load_dataset(HF_ID, cfg, split="test")
         ds = ds.cast_column("audio", Audio(sampling_rate=16_000, decode=True))
         n = 0
-        for row in tqdm(ds, desc=f"casablanca/{cfg}", unit="utt"):
+        for row in tqdm(ds, desc=f"{NAME}/{cfg}", unit="utt"):
             seg_id = str(row["seg_id"])
             key = Path(seg_id).stem
-            uid = make_id(NAME, seg_id)
-            rel = f"{NAME}/{uid}.wav"
+            uid_rel = None
+            from ..manifest import make_id
+
+            rel = f"{NAME}/{make_id(NAME, seg_id)}.wav"
             wav = audio_dir / rel
             if not wav.exists():
                 arr = np.asarray(row["audio"]["array"], dtype=np.float32)
                 hio.write_wav_16k(wav, arr, int(row["audio"]["sampling_rate"]))
-            ref = row["transcription"] or ""
             in_elm = key in elm
             if in_elm:
                 seen_elm.add(key)
-            utts.append(
-                Utterance(
-                    id=uid,
-                    dataset=NAME,
-                    split="test",
-                    source_id=seg_id,
-                    audio_rel=rel,
-                    audio_sha256=sha256_file(wav),
-                    duration_s=float(row.get("duration") or 0.0),
-                    reference=ref,
-                    dialect_raw=cfg,
-                    dialect=map_dialect(cfg),
-                    has_number=has_written_number(ref),
-                    elm_member=in_elm,
-                )
-            )
+            ref = elm[key]["text"] if in_elm else (row["transcription"] or "")
+            dur = float(row.get("duration") or 0.0) or len(row["audio"]["array"]) / 16_000
+            utts.append(make_utt(NAME, seg_id, wav, rel, ref, duration_s=dur, dialect_raw=cfg, in_elm=in_elm))
             n += 1
             if per_config_limit and n >= per_config_limit:
                 break
-    missing = sorted(set(elm) - seen_elm)
-    extra = sum(1 for u in utts if not u.elm_member)
-    print(f"casablanca: {len(utts)} utts; elm members matched {len(seen_elm)}/{len(elm)}; "
-          f"not in elm: {extra}; elm rows we lack: {len(missing)}")
-    assign_slices(utts, n_api=n_api, n_timing=n_timing, seed=seed)
-    utts.sort(key=lambda u: u.id)
-    write_manifest(manifests_dir / f"{NAME}.jsonl", utts)
-    return utts
+    return finalize(NAME, utts, elm, seen_elm, manifests_dir=manifests_dir, n_api=n_api, n_timing=n_timing, seed=seed)
