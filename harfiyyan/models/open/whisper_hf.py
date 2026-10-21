@@ -29,7 +29,7 @@ class WhisperHF(ASRModel):
         self._dtype = torch.float16 if self._device == "cuda" else torch.float32
         self.processor = AutoProcessor.from_pretrained(self.hf_id)
         self.model = AutoModelForSpeechSeq2Seq.from_pretrained(
-            self.hf_id, torch_dtype=self._dtype, low_cpu_mem_usage=True
+            self.hf_id, dtype=self._dtype, low_cpu_mem_usage=True
         ).to(self._device)
         self.model.eval()
 
