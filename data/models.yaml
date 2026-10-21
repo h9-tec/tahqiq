@@ -1,0 +1,35 @@
+# Model cards for the site. model_id must match harfiyyan/models/registry.py.
+# Seeded from arabic-ai-atlas/data/asr.yaml where an entry exists.
+models:
+  whisper_large_v3:
+    name: Whisper large-v3
+    org: OpenAI
+    kind: open
+    hf: https://huggingface.co/openai/whisper-large-v3
+    license: apache-2.0
+    params: 1.55B
+  whisper_large_v3_turbo:
+    name: Whisper large-v3-turbo
+    org: OpenAI
+    kind: open
+    hf: https://huggingface.co/openai/whisper-large-v3-turbo
+    license: mit
+    params: 809M
+  deepgram_nova3:
+    name: Deepgram Nova-3
+    org: Deepgram
+    kind: api
+    url: https://deepgram.com/
+    language_hint: ar
+  elevenlabs_scribe:
+    name: ElevenLabs Scribe
+    org: ElevenLabs
+    kind: api
+    url: https://elevenlabs.io/speech-to-text
+    language_hint: ara
+  openai_gpt4o_transcribe:
+    name: gpt-4o-transcribe
+    org: OpenAI
+    kind: api
+    url: https://platform.openai.com/docs/guides/speech-to-text
+    language_hint: ar

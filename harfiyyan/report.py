@@ -73,13 +73,15 @@ def score_model(
     for u in all_utts:
         by_dialect[u.dialect].append(u)
     for dialect, utts in sorted(by_dialect.items()):
-        out["dialects"][dialect] = {}
+        cell: dict = {}
         for nm in normalizers:
             refs, hyps, _ = _pairs(utts, all_preds, NORMALIZERS[nm])
             if len(refs) < 20:
                 continue
             w = bootstrap_ci(refs, hyps, metric="wer", n_iter=n_boot)
-            out["dialects"][dialect][nm] = {"wer": w.as_dict(), "n": len(refs)}
+            cell[nm] = {"wer": w.as_dict(), "n": len(refs)}
+        if cell:
+            out["dialects"][dialect] = cell
 
     # Numeral probe: utterances whose reference contains written digits.
     num_utts = [u for u in all_utts if u.has_number]

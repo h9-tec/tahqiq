@@ -1,0 +1,16 @@
+# Hand-maintained list prices for the "price per 1,000 minutes" column.
+# usd_per_min is the published pay-as-you-go rate for batch (pre-recorded) transcription.
+# Every entry needs source_url and as_of; the site shows both. Fill before M2; verify, do not guess.
+pricing:
+  deepgram_nova3:
+    usd_per_min: null
+    source_url: https://deepgram.com/pricing
+    as_of: null
+  elevenlabs_scribe:
+    usd_per_min: null
+    source_url: https://elevenlabs.io/pricing/api
+    as_of: null
+  openai_gpt4o_transcribe:
+    usd_per_min: null
+    source_url: https://openai.com/api/pricing/
+    as_of: null
