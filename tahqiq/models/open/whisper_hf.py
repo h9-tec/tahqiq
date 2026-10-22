@@ -52,6 +52,22 @@ class WhisperHF(ASRModel):
     def transcribe_batch(self, audios: list[np.ndarray]) -> list[str]:
         return self._generate(audios)
 
+    def reference_nll(self, audio: np.ndarray, text: str) -> float | None:
+        import torch
+
+        if len(audio) > 30 * SAMPLE_RATE or not text.strip():
+            return None
+        feats = self.processor(audio, sampling_rate=SAMPLE_RATE, return_tensors="pt").input_features.to(self._device, dtype=self._dtype)
+        tok = self.processor.tokenizer
+        prefix = tok.prefix_tokens if hasattr(tok, "prefix_tokens") else []
+        tok.set_prefix_tokens(language="ar", task="transcribe", predict_timestamps=False)
+        ids = tok(text, add_special_tokens=True).input_ids   # <|startoftranscript|><|ar|><|transcribe|><|notimestamps|> ... <|endoftext|>
+        labels = torch.tensor([ids], device=self._device)
+        with torch.no_grad():
+            out = self.model(input_features=feats, labels=labels)
+        # loss is mean over label tokens; return the sum so lengths are comparable between ref and hyp
+        return float(out.loss) * (labels.shape[1] - 1)
+
     def _transcribe_long(self, audio: np.ndarray) -> str:
         import torch
         from transformers import pipeline

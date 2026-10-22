@@ -114,7 +114,7 @@ def main() -> None:
     ap.add_argument("--datasets", default=",".join(DATASETS))
     ap.add_argument("--batch", type=int, default=None)
     ap.add_argument("--slice", default=None, choices=[None, "full", "api"], help="api = common slice only")
-    ap.add_argument("--kind", default="test", choices=["test", "dev", "pert"], help="which manifest family to run")
+    ap.add_argument("--kind", default="test", choices=["test", "dev", "pert", "lik"], help="which manifest family to run (lik = likelihood probe)")
     ap.add_argument("--no-timing", action="store_true")
     ap.add_argument("--no-publish", action="store_true")
     ap.add_argument("--helper", action="store_true", help="partial run: write cache only, no run.json/publish")
@@ -126,7 +126,9 @@ def main() -> None:
     fetch_data(datasets)
     py = sys.executable
     cmd = [py, "-m", "tahqiq.runner", "--model", args.slug]
-    if args.kind != "test":
+    if args.kind == "lik":
+        cmd += ["--likelihood", "--slice", "api"]
+    elif args.kind != "test":
         mdir = {"dev": "data/dev_manifests", "pert": "data/pert_manifests"}[args.kind]
         vol = os.environ.get("TAHQIQ_VOLUME")
         src = Path(vol, f"{args.kind}_manifests") if vol and Path(vol, f"{args.kind}_manifests").exists() else None

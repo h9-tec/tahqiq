@@ -190,6 +190,8 @@ def bootstrap_script(unit: dict) -> str:
         sl = f" --slice {unit['slice']}" if unit.get("slice") else ""
         if unit.get("nemo"):
             sl += " --batch 1"
+        if unit.get("kind"):              # contamination passes: dev | pert | lik (common slice)
+            sl += f" --kind {unit['kind']} --slice api"
         c = f"python scripts/eval_job.py --slug {slug} --datasets {','.join(datasets)} --helper{sl}"
         if hf_id:
             c += f" --hf-id {hf_id}"
@@ -230,7 +232,7 @@ touch /workspace/UNIT_DONE; echo UNIT_DONE
 
 
 def run_unit(unit: dict, idx: int, state: dict, *, retry_minutes: int = 120) -> None:
-    name = f"tahqiq-{idx}-{unit['slug'][:18]}"
+    name = f"tahqiq-{idx}-{unit['slug'][:18]}" + (f"-{unit['kind']}" if unit.get("kind") else "")
     prev = state.get(name) or {}
     if prev.get("status", "").startswith("FINISHED"):
         return
@@ -424,6 +426,31 @@ def cmd_collect_wait(state: dict) -> None:
         time.sleep(20)
 
 
+def contamination_units(slugs: list[str], kinds: tuple[str, ...] = ("dev", "pert", "lik")) -> list[dict]:
+    """Extra passes on the common slice for published systems. Likelihood only where the adapter supports it."""
+    from tahqiq.models import registry
+
+    units = []
+    for slug in slugs:
+        hf_id = None
+        try:
+            m = registry.build(slug)
+            hf_id = m.hf_id
+            fam = type(m).__name__
+        except Exception:
+            rj = ROOT / "results" / slug / "run.json"
+            hf_id = json.loads(rj.read_text(encoding="utf-8")).get("hf_id") if rj.exists() else None
+            fam = ""
+        for kind in kinds:
+            if kind == "lik" and fam not in ("WhisperHF", "CohereTranscribe"):
+                continue
+            unit = {"slug": slug, "datasets": _ALL, "timing": False, "kind": kind, "nemo": slug.startswith("nvidia_fastconformer")}
+            if slug not in registry.REGISTRY and hf_id:
+                unit.update({"hf_id": hf_id, "display_name": slug})
+            units.append(unit)
+    return units
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -434,7 +461,10 @@ def main() -> None:
     a = ap.parse_args()
     if a.cmd == "seed":
         cmd_seed(a.gpu, a.pod_id); return
-    units_all = units_from_candidates(ROOT / "data" / "candidates.yaml", max_priority=getattr(a, "max_priority", 1)) if getattr(a, "from_candidates", False) else UNITS
+    if getattr(a, "contamination", None):
+        units_all = contamination_units(a.contamination.split(","))
+    else:
+        units_all = units_from_candidates(ROOT / "data" / "candidates.yaml", max_priority=getattr(a, "max_priority", 1)) if getattr(a, "from_candidates", False) else UNITS
     if a.cmd == "plan":
         for i, u in enumerate(units_all):
             print(i, u["slug"], u["datasets"], "timing" if u.get("timing") else "", "+then " + u["then"] if u.get("then") else "")

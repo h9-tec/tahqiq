@@ -60,7 +60,39 @@ def build_scores(slug: str, *, n_boot: int = 2000, extra: dict | None = None, sl
             v = mean_vector(hyps) if len(hyps) >= 50 else None
             if v:
                 fp.setdefault(ds, {})[sl] = v
+    # Extra passes for the contamination suite (common slice): dev split, perturbed audio, likelihood probe.
+    from tahqiq.metrics import wer as _wer
+    from tahqiq.normalize import NORMALIZERS
+
+    extras: dict = {}
+    sub = RESULTS / "_sub"
+    def _wer_for(manifest_path: Path, preds_dir_slug: str, results_root: Path) -> dict | None:
+        if not manifest_path.exists():
+            return None
+        utts = [u for u in load_manifest(manifest_path) if u.in_api_slice]
+        preds = hio.load_predictions(results_root, preds_dir_slug, manifest_path.stem)
+        pairs = [(NORMALIZERS["elm"](u.reference), NORMALIZERS["elm"](preds[u.id].hyp)) for u in utts if u.id in preds and not preds[u.id].error]
+        if len(pairs) < 50:
+            return None
+        return {"wer": round(_wer([r for r, _ in pairs], [h for _, h in pairs]), 4), "n": len(pairs)}
+    for ds in datasets:
+        v = _wer_for(ROOT / "data" / "dev_manifests" / f"dev_{ds}.jsonl", slug, sub / "dev")
+        if v:
+            extras.setdefault("dev", {})[ds] = v
+    for mp in sorted((ROOT / "data" / "pert_manifests").glob("*__*.jsonl")) if (ROOT / "data" / "pert_manifests").exists() else []:
+        v = _wer_for(mp, slug, sub / "pert")
+        if v:
+            extras.setdefault("pert", {})[mp.stem] = v
+    lik_dir = sub / "lik" / slug
+    if lik_dir.exists():
+        for lp in sorted(lik_dir.glob("*.jsonl")):
+            rows = [json.loads(l) for l in lp.read_text(encoding="utf-8").splitlines() if l.strip()]
+            rows = [r for r in rows if r.get("nll_ref") is not None and r.get("nll_hyp") is not None]
+            if len(rows) >= 50:
+                pref = sum(1 for r in rows if r["nll_ref"] < r["nll_hyp"]) / len(rows)
+                extras.setdefault("likelihood", {})[lp.stem] = {"ref_preferred_rate": round(pref, 4), "n": len(rows)}
     doc = {
+        "extras": extras,
         "fingerprint": fp,
         "profile": profile(slug, hf_id),
         "timing": timing,

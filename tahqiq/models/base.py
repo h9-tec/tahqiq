@@ -114,6 +114,13 @@ class ASRModel(ABC):
                 out[i] = Transcript(text=text, wall_s=time.perf_counter() - t0)
         return out  # type: ignore[return-value]
 
+    def reference_nll(self, audio: np.ndarray, text: str) -> float | None:
+        """Teacher-forced negative log-likelihood (nats, summed over tokens) of ``text`` given ``audio``.
+
+        Only decoders that can score a given transcript implement it (Whisper, Cohere Transcribe).
+        Returns None when unsupported."""
+        return None
+
     def env_info(self) -> dict:
         """Versions worth recording in run.json. Overridden per adapter."""
         info: dict = {}

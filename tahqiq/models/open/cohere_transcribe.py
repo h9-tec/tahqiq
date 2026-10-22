@@ -47,6 +47,23 @@ class CohereTranscribe(ASRModel):
             text = text[0]
         return str(text).strip()
 
+    def reference_nll(self, audio: np.ndarray, text: str) -> float | None:
+        import torch
+
+        if len(audio) > 30 * SAMPLE_RATE or not text.strip():
+            return None
+        inputs = self.processor(audio=audio, sampling_rate=SAMPLE_RATE, return_tensors="pt", language="ar")
+        if inputs.get("audio_chunk_index") is not None and len(set(inputs["audio_chunk_index"].tolist())) > 1:
+            return None
+        inputs = inputs.to(self.model.device, dtype=self.model.dtype)
+        labels = self.processor.tokenizer(text, return_tensors="pt", add_special_tokens=True).input_ids.to(self.model.device)
+        try:
+            with torch.no_grad():
+                out = self.model(**{k: v for k, v in inputs.items() if k != "audio_chunk_index"}, labels=labels)
+            return float(out.loss) * (labels.shape[1] - 1)
+        except Exception:
+            return None
+
     def transcribe_batch(self, audios: list[np.ndarray]) -> list[str]:
         import torch
 

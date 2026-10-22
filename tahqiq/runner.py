@@ -140,6 +140,37 @@ def run_model(
     return run
 
 
+def run_likelihood(model_id: str, datasets: list[str], *, manifests_dir: Path = MANIFESTS, audio_dir: Path = AUDIO,
+                   results_dir: Path = RESULTS, hf_id: str | None = None, adapter: str | None = None, limit: int | None = None) -> None:
+    """Likelihood probe on the common slice: NLL of the reference vs NLL of the model's own greedy output."""
+    from .io import load_audio_16k_mono
+
+    model = registry.build(model_id, hf_id=hf_id, adapter=adapter)
+    model.load()
+    out_dir = results_dir / "_sub" / "lik" / model_id
+    out_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        for ds in datasets:
+            utts = [u for u in load_manifest(manifests_dir / f"{ds}.jsonl") if u.in_api_slice]
+            preds = hio.load_predictions(results_dir, model_id, ds)
+            out = out_dir / f"{ds}.jsonl"
+            done = set()
+            if out.exists():
+                done = {json.loads(l)["id"] for l in out.read_text(encoding="utf-8").splitlines() if l.strip()}
+            todo = [u for u in utts if u.id not in done and u.id in preds and not preds[u.id].error][: limit]
+            with open(out, "a", encoding="utf-8") as f:
+                for u in tqdm(todo, desc=f"lik {model_id}/{ds}", unit="utt"):
+                    audio, _ = load_audio_16k_mono(audio_dir / u.audio_rel)
+                    try:
+                        nr = model.reference_nll(audio, u.reference)
+                        nh = model.reference_nll(audio, preds[u.id].hyp) if preds[u.id].hyp.strip() else None
+                    except Exception as e:  # noqa: BLE001
+                        nr, nh = None, None
+                    f.write(json.dumps({"id": u.id, "nll_ref": nr, "nll_hyp": nh}) + "\n")
+    finally:
+        model.unload()
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True, help="model_id or 'all'")
@@ -153,6 +184,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--batch", type=int, default=None, help="override the adapter batch size (1 = no batching)")
     ap.add_argument("--manifests-dir", default=None, help="e.g. data/dev_manifests or data/pert_manifests")
     ap.add_argument("--results-sub", default=None, help="write to results/<model>/<sub>/ (e.g. dev, pert)")
+    ap.add_argument("--likelihood", action="store_true", help="likelihood probe on the common slice (needs cached greedy outputs)")
     args = ap.parse_args(argv)
 
     from dotenv import load_dotenv
@@ -166,7 +198,9 @@ def main(argv: list[str] | None = None) -> None:
     datasets = args.dataset or [p.stem for p in manifest_paths(mdir)]
     models = registry.list_models() if args.model == "all" else [args.model]
     for m in models:
-        results_dir = RESULTS if not args.results_sub else RESULTS  # per-model sub-folder handled below
+        if args.likelihood:
+            run_likelihood(m, datasets, manifests_dir=mdir, hf_id=args.hf_id, adapter=args.adapter, limit=args.limit)
+            continue
         run_model(m, datasets, slice_name=args.slice, limit=args.limit, hf_id=args.hf_id,
                   display_name=args.display_name, adapter=args.adapter, write_run_json=not args.helper, batch=args.batch,
                   manifests_dir=mdir, results_dir=(RESULTS / "_sub" / args.results_sub) if args.results_sub else RESULTS)
