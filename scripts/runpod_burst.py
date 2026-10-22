@@ -203,6 +203,7 @@ export TAHQIQ_AUDIO_KEY=$(cat <<'KEYEOF'
 )"""
     trc = "export TAHQIQ_TRUST_REMOTE_CODE=1" if unit.get("remote_code") else ""
     return f"""set -e
+rm -f /workspace/UNIT_DONE /workspace/UNIT_FAILED; trap 'touch /workspace/UNIT_FAILED' ERR
 export HF_HUB_DISABLE_XET=1 HF_HOME=/workspace/hf TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 TOKENIZERS_PARALLELISM=false TAHQIQ_VOLUME=/vol
 export TAHQIQ_RESULTS_REPO='{hub.RESULTS_REPO}' TAHQIQ_REQUESTS_REPO='{hub.REQUESTS_REPO}'
 {secrets}
@@ -220,7 +221,7 @@ PY
 cd /workspace/tahqiq && export PYTHONPATH=/workspace/tahqiq && (pip install -q -e . --no-deps || true)
 python -c "import tahqiq, sys; print('tahqiq import ok', sys.version.split()[0])"
 {cmds}
-echo UNIT_DONE
+touch /workspace/UNIT_DONE; echo UNIT_DONE
 """
 
 
@@ -401,8 +402,9 @@ def cmd_collect_wait(state: dict) -> None:
     idle = {k: 0 for k in live}
     while live:
         for k, v in list(live.items()):
-            r = subprocess.run(["ssh", *ssh_opts(v["ip"], v["port"]), "pgrep -c -f '[t]ahqiq.runner|[s]cripts/timing.py|[e]val_job.py' || true"],
-                               capture_output=True, text=True, timeout=60)
+            probe = ("if [ -f /workspace/UNIT_DONE ] || [ -f /workspace/UNIT_FAILED ]; then echo 0; else "
+                     "grep -alE '[t]ahqiq.runner|[s]cripts/timing.py|[e]val_job.py' /proc/[0-9]*/cmdline 2>/dev/null | wc -l; fi")
+            r = subprocess.run(["ssh", *ssh_opts(v["ip"], v["port"]), probe], capture_output=True, text=True, timeout=60)
             n = int((r.stdout.strip() or "0").splitlines()[-1]) if r.returncode == 0 else -1
             if n == -1:
                 print(k, "unreachable; collecting what exists and terminating"); n = 0; idle[k] = 2

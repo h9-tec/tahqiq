@@ -1,7 +1,7 @@
 {
  "tahqiq-3-whisper_large_v3": {
   "pod": "4l6d9efof5lvju",
-  "status": "RUNNING",
+  "status": "FAILED (lost on orchestrator restart; retry)",
   "unit": {
    "slug": "whisper_large_v3",
    "nemo": false,
@@ -143,7 +143,7 @@
  },
  "tahqiq-1-openai_whisper-med": {
   "pod": "irt44etx3s8ipx",
-  "status": "RUNNING",
+  "status": "FAILED (lost on orchestrator restart; retry)",
   "unit": {
    "slug": "openai_whisper-medium",
    "nemo": false,
@@ -166,7 +166,7 @@
  },
  "tahqiq-2-openai_whisper-lar": {
   "pod": "6u1znnafs1e4ph",
-  "status": "RUNNING",
+  "status": "FAILED (lost on orchestrator restart; retry)",
   "unit": {
    "slug": "openai_whisper-large-v2",
    "nemo": false,
@@ -245,8 +245,8 @@
   }
  },
  "tahqiq-8-facebook_omniASR-L": {
-  "pod": "zzeqkfloczhm7r",
-  "status": "NO_SSH",
+  "pod": "y1v4qpn04ft8us",
+  "status": "FAILED (round-2 restart)",
   "unit": {
    "slug": "facebook_omniASR-LLM-1B",
    "nemo": false,
@@ -307,7 +307,7 @@
  },
  "tahqiq-7-seamless_m4t_v2_la": {
   "pod": "3wph53j1tmwfu6",
-  "status": "RUNNING",
+  "status": "FAILED (partial collect; retry)",
   "unit": {
    "slug": "seamless_m4t_v2_large",
    "nemo": false,
@@ -325,7 +325,7 @@
  },
  "tahqiq-16-nvidia_fastconform": {
   "pod": "2o3igx32uxhoth",
-  "status": "RUNNING",
+  "status": "FAILED (lost on orchestrator restart; retry)",
   "unit": {
    "slug": "nvidia_fastconformer_ar_pc",
    "nemo": true,
@@ -346,7 +346,7 @@
  },
  "tahqiq-17-nvidia_fastconform": {
   "pod": "y45rexwmngzzn3",
-  "status": "RUNNING",
+  "status": "FAILED (lost on orchestrator restart; retry)",
   "unit": {
    "slug": "nvidia_fastconformer_ar_pcd",
    "nemo": true,
@@ -464,7 +464,7 @@
  },
  "tahqiq-24-google_gemma-4-E4B": {
   "pod": "h17fki1evgxpbf",
-  "status": "CREATED",
+  "status": "FAILED (round-2 restart)",
   "unit": {
    "slug": "google_gemma-4-E4B-it",
    "nemo": false,

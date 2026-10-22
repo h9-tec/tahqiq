@@ -956,3 +956,21 @@ terminate failed 6rdfut3frjij5p [{'message': 'pod not found to terminate', 'path
 tahqiq-26-google_gemma-4-E2B: FAILED rc=255 (terminated)
 tahqiq-25-google_gemma-4-E2B: spend cap 45.0/h reached, waiting
 tahqiq-12-audarai_Audar-ASR-: spend cap 45.0/h reached, waiting
+Warning: Permanently added '[38.80.152.148]:32981' (ED25519) to the list of known hosts.
+waiting on ['tahqiq-3-whisper_large_v3', 'tahqiq-1-openai_whisper-med', 'tahqiq-2-openai_whisper-lar', 'tahqiq-7-seamless_m4t_v2_la', 'tahqiq-16-nvidia_fastconform', 'tahqiq-17-nvidia_fastconform']
+tahqiq-3-whisper_large_v3 collected + terminated
+Warning: Permanently added '[38.80.152.146]:31959' (ED25519) to the list of known hosts.
+tahqiq-1-openai_whisper-med collected + terminated
+Warning: Permanently added '[38.80.152.148]:31532' (ED25519) to the list of known hosts.
+tahqiq-2-openai_whisper-lar collected + terminated
+Warning: Permanently added '[38.80.152.148]:30873' (ED25519) to the list of known hosts.
+tahqiq-7-seamless_m4t_v2_la collected + terminated
+Warning: Permanently added '[38.80.152.148]:31949' (ED25519) to the list of known hosts.
+tahqiq-16-nvidia_fastconform collected + terminated
+Warning: Permanently added '[38.80.152.148]:31808' (ED25519) to the list of known hosts.
+tahqiq-17-nvidia_fastconform collected + terminated
+27 units, 8 pods at a time
+  tahqiq-12-audarai_Audar-ASR-: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-0-openai_whisper-sma: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-8-facebook_omniASR-L: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+tahqiq-8-facebook_omniASR-L: pod y1v4qpn04ft8us on NVIDIA H200 (SECURE)
