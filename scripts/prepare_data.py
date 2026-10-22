@@ -28,6 +28,7 @@ BUILDERS = {
     "sada": "tahqiq.data.sada",
     "commonvoice": "tahqiq.data.commonvoice",
     "masc": "tahqiq.data.masc",
+    "mgb2": "tahqiq.data.mgb2",
 }
 
 

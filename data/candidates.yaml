@@ -3369,7 +3369,8 @@ excluded:
   name: FastConformer Quran streaming
   family: nvidia-nemo-arabic-finetune
   reason: Gated, empty card, Quran-only; offline sibling listed at priority 3.
-  hf_exists: false
+  hf_exists: true
+  downloads_30d: 40
   source_urls:
   - https://huggingface.co/Muno459/fastconformer-quran-streaming
 - hf_id: hawzhin/Kurdish-OmniASR-7B-Champion
@@ -3383,7 +3384,8 @@ excluded:
   name: IndicSeamless
   family: meta-seamless
   reason: Indic languages only.
-  hf_exists: false
+  hf_exists: true
+  downloads_30d: 5040
   source_urls:
   - https://huggingface.co/ai4bharat/indic-seamless
 - hf_id: Qwen/Qwen3-Omni-30B-A3B-Thinking
