@@ -39,10 +39,22 @@ NUM_WORDS: dict[str, str] = {
 _DIGIT_RE = re.compile(r"\d")
 _HAS_DIGIT_RE = re.compile(r"[0-9٠-٩۰-۹]")
 
+# Number words that are not also common non-numeric words. "ست" (lady), "واحد"
+# (someone), "عشر", "ثمن" (price), "الف" are excluded from detection.
+_AMBIGUOUS = {"ست", "واحد", "وحده", "واحده", "عشر", "ثمن", "الف", "ثمان"}
+UNAMBIGUOUS_NUM_WORDS = {w for w in NUM_WORDS if w not in _AMBIGUOUS}
+
 
 def has_written_number(text: str) -> bool:
     """True when the raw text contains any Arabic-Indic, Persian, or Western digit."""
     return bool(_HAS_DIGIT_RE.search(text or ""))
+
+
+def has_number(text: str) -> bool:
+    """Digits, or an unambiguous spoken number word (after tolerant normalization)."""
+    if has_written_number(text):
+        return True
+    return any(w in UNAMBIGUOUS_NUM_WORDS for w in normalize_tolerant(text).split())
 
 
 def digit_string(text: str, *, map_number_words: bool = False) -> str:

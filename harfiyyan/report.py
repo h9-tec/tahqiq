@@ -14,7 +14,7 @@ from . import io as hio
 from .manifest import Utterance, load_manifest
 from .metrics import bootstrap_ci, mcnemar_pair, paired_delta_ci, proportion_ci
 from .normalize import NORMALIZERS
-from .normalize.numbers import digit_string
+from .normalize.numbers import digit_string, has_number
 
 BASELINE = "whisper_large_v3"
 
@@ -83,15 +83,17 @@ def score_model(
         if cell:
             out["dialects"][dialect] = cell
 
-    # Numeral probe: utterances whose reference contains written digits.
-    num_utts = [u for u in all_utts if u.has_number]
+    # Numeral probe: references with digits or an unambiguous number word; compared
+    # as digit strings with number words mapped on both sides. Computed from the
+    # reference at score time so the manifest hash does not depend on the word list.
+    num_utts = [u for u in all_utts if has_number(u.reference)]
     k = n = 0
     for u in num_utts:
         p = all_preds.get(u.id)
         if p is None or p.error:
             continue
         n += 1
-        k += int(digit_string(u.reference) == digit_string(p.hyp))
+        k += int(digit_string(u.reference, map_number_words=True) == digit_string(p.hyp, map_number_words=True))
     out["probes"]["numeral"] = {"acc": proportion_ci(k, n).as_dict(), "k": k, "n": n}
 
     # Paired comparison against the baseline on shared utterances.

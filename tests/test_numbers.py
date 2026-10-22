@@ -16,3 +16,12 @@ def test_digit_string_number_words():
     assert digit_string("خمسة وعشرين", map_number_words=True) == "5"
     assert digit_string("ثلاثة أربعة", map_number_words=True) == "34"
     assert digit_string("تلاته", map_number_words=True) == "3"
+
+
+def test_has_number_words_but_not_ambiguous():
+    from harfiyyan.normalize.numbers import has_number
+    assert has_number("عندي خمسة أولاد")
+    assert has_number("الساعة ٣")
+    assert not has_number("يا ست الكل")          # ست = lady
+    assert not has_number("واحد من الناس")        # واحد = someone
+    assert not has_number("كيف الحال")
