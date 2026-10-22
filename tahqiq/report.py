@@ -105,7 +105,9 @@ def score_model(
     for ds in datasets:
         utts = select_utts(load_manifest(manifests_dir / f"{ds}.jsonl"), slice_name)
         preds = hio.load_predictions(results_dir, model_id, ds)
-        if baseline_id and baseline_id != model_id:
+        # Only compare against a baseline whose run is complete (run.json written),
+        # otherwise a half-finished baseline would make the delta meaningless.
+        if baseline_id and baseline_id != model_id and (results_dir / baseline_id / "run.json").exists():
             base_preds.update(hio.load_predictions(results_dir, baseline_id, ds))
         n_ok = sum(1 for u in utts if u.id in preds and not preds[u.id].error)
         out["coverage"][ds] = {"n": len(utts), "scored": n_ok}

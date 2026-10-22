@@ -1,6 +1,6 @@
 # Tahqiq (تحقيق)
 
-**A reproducible Arabic ASR leaderboard.** *Tahqiq* (تحقيق) is the slowest, most exact style of recitation, where every letter is given its full right; in everyday Arabic it means verification. Every model's Arabic gets the tahqiq treatment: Open models on the same public test sets as Elm's Open Universal Arabic ASR Leaderboard, re-scored with: an Elm-identical normalizer for comparability, a variant-tolerant normalizer, numeral and named-entity probes, a 95% confidence interval on every number, per-dataset and per-dialect columns, and every per-utterance output published.
+**A reproducible Arabic ASR leaderboard.** *Tahqiq* (تحقيق) is the slowest, most exact style of recitation, where every letter is given its full right; in everyday Arabic it means verification. Every model's Arabic gets the tahqiq treatment. Open models on the same public test sets as Elm's Open Universal Arabic ASR Leaderboard, re-scored with: an Elm-identical normalizer for comparability, a variant-tolerant normalizer, numeral and named-entity probes, a 95% confidence interval on every number, per-dataset and per-dialect columns, and every per-utterance output published.
 
 **Live board and submissions:** https://huggingface.co/spaces/HeshamHaroon/tahqiq · Results: [tahqiq-results](https://huggingface.co/datasets/HeshamHaroon/tahqiq-results) · Queue: [tahqiq-requests](https://huggingface.co/datasets/HeshamHaroon/tahqiq-requests) · Method: [docs/methodology.md](docs/methodology.md)
 
