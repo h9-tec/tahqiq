@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harfiyyan · Arabic ASR Leaderboard</title>
+<meta name="description" content="Reproducible Arabic ASR leaderboard: Elm-compatible WER, variant-tolerant WER, numeral probe, 95% confidence intervals, per dataset and per dialect.">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230f766e'/><text x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='serif'>ح</text></svg>">
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="brand"><span class="glyph">حرفياً</span><h1>Harfiyyan</h1></div>
+    <p class="tag">Arabic ASR, scored <em>verbatim</em>. Open models on the same six public test sets as Elm's leaderboard, with confidence intervals, a second normalizer, a numeral probe, and dialect columns.</p>
+    <div class="pills" id="meta-pills"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="controls" aria-label="View controls">
+    <div class="seg" role="tablist" aria-label="Slice">
+      <button class="on" data-slice="full" role="tab">Full test sets</button>
+      <button data-slice="api" role="tab">Common slice</button>
+    </div>
+    <div class="seg" role="tablist" aria-label="Normalizer">
+      <button class="on" data-norm="elm" role="tab">Elm normalizer</button>
+      <button data-norm="tolerant" role="tab">Tolerant normalizer</button>
+    </div>
+    <div class="seg" role="tablist" aria-label="Metric">
+      <button class="on" data-metric="wer" role="tab">WER</button>
+      <button data-metric="cer" role="tab">CER</button>
+    </div>
+    <label class="chk"><input type="checkbox" id="show-ci" checked> show 95% CI</label>
+  </section>
+
+  <section>
+    <h2>Leaderboard <span class="sub" id="lb-sub"></span></h2>
+    <div class="scroll"><table id="lb"><thead></thead><tbody></tbody></table></div>
+    <p class="note">Average = unweighted mean over the datasets shown (Elm's convention). “Δ vs Whisper v3” is the paired bootstrap difference in WER on shared utterances with the Elm normalizer; negative is better than the baseline. Numeral probe = share of utterances whose reference contains a number where the hypothesis has the same digits. Click a row for the model card and per-utterance outputs.</p>
+  </section>
+
+  <section>
+    <h2>By dialect <span class="sub">WER, pooled across datasets that carry dialect labels (SADA, Casablanca)</span></h2>
+    <div class="scroll"><table id="dialects"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <section>
+    <h2>Test sets</h2>
+    <div class="cards" id="datasets"></div>
+  </section>
+
+  <section class="method">
+    <h2>Method in one paragraph</h2>
+    <p>Every system is run zero-shot, as released, with the decode settings recorded in its <code>run.json</code>. Hypotheses and references go through the same published normalizer. WER and CER are corpus-level. Every number carries a 95% utterance-level percentile bootstrap interval. The <em>common slice</em> is a fixed, seeded, dialect-stratified sample of about 1,000 utterances per set so that every system is compared on identical audio. Full details, the normalizer code, the manifests and every per-utterance output are in the repository.</p>
+    <p class="policy">Scope: open-weight models and global vendors only. Vendors domiciled in the GCC appear only after written opt-in. This page reports measured values and makes no other claims.</p>
+  </section>
+</main>
+
+<dialog id="card"><div class="card-body"></div><form method="dialog"><button>Close</button></form></dialog>
+
+<footer class="wrap foot" id="foot"></footer>
+<script src="app.js"></script>
+</body>
+</html>
