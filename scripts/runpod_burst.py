@@ -234,10 +234,8 @@ du -sh /vol/audio/*; echo SEED_DONE
 """
 
 
-def cmd_seed(gpu: str) -> None:
-    pub = POD_KEY.with_suffix(".pub").read_text().strip()
-    pod_id = None
-    for cloud in ("COMMUNITY", "SECURE"):
+def cmd_seed(gpu: str, pod_id: str | None = None) -> None:
+    for cloud in (() if pod_id else ("COMMUNITY", "SECURE")):
         pod_id = create_pod("tahqiq-seed", gpu, cloud)
         if pod_id:
             break
@@ -251,7 +249,7 @@ def cmd_seed(gpu: str) -> None:
             break
     else:
         terminate(pod_id); raise SystemExit("seed pod never came up")
-    script = SEED_SCRIPT.format(ssh=os.environ["TAHQIQ_AUDIO_SSH"], key=Path(os.environ["TAHQIQ_AUDIO_KEY_PATH"]).read_text())
+    script = SEED_SCRIPT.replace("{ssh}", os.environ["TAHQIQ_AUDIO_SSH"]).replace("{key}", Path(os.environ["TAHQIQ_AUDIO_KEY_PATH"]).read_text())
     rc = subprocess.call(["ssh", *ssh_opts(*addr), "bash -s"], input=script.encode())
     terminate(pod_id)
     print("seed rc", rc)
@@ -304,12 +302,12 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("plan").add_argument("--from-candidates", action="store_true")
-    sd = sub.add_parser("seed"); sd.add_argument("--gpu", default="NVIDIA RTX A5000")
+    sd = sub.add_parser("seed"); sd.add_argument("--gpu", default="NVIDIA RTX A5000"); sd.add_argument("--pod-id", default=None, help="reuse an existing pod")
     r = sub.add_parser("run"); r.add_argument("--max-pods", type=int, default=16); r.add_argument("--only", default=None, help="comma list of slugs"); r.add_argument("--from-candidates", action="store_true"); r.add_argument("--skip-done", action="store_true", help="skip slugs that already have results/<slug>/run.json")
     sub.add_parser("collect"); sub.add_parser("kill")
     a = ap.parse_args()
     if a.cmd == "seed":
-        cmd_seed(a.gpu); return
+        cmd_seed(a.gpu, a.pod_id); return
     units_all = units_from_candidates(ROOT / "data" / "candidates.yaml") if getattr(a, "from_candidates", False) else UNITS
     if a.cmd == "plan":
         for i, u in enumerate(units_all):
