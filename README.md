@@ -52,7 +52,13 @@ Every run also scores a fixed, seeded, dialect-stratified **common slice** of ab
 ## Leaderboard snapshot
 
 <!-- tahqiq:table:start -->
-_Generated from the live results; see the Space for the current board._
+| System | Avg WER | Casablanca | CV18 | MASC-c | MASC-n | MGB-2 | SADA | Numerals | Entities | Δ vs Whisper v3 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen3-ASR 0.6B | 40.9 | 70.2 | 27.6 | 28.4 | 41.7 | 25.1 | 52.6 | 66% | 54% | base |
+| Whisper large-v3-turbo | 43.9 | 85.7 | 23.9 | 21.1 | 37.2 | 18.3 | 77.0 | 48% | 63% | base |
+| MMS-1b-all (ara) | 53.6 | 86.0 | 26.0 | 36.5 | 56.6 | 39.0 | 77.4 | 35% | 44% | base |
+
+WER % on the full test sets, `elm` normalizer, corpus-level, sorted by unweighted average over 6 sets. Confidence intervals, CER, the tolerant normalizer and per-dialect numbers are on the [live board](https://huggingface.co/spaces/HeshamHaroon/tahqiq). Snapshot of 3 systems, manifest `6ef6d50155f4`, 2026-10-22.
 <!-- tahqiq:table:end -->
 
 ## How a number is produced
