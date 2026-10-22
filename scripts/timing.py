@@ -52,6 +52,59 @@ def gpu_neighbours() -> int:
         return -1
 
 
+def measure(slug: str, *, hf_id: str | None = None, display_name: str | None = None, adapter: str | None = None, passes: int = 3) -> dict:
+    """Timing pass; returns the timing dict and writes results/<slug>/timing.json."""
+    utts = [u for p in manifest_paths(MANIFESTS) for u in load_manifest(p) if u.in_timing_slice]
+    utts.sort(key=lambda u: u.id)
+    audio_s = sum(u.duration_s for u in utts)
+    if hf_id is None and slug not in registry.REGISTRY:
+        rj = RESULTS / slug / "run.json"
+        if rj.exists():
+            hf_id = json.loads(rj.read_text(encoding="utf-8")).get("hf_id")
+    model = registry.build(slug, hf_id=hf_id, display_name=display_name, adapter=adapter)
+    torch = None
+    try:
+        import torch
+
+        torch.cuda.reset_peak_memory_stats()
+    except Exception:
+        pass
+    t0 = time.perf_counter()
+    model.load()
+    load_s = time.perf_counter() - t0
+    for u in utts[:5]:
+        model.transcribe_path(AUDIO / u.audio_rel)
+    passes_wall, lat = [], []
+    for _ in range(passes):
+        t1 = time.perf_counter()
+        for u in utts:
+            lat.append(model.transcribe_path(AUDIO / u.audio_rel).wall_s)
+        passes_wall.append(time.perf_counter() - t1)
+    peak = gpu = None
+    try:
+        peak = round(torch.cuda.max_memory_allocated() / 1e9, 2)
+        gpu = torch.cuda.get_device_name(0)
+    except Exception:
+        pass
+    neighbours = gpu_neighbours()
+    model.unload()
+    lat_a = np.array(lat)
+    doc = {
+        "slug": slug, "n_utts": len(utts), "audio_s": round(audio_s, 1),
+        "passes_wall_s": [round(x, 2) for x in passes_wall],
+        "rtfx": round(audio_s / float(np.median(passes_wall)), 1),
+        "latency_p50_s": round(float(np.percentile(lat_a, 50)), 3),
+        "latency_p95_s": round(float(np.percentile(lat_a, 95)), 3),
+        "load_s": round(load_s, 1), "peak_vram_gb": peak, "gpu": gpu, "gpu_other_processes": neighbours,
+        "batch_size": 1, "concurrency": 1, "machine": platform.node(),
+        "measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }
+    out = RESULTS / slug / "timing.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(doc, indent=1), encoding="utf-8")
+    return doc
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("slug")
@@ -60,69 +113,7 @@ def main() -> None:
     ap.add_argument("--adapter", default=None)
     ap.add_argument("--passes", type=int, default=3)
     args = ap.parse_args()
-
-    utts = [u for p in manifest_paths(MANIFESTS) for u in load_manifest(p) if u.in_timing_slice]
-    utts.sort(key=lambda u: u.id)
-    audio_s = sum(u.duration_s for u in utts)
-    hf_id = args.hf_id
-    if hf_id is None and args.slug not in registry.REGISTRY:
-        rj = RESULTS / args.slug / "run.json"
-        if rj.exists():
-            hf_id = json.loads(rj.read_text(encoding="utf-8")).get("hf_id")
-    model = registry.build(args.slug, hf_id=hf_id, display_name=args.display_name, adapter=args.adapter)
-    try:
-        import torch
-
-        torch.cuda.reset_peak_memory_stats()
-    except Exception:
-        torch = None  # type: ignore[assignment]
-    t0 = time.perf_counter()
-    model.load()
-    load_s = time.perf_counter() - t0
-    # Warm-up (not timed).
-    for u in utts[:5]:
-        model.transcribe_path(AUDIO / u.audio_rel)
-    passes, lat = [], []
-    for _ in range(args.passes):
-        t1 = time.perf_counter()
-        for u in utts:
-            t = model.transcribe_path(AUDIO / u.audio_rel)
-            lat.append(t.wall_s)
-        passes.append(time.perf_counter() - t1)
-    peak = None
-    try:
-        peak = round(torch.cuda.max_memory_allocated() / 1e9, 2)
-    except Exception:
-        pass
-    neighbours = gpu_neighbours()
-    gpu = None
-    try:
-        gpu = torch.cuda.get_device_name(0)
-    except Exception:
-        pass
-    model.unload()
-    lat = np.array(lat)
-    doc = {
-        "slug": args.slug,
-        "n_utts": len(utts),
-        "audio_s": round(audio_s, 1),
-        "passes_wall_s": [round(x, 2) for x in passes],
-        "rtfx": round(audio_s / float(np.median(passes)), 1),
-        "latency_p50_s": round(float(np.percentile(lat, 50)), 3),
-        "latency_p95_s": round(float(np.percentile(lat, 95)), 3),
-        "load_s": round(load_s, 1),
-        "peak_vram_gb": peak,
-        "gpu": gpu,
-        "gpu_other_processes": neighbours,
-        "batch_size": 1,
-        "concurrency": 1,
-        "machine": platform.node(),
-        "measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-    }
-    out = RESULTS / args.slug / "timing.json"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(doc, indent=1), encoding="utf-8")
-    print(json.dumps(doc))
+    print(json.dumps(measure(args.slug, hf_id=args.hf_id, display_name=args.display_name, adapter=args.adapter, passes=args.passes)))
 
 
 if __name__ == "__main__":

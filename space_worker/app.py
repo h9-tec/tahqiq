@@ -105,9 +105,17 @@ def _env() -> dict:
 
 
 def _gpu_timing(slug: str, hf_id: str, adapter: str | None) -> str:
-    cmd = [sys.executable, str(CODE / "scripts" / "timing.py"), slug, "--hf-id", hf_id] + (["--adapter", adapter] if adapter else [])
-    rc = subprocess.call(cmd, cwd=CODE, env=_env())
-    return f"timing rc={rc}"
+    try:
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location("tahqiq_timing", CODE / "scripts" / "timing.py")
+        mod = importlib.util.module_from_spec(spec)
+        os.environ["TAHQIQ_AUDIO"] = str(CODE / "audio")
+        spec.loader.exec_module(mod)
+        doc = mod.measure(slug, hf_id=hf_id, adapter=adapter)
+        return f"timing rtfx={doc['rtfx']} p50={doc['latency_p50_s']}s vram={doc['peak_vram_gb']}GB (ZeroGPU shared slice)"
+    except Exception as e:  # noqa: BLE001
+        return f"timing failed: {type(e).__name__}: {e}"
 
 
 _gpu_timing = spaces.GPU(duration=300)(_gpu_timing)
