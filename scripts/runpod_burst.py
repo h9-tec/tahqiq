@@ -181,7 +181,7 @@ def run_unit(unit: dict, idx: int, state: dict) -> None:
     log = ROOT / "logs" / "runpod" / f"{name}.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     with open(log, "wb") as f:
-        rc = subprocess.call(["ssh", *ssh_opts(ip, port), "bash -s"], input=script.encode(), stdout=f, stderr=subprocess.STDOUT)
+        rc = subprocess.run(["ssh", *ssh_opts(ip, port), "bash -s"], input=script.encode(), stdout=f, stderr=subprocess.STDOUT).returncode
     state[name]["status"] = "FINISHED" if rc == 0 else f"FAILED rc={rc}"
     _save(state)
     collect_pod(ip, port)
@@ -250,7 +250,7 @@ def cmd_seed(gpu: str, pod_id: str | None = None) -> None:
     else:
         terminate(pod_id); raise SystemExit("seed pod never came up")
     script = SEED_SCRIPT.replace("{ssh}", os.environ["TAHQIQ_AUDIO_SSH"]).replace("{key}", Path(os.environ["TAHQIQ_AUDIO_KEY_PATH"]).read_text())
-    rc = subprocess.call(["ssh", *ssh_opts(*addr), "bash -s"], input=script.encode())
+    rc = subprocess.run(["ssh", *ssh_opts(*addr), "bash -s"], input=script.encode()).returncode
     terminate(pod_id)
     print("seed rc", rc)
 
