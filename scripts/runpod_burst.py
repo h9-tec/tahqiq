@@ -177,7 +177,11 @@ def bootstrap_script(unit: dict) -> str:
     pip = ("pip install -q -U 'transformers>=5.13' accelerate soundfile scipy numpy rapidfuzz jiwer pyyaml tenacity httpx tqdm "
            "python-dotenv huggingface_hub sentencepiece protobuf tiktoken paramiko 'mistral-common[audio]'")
     if unit.get("nemo"):
-        pip += " && pip install -q 'nemo_toolkit[asr]' cython packaging"
+        # NeMo's resolver swaps torch for a build that does not match the image's CUDA → illegal memory access.
+        # Install NeMo, then pin torch/torchaudio back to the image's cu128 wheels.
+        pip += (" && pip install -q 'nemo_toolkit[asr]' cython packaging"
+                " && pip install -q --force-reinstall --no-deps torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128"
+                " && python -c \"import torch; x=torch.randn(256,256,device='cuda'); print('cuda ok', torch.__version__, float((x@x).sum())>-1)\"")
     if unit.get("omni"):
         pip += " && pip install -q omnilingual-asr"
     def eval_cmd(slug: str, datasets: list[str], timing: bool, hf_id: str | None, display: str | None) -> str:

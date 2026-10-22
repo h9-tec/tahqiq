@@ -365,29 +365,6 @@
   "ip": "38.80.152.148",
   "port": 31808
  },
- "tahqiq-18-nvidia_nemotron-3.": {
-  "pod": "tt1fqln1enqi72",
-  "status": "FINISHED (terminated)",
-  "unit": {
-   "slug": "nvidia_nemotron-3.5-asr-streaming-0.6b",
-   "nemo": true,
-   "omni": false,
-   "remote_code": false,
-   "hf_id": "nvidia/nemotron-3.5-asr-streaming-0.6b",
-   "display_name": "Nemotron 3.5 ASR streaming 0.6B",
-   "datasets": [
-    "casablanca",
-    "commonvoice",
-    "masc_clean",
-    "masc_noisy",
-    "mgb2",
-    "sada"
-   ],
-   "timing": true
-  },
-  "ip": "38.80.152.146",
-  "port": 31310
- },
  "tahqiq-19-mistralai_Voxtral-": {
   "pod": "4khg9d1lfgt93y",
   "status": "FINISHED (terminated)",
