@@ -149,3 +149,159 @@ models:
     languages: 8 listed + others
     arabic_only: false
     declared_source: https://huggingface.co/mistralai/Voxtral-Mini-3B-2507
+  openai_whisper-small:
+    name: Whisper small
+    org: OpenAI
+    kind: open
+    hf: https://huggingface.co/openai/whisper-small
+    license: apache-2.0
+    params: 244M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: 99 (multilingual)
+    arabic_only: false
+    declared_source: https://huggingface.co/openai/whisper-small
+  openai_whisper-medium:
+    name: Whisper medium
+    org: OpenAI
+    kind: open
+    hf: https://huggingface.co/openai/whisper-medium
+    license: apache-2.0
+    params: 769M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: 99 (multilingual)
+    arabic_only: false
+    declared_source: https://huggingface.co/openai/whisper-medium
+  openai_whisper-large-v2:
+    name: Whisper large-v2
+    org: OpenAI
+    kind: open
+    hf: https://huggingface.co/openai/whisper-large-v2
+    license: apache-2.0
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: 99 (multilingual)
+    arabic_only: false
+    declared_source: https://huggingface.co/openai/whisper-large-v2
+  CohereLabs_cohere-transcribe-03-2026:
+    name: Cohere Transcribe 03-2026
+    org: Cohere Labs
+    kind: open
+    hf: https://huggingface.co/CohereLabs/cohere-transcribe-03-2026
+    license: apache-2.0
+    params: 2B
+    streaming: chunked
+    timestamps: unknown
+    max_audio: feature extractor chunks long audio automatically
+    languages: multilingual (includes Arabic)
+    arabic_only: false
+    declared_source: https://huggingface.co/CohereLabs/cohere-transcribe-03-2026
+  nvidia_nemotron-3.5-asr-streaming-0.6b:
+    name: NVIDIA Nemotron 3.5 ASR streaming 0.6B
+    org: NVIDIA
+    kind: open
+    hf: https://huggingface.co/nvidia/nemotron-3.5-asr-streaming-0.6b
+    license: OpenMDW-1.1
+    params: 0.6B
+    streaming: native
+    timestamps: word
+    max_audio: cache-aware streaming; unbounded
+    languages: multilingual (Arabic transcription-ready)
+    arabic_only: false
+    declared_source: https://huggingface.co/nvidia/nemotron-3.5-asr-streaming-0.6b
+  mistralai_Voxtral-Mini-4B-Realtime-2602:
+    name: Voxtral Mini 4B Realtime
+    org: Mistral AI
+    kind: open
+    hf: https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602
+    license: apache-2.0
+    params: 4.4B
+    streaming: native
+    timestamps: no
+    max_audio: streaming; configurable delay
+    languages: multilingual
+    arabic_only: false
+    declared_source: https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602
+  mistralai_Voxtral-Mini-4B-Realtime-Arabic:
+    name: Voxtral Mini 4B Realtime Arabic
+    org: Mistral AI
+    kind: open
+    hf: https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-Arabic
+    license: apache-2.0
+    params: 4.4B
+    streaming: native
+    timestamps: no
+    max_audio: streaming; 480 ms configured delay in the card
+    languages: Arabic MSA + 15 dialect codes, code-switching
+    arabic_only: true
+    declared_source: https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-Arabic
+  google_gemma-4-E4B-it:
+    name: Gemma 4 E4B (audio)
+    org: Google DeepMind
+    kind: open
+    hf: https://huggingface.co/google/gemma-4-E4B-it
+    license: apache-2.0
+    params: 8B (4.5B effective)
+    streaming: no
+    timestamps: no
+    max_audio: audio in a 128K-token context; prompt-based transcription
+    languages: 140+ (multilingual LLM)
+    arabic_only: false
+    declared_source: https://huggingface.co/google/gemma-4-E4B-it
+  google_gemma-4-E2B-it:
+    name: Gemma 4 E2B (audio)
+    org: Google DeepMind
+    kind: open
+    hf: https://huggingface.co/google/gemma-4-E2B-it
+    license: apache-2.0
+    params: 5.1B (2.3B effective)
+    streaming: no
+    timestamps: no
+    max_audio: audio in a 128K-token context; prompt-based transcription
+    languages: 140+ (multilingual LLM)
+    arabic_only: false
+    declared_source: https://huggingface.co/google/gemma-4-E2B-it
+  facebook_omniASR-LLM-1B:
+    name: Omnilingual ASR LLM 1B
+    org: Meta
+    kind: open
+    hf: https://huggingface.co/facebook/omniASR-LLM-1B
+    license: apache-2.0
+    params: 2.3B
+    streaming: no
+    timestamps: no
+    max_audio: 40 s per utterance (card)
+    languages: 1,600+ (lang-conditioned)
+    arabic_only: false
+    declared_source: https://huggingface.co/facebook/omniASR-LLM-1B
+  audarai_Audar-ASR-V1-Turbo:
+    name: Audar ASR V1 Turbo
+    org: Audar AI
+    kind: open
+    hf: https://huggingface.co/audarai/Audar-ASR-V1-Turbo
+    license: other (custom)
+    params: 1.7B
+    streaming: native (per card)
+    timestamps: unknown
+    max_audio: unknown
+    languages: Arabic (Emirati/Gulf focus), English
+    arabic_only: true
+    declared_source: https://huggingface.co/audarai/Audar-ASR-V1-Turbo
+  audarai_Audar-ASR-V1-Flash:
+    name: Audar ASR V1 Flash
+    org: Audar AI
+    kind: open
+    hf: https://huggingface.co/audarai/Audar-ASR-V1-Flash
+    license: other (custom)
+    params: 0.6B
+    streaming: native (per card)
+    timestamps: unknown
+    max_audio: unknown
+    languages: Arabic (Emirati/Gulf focus)
+    arabic_only: true
+    declared_source: https://huggingface.co/audarai/Audar-ASR-V1-Flash

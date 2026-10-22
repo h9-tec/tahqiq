@@ -174,4 +174,80 @@ tahqiq import ok 3.11.11
 qwen3_asr_0.6b/casablanca:  35%|███▌      | 2400/6818 [01:10<05:54, 12.48utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
 qwen3_asr_0.6b/casablanca:  35%|███▌      | 2416/6818 [01:10<04:33, 16.11utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
 qwen3_asr_0.6b/casablanca:  36%|███▌      | 2432/6818 [01:10<03:34, 20.41utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
-qwen3_asr_0.6b/casablanca:  36%|███▌      | 2448/6818 [01:15<09:07,  7.99utt/s]
+qwen3_asr_0.6b/casablanca:  36%|███▌      | 2448/6818 [01:15<09:07,  7.99utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  36%|███▌      | 2464/6818 [01:15<06:45, 10.72utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  36%|███▋      | 2480/6818 [01:20<11:25,  6.33utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  37%|███▋      | 2496/6818 [01:21<08:24,  8.57utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  37%|███▋      | 2512/6818 [01:21<06:15, 11.48utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  37%|███▋      | 2528/6818 [01:21<04:46, 14.96utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  37%|███▋      | 2544/6818 [01:22<03:47, 18.76utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  38%|███▊      | 2560/6818 [01:22<03:07, 22.68utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  38%|███▊      | 2576/6818 [01:22<02:35, 27.31utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  38%|███▊      | 2592/6818 [01:23<02:15, 31.13utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  38%|███▊      | 2608/6818 [01:23<01:57, 35.80utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  38%|███▊      | 2624/6818 [01:23<02:05, 33.45utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  39%|███▊      | 2640/6818 [01:24<01:49, 38.01utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  39%|███▉      | 2656/6818 [01:24<01:41, 40.85utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  39%|███▉      | 2672/6818 [01:24<01:37, 42.73utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  39%|███▉      | 2688/6818 [01:25<01:30, 45.80utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  40%|███▉      | 2704/6818 [01:25<01:30, 45.59utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  40%|███▉      | 2720/6818 [01:25<01:27, 46.70utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  40%|████      | 2736/6818 [01:26<01:26, 46.94utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  40%|████      | 2752/6818 [01:26<01:25, 47.28utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  41%|████      | 2768/6818 [01:26<01:25, 47.33utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  41%|████      | 2784/6818 [01:27<01:28, 45.67utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  41%|████      | 2800/6818 [01:27<01:25, 46.99utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  41%|████▏     | 2816/6818 [01:27<01:21, 49.08utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  42%|████▏     | 2832/6818 [01:28<01:21, 49.14utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  42%|████▏     | 2848/6818 [01:28<01:20, 49.02utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  42%|████▏     | 2864/6818 [01:28<01:22, 47.94utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  42%|████▏     | 2880/6818 [01:29<01:18, 50.29utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  42%|████▏     | 2896/6818 [01:29<01:18, 50.02utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  43%|████▎     | 2912/6818 [01:34<06:54,  9.43utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  43%|████▎     | 2928/6818 [01:34<05:18, 12.22utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  43%|████▎     | 2944/6818 [01:35<04:05, 15.77utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  43%|████▎     | 2960/6818 [01:35<03:18, 19.41utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  44%|████▎     | 2976/6818 [01:35<02:40, 23.92utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  44%|████▍     | 2992/6818 [01:36<02:13, 28.59utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  44%|████▍     | 3008/6818 [01:36<01:55, 32.90utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  44%|████▍     | 3024/6818 [01:36<01:43, 36.52utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  45%|████▍     | 3040/6818 [01:37<01:36, 39.32utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  45%|████▍     | 3056/6818 [01:37<01:36, 38.96utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  45%|████▌     | 3072/6818 [01:37<01:28, 42.14utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  45%|████▌     | 3088/6818 [01:38<01:22, 45.20utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  46%|████▌     | 3104/6818 [01:38<01:19, 46.57utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  46%|████▌     | 3120/6818 [01:38<01:19, 46.47utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  46%|████▌     | 3136/6818 [01:39<01:19, 46.24utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  46%|████▌     | 3152/6818 [01:39<01:19, 46.35utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  46%|████▋     | 3168/6818 [01:39<01:17, 46.89utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  47%|████▋     | 3184/6818 [01:40<01:16, 47.50utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  47%|████▋     | 3200/6818 [01:40<01:13, 49.28utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  47%|████▋     | 3216/6818 [01:40<01:15, 47.94utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  47%|████▋     | 3232/6818 [01:41<01:14, 47.84utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  48%|████▊     | 3248/6818 [01:41<01:16, 46.38utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  48%|████▊     | 3264/6818 [01:41<01:15, 47.33utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  48%|████▊     | 3280/6818 [01:42<01:15, 46.89utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  48%|████▊     | 3296/6818 [01:42<01:28, 39.74utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  49%|████▊     | 3312/6818 [01:43<01:24, 41.29utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  49%|████▉     | 3328/6818 [01:43<01:24, 41.36utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  49%|████▉     | 3344/6818 [01:48<06:20,  9.14utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  49%|████▉     | 3360/6818 [01:48<04:48, 11.99utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  50%|████▉     | 3376/6818 [01:53<08:41,  6.60utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  50%|████▉     | 3392/6818 [01:54<06:25,  8.88utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  50%|████▉     | 3408/6818 [01:54<04:52, 11.67utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  50%|█████     | 3424/6818 [01:54<03:47, 14.92utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  50%|█████     | 3440/6818 [01:55<03:00, 18.73utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  51%|█████     | 3456/6818 [01:55<02:29, 22.42utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  51%|█████     | 3472/6818 [01:55<02:05, 26.68utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  51%|█████     | 3488/6818 [01:56<01:53, 29.36utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  51%|█████▏    | 3504/6818 [01:56<01:41, 32.67utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  52%|█████▏    | 3520/6818 [01:57<01:33, 35.28utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  52%|█████▏    | 3536/6818 [01:57<01:29, 36.70utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  52%|█████▏    | 3552/6818 [01:57<01:22, 39.37utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  52%|█████▏    | 3568/6818 [01:58<01:19, 40.69utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  53%|█████▎    | 3584/6818 [01:58<01:23, 38.53utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  53%|█████▎    | 3600/6818 [01:58<01:21, 39.71utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  53%|█████▎    | 3616/6818 [02:03<05:54,  9.04utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  53%|█████▎    | 3632/6818 [02:04<04:28, 11.87utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  54%|█████▎    | 3648/6818 [02:04<03:32, 14.93utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+qwen3_asr_0.6b/casablanca:  54%|█████▎    | 3664/6818 [02:05<02:51, 18.41utt/s][transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
