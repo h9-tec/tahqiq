@@ -565,3 +565,13 @@ tahqiq-8-facebook_omniASR-L: spend cap 45.0/h reached, waiting
 tahqiq-12-audarai_Audar-ASR-: spend cap 45.0/h reached, waiting
 tahqiq-13-audarai_Audar-ASR-: spend cap 45.0/h reached, waiting
 tahqiq-7-seamless_m4t_v2_la: spend cap 45.0/h reached, waiting
+tahqiq-0-openai_whisper-sma: spend cap 45.0/h reached, waiting
+tahqiq-1-openai_whisper-med: spend cap 45.0/h reached, waiting
+tahqiq-2-openai_whisper-lar: spend cap 45.0/h reached, waiting
+tahqiq-4-whisper_large_v3_t: spend cap 45.0/h reached, waiting
+tahqiq-9-facebook_omniASR-L: spend cap 45.0/h reached, waiting
+tahqiq-15-cohere_transcribe_: spend cap 45.0/h reached, waiting
+tahqiq-8-facebook_omniASR-L: spend cap 45.0/h reached, waiting
+tahqiq-12-audarai_Audar-ASR-: spend cap 45.0/h reached, waiting
+tahqiq-13-audarai_Audar-ASR-: spend cap 45.0/h reached, waiting
+tahqiq-7-seamless_m4t_v2_la: spend cap 45.0/h reached, waiting

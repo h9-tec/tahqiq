@@ -29,13 +29,17 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--slugs", default=None)
     ap.add_argument("--no-upload", action="store_true")
+    ap.add_argument("--allow-partial", action="store_true")
+    ap.add_argument("--skip-published", action="store_true", help="skip slugs that already have scores.json")
     a = ap.parse_args()
     results = ROOT / "results"
     slugs = a.slugs.split(",") if a.slugs else sorted(p.parent.name for p in results.glob("*/runs"))
     ok, bad = [], []
     for slug in slugs:
+        if a.skip_published and (results / slug / "scores.json").exists():
+            continue
         try:
-            run = assemble(slug)
+            run = assemble(slug, allow_partial=a.allow_partial)
         except SystemExit as e:
             print(f"{slug}: {e}"); bad.append(slug); continue
         cmd = [sys.executable, str(ROOT / "scripts" / "publish.py"), slug]

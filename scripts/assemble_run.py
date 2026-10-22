@@ -24,7 +24,7 @@ MANIFESTS = ROOT / "data" / "manifests"
 RESULTS = ROOT / "results"
 
 
-def assemble(slug: str) -> dict:
+def assemble(slug: str, *, allow_partial: bool = False) -> dict:
     d = RESULTS / slug
     units = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((d / "runs").glob("*.json"))]
     if not units:
@@ -44,6 +44,8 @@ def assemble(slug: str) -> dict:
         ok = sum(1 for u in utts if u.id in preds and not preds[u.id].error)
         coverage[ds] = (ok, len(utts))
     missing = {ds: v for ds, v in coverage.items() if v[0] < v[1]}
+    if missing and not allow_partial:
+        raise SystemExit(f"{slug}: incomplete coverage {missing}")
     base = units[0]
     totals = {k: sum(u["totals"].get(k, 0) for u in units) for k in ("done", "errors", "skipped", "audio_s", "wall_s")}
     run = {**base, "run_id": "+".join(u["run_id"] for u in units), "datasets": datasets, "slice": slice_name,
