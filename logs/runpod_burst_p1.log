@@ -1,0 +1,287 @@
+27 units, 16 pods at a time
+  tahqiq-8-facebook_omniASR-L: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-2-openai_whisper-lar: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-10-qwen3_asr_1.7b: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-3-whisper_large_v3: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-13-audarai_Audar-ASR-: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-11-qwen3_asr_0.6b: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-14-CohereLabs_cohere-: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-12-audarai_Audar-ASR-: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-15-cohere_transcribe_: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-1-openai_whisper-med: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-5-mms_1b_all: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-9-facebook_omniASR-L: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-6-seamless_m4t_v2_la: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-0-openai_whisper-sma: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-4-whisper_large_v3_t: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-7-seamless_m4t_v2_la: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-8-facebook_omniASR-L: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-12-audarai_Audar-ASR-: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-13-audarai_Audar-ASR-: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-10-qwen3_asr_1.7b: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-14-CohereLabs_cohere-: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-15-cohere_transcribe_: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-2-openai_whisper-lar: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-3-whisper_large_v3: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-1-openai_whisper-med: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-9-facebook_omniASR-L: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-11-qwen3_asr_0.6b: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-6-seamless_m4t_v2_la: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-5-mms_1b_all: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-0-openai_whisper-sma: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-4-whisper_large_v3_t: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-7-seamless_m4t_v2_la: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-8-facebook_omniASR-L: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-14-CohereLabs_cohere-: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-15-cohere_transcribe_: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-12-audarai_Audar-ASR-: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-2-openai_whisper-lar: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-10-qwen3_asr_1.7b: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-13-audarai_Audar-ASR-: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-9-facebook_omniASR-L: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-3-whisper_large_v3: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-1-openai_whisper-med: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-11-qwen3_asr_0.6b: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-0-openai_whisper-sma: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-6-seamless_m4t_v2_la: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-5-mms_1b_all: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-4-whisper_large_v3_t: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-7-seamless_m4t_v2_la: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-14-CohereLabs_cohere-: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-8-facebook_omniASR-L: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-2-openai_whisper-lar: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-15-cohere_transcribe_: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-13-audarai_Audar-ASR-: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-12-audarai_Audar-ASR-: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-10-qwen3_asr_1.7b: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-9-facebook_omniASR-L: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-11-qwen3_asr_0.6b: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-3-whisper_large_v3: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-1-openai_whisper-med: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-6-seamless_m4t_v2_la: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-5-mms_1b_all: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-0-openai_whisper-sma: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-4-whisper_large_v3_t: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-7-seamless_m4t_v2_la: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-14-CohereLabs_cohere-: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-8-facebook_omniASR-L: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-12-audarai_Audar-ASR-: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-15-cohere_transcribe_: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-10-qwen3_asr_1.7b: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-9-facebook_omniASR-L: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-13-audarai_Audar-ASR-: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-3-whisper_large_v3: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-11-qwen3_asr_0.6b: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-6-seamless_m4t_v2_la: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-5-mms_1b_all: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-0-openai_whisper-sma: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-1-openai_whisper-med: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-2-openai_whisper-lar: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-4-whisper_large_v3_t: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-7-seamless_m4t_v2_la: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-8-facebook_omniASR-L: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-12-audarai_Audar-ASR-: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-15-cohere_transcribe_: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-10-qwen3_asr_1.7b: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-11-qwen3_asr_0.6b: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-3-whisper_large_v3: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-14-CohereLabs_cohere-: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-13-audarai_Audar-ASR-: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-6-seamless_m4t_v2_la: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-9-facebook_omniASR-L: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-0-openai_whisper-sma: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-2-openai_whisper-lar: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-5-mms_1b_all: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-1-openai_whisper-med: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-4-whisper_large_v3_t: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-7-seamless_m4t_v2_la: NVIDIA H100 NVL/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-8-facebook_omniASR-L: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-15-cohere_transcribe_: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-12-audarai_Audar-ASR-: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-10-qwen3_asr_1.7b: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-11-qwen3_asr_0.6b: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-14-CohereLabs_cohere-: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-3-whisper_large_v3: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-6-seamless_m4t_v2_la: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-13-audarai_Audar-ASR-: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-5-mms_1b_all: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-0-openai_whisper-sma: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-9-facebook_omniASR-L: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-2-openai_whisper-lar: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-4-whisper_large_v3_t: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-1-openai_whisper-med: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-7-seamless_m4t_v2_la: NVIDIA B200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+tahqiq-8-facebook_omniASR-L: pod 908maponkrwedp on NVIDIA B200 (SECURE)
+  tahqiq-12-audarai_Audar-ASR-: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-15-cohere_transcribe_: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-14-CohereLabs_cohere-: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-10-qwen3_asr_1.7b: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-3-whisper_large_v3: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+tahqiq-5-mms_1b_all: pod jcnuabc9jt432d on NVIDIA B200 (SECURE)
+  tahqiq-13-audarai_Audar-ASR-: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-7-seamless_m4t_v2_la: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-1-openai_whisper-med: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-9-facebook_omniASR-L: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-6-seamless_m4t_v2_la: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-11-qwen3_asr_0.6b: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-4-whisper_large_v3_t: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-0-openai_whisper-sma: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-2-openai_whisper-lar: NVIDIA B200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-19-mistralai_Voxtral-: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-16-nvidia_fastconform: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-17-nvidia_fastconform: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-18-nvidia_nemotron-3.: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-20-mistralai_Voxtral-: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-22-mistralai_Voxtral-: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-23-google_gemma-4-E4B: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-25-google_gemma-4-E2B: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-21-mistralai_Voxtral-: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-24-google_gemma-4-E4B: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-26-google_gemma-4-E2B: NVIDIA H200/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-16-nvidia_fastconform: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-17-nvidia_fastconform: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-19-mistralai_Voxtral-: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-18-nvidia_nemotron-3.: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-20-mistralai_Voxtral-: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-23-google_gemma-4-E4B: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-22-mistralai_Voxtral-: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-25-google_gemma-4-E2B: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-24-google_gemma-4-E4B: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-26-google_gemma-4-E2B: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-21-mistralai_Voxtral-: NVIDIA H200/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-16-nvidia_fastconform: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-19-mistralai_Voxtral-: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-18-nvidia_nemotron-3.: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-17-nvidia_fastconform: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-23-google_gemma-4-E4B: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-22-mistralai_Voxtral-: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-21-mistralai_Voxtral-: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-25-google_gemma-4-E2B: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-20-mistralai_Voxtral-: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-24-google_gemma-4-E4B: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-26-google_gemma-4-E2B: NVIDIA H100 80GB HBM3/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-16-nvidia_fastconform: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-18-nvidia_nemotron-3.: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-19-mistralai_Voxtral-: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-25-google_gemma-4-E2B: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-17-nvidia_fastconform: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-21-mistralai_Voxtral-: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-22-mistralai_Voxtral-: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-24-google_gemma-4-E4B: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-20-mistralai_Voxtral-: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-26-google_gemma-4-E2B: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-23-google_gemma-4-E4B: NVIDIA H100 80GB HBM3/SECURE unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-16-nvidia_fastconform: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-18-nvidia_nemotron-3.: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-17-nvidia_fastconform: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-19-mistralai_Voxtral-: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-25-google_gemma-4-E2B: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-26-google_gemma-4-E2B: NVIDIA H100 NVL/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-20-mistralai_Voxtral-: NVIDIA H100 NVL/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-22-mistralai_Voxtral-: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-21-mistralai_Voxtral-: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-24-google_gemma-4-E4B: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+  tahqiq-23-google_gemma-4-E4B: NVIDIA H100 NVL/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-16-nvidia_fastconform: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-18-nvidia_nemotron-3.: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-25-google_gemma-4-E2B: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-26-google_gemma-4-E2B: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-19-mistralai_Voxtral-: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-17-nvidia_fastconform: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-20-mistralai_Voxtral-: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-22-mistralai_Voxtral-: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-21-mistralai_Voxtral-: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-24-google_gemma-4-E4B: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-23-google_gemma-4-E4B: NVIDIA H100 NVL/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-16-nvidia_fastconform: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-18-nvidia_nemotron-3.: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-17-nvidia_fastconform: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-26-google_gemma-4-E2B: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-25-google_gemma-4-E2B: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-20-mistralai_Voxtral-: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-23-google_gemma-4-E4B: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-24-google_gemma-4-E4B: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-22-mistralai_Voxtral-: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-19-mistralai_Voxtral-: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-21-mistralai_Voxtral-: NVIDIA B200/COMMUNITY unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-16-nvidia_fastconform: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-25-google_gemma-4-E2B: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-24-google_gemma-4-E4B: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-17-nvidia_fastconform: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-20-mistralai_Voxtral-: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-26-google_gemma-4-E2B: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-19-mistralai_Voxtral-: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-22-mistralai_Voxtral-: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-21-mistralai_Voxtral-: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-23-google_gemma-4-E4B: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+  tahqiq-18-nvidia_nemotron-3.: NVIDIA B200/SECURE unavailable (Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For)
+Traceback (most recent call last):
+  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 389, in <module>
+    main()
+  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 384, in main
+    list(ex.map(lambda iu: run_unit(iu[1], iu[0], state), enumerate(units)))
+  File "/home/hesham/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hesham/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/hesham/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/hesham/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/home/hesham/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 384, in <lambda>
+    list(ex.map(lambda iu: run_unit(iu[1], iu[0], state), enumerate(units)))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 215, in run_unit
+    addr = pod_ssh(pod_id)
+           ^^^^^^^^^^^^^^^
+  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 95, in pod_ssh
+    d = gql("""query($id: String!) { pod(input: {podId: $id}) { desiredStatus runtime { ports { ip isIpPublic privatePort publicPort type } } } }""", {"id": pod_id})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 69, in gql
+    r.raise_for_status()
+  File "/home/hesham/tahqiq/.venv/lib/python3.12/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '429 Too Many Requests' for url 'https://api.runpod.io/graphql'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429

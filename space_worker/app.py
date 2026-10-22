@@ -180,7 +180,11 @@ def poll_once() -> str:
     slug = todo[0]["slug"]
     from gradio_client import Client
 
-    client = Client(os.environ.get("SPACE_ID", "HeshamHaroon/tahqiq-worker"), token=os.environ["HF_TOKEN"], verbose=False)
+    space = os.environ.get("SPACE_ID", "HeshamHaroon/tahqiq-worker")
+    try:
+        client = Client(space, token=os.environ["HF_TOKEN"], verbose=False)
+    except TypeError:  # older gradio_client
+        client = Client(space, hf_token=os.environ["HF_TOKEN"], verbose=False)
     log(f"launching {slug}")
     out = client.predict(slug, api_name="/evaluate")
     return str(out)

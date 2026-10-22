@@ -1,0 +1,133 @@
+{
+ "tahqiq-8-facebook_omniASR-L": {
+  "pod": "908maponkrwedp",
+  "status": "CREATED",
+  "unit": {
+   "slug": "facebook_omniASR-LLM-1B",
+   "nemo": false,
+   "omni": true,
+   "remote_code": false,
+   "hf_id": "facebook/omniASR-LLM-1B",
+   "display_name": "Omnilingual ASR LLM 1B",
+   "datasets": [
+    "casablanca",
+    "masc_clean",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-12-audarai_Audar-ASR-": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "audarai_Audar-ASR-V1-Turbo",
+   "nemo": false,
+   "omni": false,
+   "remote_code": true,
+   "hf_id": "audarai/Audar-ASR-V1-Turbo",
+   "display_name": "Audar-ASR V1 Turbo",
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-15-cohere_transcribe_": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "cohere_transcribe_arabic_07_2026",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-14-CohereLabs_cohere-": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "CohereLabs_cohere-transcribe-03-2026",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "CohereLabs/cohere-transcribe-03-2026",
+   "display_name": "Cohere Transcribe 03-2026",
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-10-qwen3_asr_1.7b": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "qwen3_asr_1.7b",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-3-whisper_large_v3": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "whisper_large_v3",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-5-mms_1b_all": {
+  "pod": "jcnuabc9jt432d",
+  "status": "CREATED",
+  "unit": {
+   "slug": "mms_1b_all",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ }
+}
