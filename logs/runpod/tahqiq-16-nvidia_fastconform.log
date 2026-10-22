@@ -5460,3 +5460,156 @@ CUDA kernel errors might be asynchronously reported at some other API call, so t
 For debugging consider passing CUDA_LAUNCH_BLOCKING=1
 Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
 
+nvidia_fastconformer_ar_pc/masc_clean:  87%|████████▋ | 7520/8612 [05:07<00:50, 21.52utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  88%|████████▊ | 7552/8612 [05:09<00:48, 21.90utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  88%|████████▊ | 7584/8612 [05:10<00:48, 21.20utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  88%|████████▊ | 7616/8612 [05:12<00:47, 20.97utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  89%|████████▉ | 7648/8612 [05:13<00:45, 21.37utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  89%|████████▉ | 7680/8612 [05:15<00:44, 20.97utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  90%|████████▉ | 7712/8612 [05:17<00:43, 20.67utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  90%|████████▉ | 7744/8612 [05:18<00:43, 20.17utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  90%|█████████ | 7776/8612 [05:20<00:42, 19.74utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  91%|█████████ | 7808/8612 [05:21<00:39, 20.58utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  91%|█████████ | 7840/8612 [05:23<00:37, 20.78utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  91%|█████████▏| 7872/8612 [05:24<00:35, 20.95utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  92%|█████████▏| 7904/8612 [05:26<00:33, 21.02utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  92%|█████████▏| 7936/8612 [05:27<00:31, 21.45utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  93%|█████████▎| 7968/8612 [05:29<00:30, 21.13utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  93%|█████████▎| 8000/8612 [05:30<00:28, 21.21utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+nvidia_fastconformer_ar_pc/masc_clean:  93%|█████████▎| 8032/8612 [05:32<00:26, 21.61utt/s]Traceback (most recent call last):
+  File "/workspace/tahqiq/tahqiq/runner.py", line 89, in run_model
+    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+

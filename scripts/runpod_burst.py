@@ -389,13 +389,36 @@ def units_from_candidates(path: Path, *, max_priority: int = 1, split_over_gb: f
     return units
 
 
+def cmd_collect_wait(state: dict) -> None:
+    """For pods left RUNNING by a stopped orchestrator: wait until no runner/timing process is alive,
+    then pull results and terminate the pod. Three consecutive idle readings 20 s apart count as done."""
+    live = {k: v for k, v in state.items() if v.get("status") == "RUNNING" and v.get("ip")}
+    print("waiting on", list(live))
+    idle = {k: 0 for k in live}
+    while live:
+        for k, v in list(live.items()):
+            r = subprocess.run(["ssh", *ssh_opts(v["ip"], v["port"]), "pgrep -c -f 'tahqiq.runner|scripts/timing.py|eval_job.py' || true"],
+                               capture_output=True, text=True, timeout=60)
+            n = int((r.stdout.strip() or "0").splitlines()[-1]) if r.returncode == 0 else -1
+            if n == -1:
+                print(k, "unreachable; collecting what exists and terminating"); n = 0; idle[k] = 2
+            idle[k] = idle[k] + 1 if n == 0 else 0
+            if idle[k] >= 3:
+                collect_pod(v["ip"], v["port"])
+                terminate(v["pod"])
+                state[k]["status"] = "FINISHED (collected after orchestrator restart)"; _save(state)
+                print(k, "collected + terminated", flush=True)
+                del live[k]
+        time.sleep(20)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     pl = sub.add_parser("plan"); pl.add_argument("--from-candidates", action="store_true"); pl.add_argument("--max-priority", type=int, default=1)
     sd = sub.add_parser("seed"); sd.add_argument("--gpu", default="NVIDIA RTX A5000"); sd.add_argument("--pod-id", default=None, help="reuse an existing pod")
     r = sub.add_parser("run"); r.add_argument("--max-pods", type=int, default=16); r.add_argument("--only", default=None, help="comma list of slugs"); r.add_argument("--from-candidates", action="store_true"); r.add_argument("--skip-done", action="store_true", help="skip slugs that already have results/<slug>/run.json"); r.add_argument("--max-priority", type=int, default=1); r.add_argument("--exclude-slow", action="store_true", help="skip LLM-style models (Gemma, Voxtral Realtime, omniASR)")
-    sub.add_parser("collect"); sub.add_parser("kill")
+    sub.add_parser("collect"); sub.add_parser("kill"); sub.add_parser("collect-wait")
     a = ap.parse_args()
     if a.cmd == "seed":
         cmd_seed(a.gpu, a.pod_id); return
@@ -412,6 +435,8 @@ def main() -> None:
             if p["name"].startswith("tahqiq-"):
                 terminate(p["id"]); print("terminated", p["name"])
         return
+    if a.cmd == "collect-wait":
+        cmd_collect_wait(state); return
     if a.cmd == "collect":
         for name, s in state.items():
             if s.get("ip"):
