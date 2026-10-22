@@ -65,8 +65,11 @@ function allDatasets() {
 }
 
 function rowsFor(datasets) {
-  return board.models.filter(m => m.scores && m.scores[S.slice]).map(m => {
-    const sc = m.scores[S.slice]; const per = {}; let sum = 0, n = 0;
+  // Every submitted system shows in every view: if it was only run on the common slice, its
+  // common-slice numbers are used and the row says so.
+  return board.models.filter(m => m.scores && (m.scores[S.slice] || m.scores.api || m.scores.full)).map(m => {
+    const used = m.scores[S.slice] ? S.slice : (m.scores.api ? "api" : "full");
+    const sc = m.scores[used]; m._used = used; const per = {}; let sum = 0, n = 0;
     for (const d of datasets) { const c = sc.datasets[d] && sc.datasets[d][S.norm]; if (c) { per[d] = c[S.metric]; sum += c[S.metric].point; n++; } }
     return { m, sc, per, avg: n ? sum / n : null, n, numeral: sc.probes?.numeral, entity: sc.probes?.entity, vs: sc.vs_baseline };
   });
@@ -91,7 +94,7 @@ function renderLB() {
   document.querySelector("#lb tbody").innerHTML = rows.length ? rows.map((r, i) => {
     const d = r.vs ? 100 * r.vs.delta_wer.point : null;
     const vs = r.vs ? `<td class="num delta ${d < 0 ? "neg" : "pos"}">${d > 0 ? "+" : ""}${d.toFixed(1)}${S.ci ? `<span class="ci">${fmtCI(r.vs.delta_wer)} p=${r.vs.mcnemar.p_value.toExponential(1)}</span>` : ""}</td>` : `<td class="pending">baseline</td>`;
-    return `<tr data-id="${r.m.model_id}"><td>${i + 1}</td><td><span class="model">${r.m.display_name}</span><span class="kind">${r.m.submitted_by === "maintainer" || !r.m.submitted_by ? "" : (r.m.scores.full ? "community" : "community · common slice")}</span></td><td class="num"><b>${r.avg == null ? "·" : pct(r.avg)}</b><span class="ci">${r.n}/${datasets.length} sets</span></td>${datasets.map(d => cell(r.per[d])).join("")}${probeCell(r.numeral)}${probeCell(r.entity)}${vs}${prodCells(r.m)}</tr>`;
+    return `<tr data-id="${r.m.model_id}"><td>${i + 1}</td><td><span class="model">${r.m.display_name}</span><span class="kind">${[r.m.submitted_by && r.m.submitted_by !== "maintainer" ? "community" : "", r.m._used !== S.slice ? (r.m._used === "api" ? "common slice only" : "full sets") : ""].filter(Boolean).join(" · ")}</span></td><td class="num"><b>${r.avg == null ? "·" : pct(r.avg)}</b><span class="ci">${r.n}/${datasets.length} sets</span></td>${datasets.map(d => cell(r.per[d])).join("")}${probeCell(r.numeral)}${probeCell(r.entity)}${vs}${prodCells(r.m)}</tr>`;
   }).join("") : `<tr><td colspan="${th.length}" class="pending">No results published yet. The first runs are in progress.</td></tr>`;
   document.getElementById("lb-sub").textContent = `${S.slice === "full" ? "full test sets" : "common stratified slice"} · ${S.norm} normalizer · ${S.acc ? "accuracy = 100 − " + S.metric.toUpperCase() : S.metric.toUpperCase()} %`;
   document.querySelectorAll("#lb th[data-key]").forEach(h => h.onclick = () => { const k = h.dataset.key; if (!k) return; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = 1; } renderLB(); });
@@ -105,7 +108,7 @@ function prodCells(m) {
   return `<td class="num">${t.rtfx != null ? t.rtfx + "×" + warn : "·"}</td><td class="num">${fmtParams(p.params_m) === "·" && p.params_label ? p.params_label : fmtParams(p.params_m)}</td><td>${p.streaming && p.streaming !== "unknown" ? p.streaming : "·"}</td>`;
 }
 function renderProd() {
-  const rows = board.models.filter(m => m.scores && m.scores[S.slice]);
+  const rows = board.models.filter(m => m.scores && (m.scores[S.slice] || m.scores.api || m.scores.full));
   const th = ["System", "RTFx", "Latency p50 / p95 (s)", "Peak VRAM", "Load (s)", "Params", "Weights", "License", "Released", "Streaming", "Timestamps", "Max input", "Languages"];
   document.querySelector("#prod thead").innerHTML = "<tr>" + th.map((t, i) => `<th class="${i >= 1 && i <= 4 ? "measured" : i >= 5 ? "declared" : ""}">${t}</th>`).join("") + "</tr>";
   document.querySelector("#prod tbody").innerHTML = rows.length ? rows.map(m => {
@@ -126,12 +129,13 @@ function renderProd() {
 }
 
 function renderDialects() {
-  const rows = board.models.filter(m => m.scores && m.scores[S.slice]);
-  const dialects = [...new Set(rows.flatMap(m => Object.keys(m.scores[S.slice].dialects || {})))].filter(d => d !== "unknown").sort();
+  const rows = board.models.filter(m => m.scores && (m.scores[S.slice] || m.scores.api || m.scores.full));
+  const pick = m => m.scores[S.slice] || m.scores.api || m.scores.full;
+  const dialects = [...new Set(rows.flatMap(m => Object.keys(pick(m).dialects || {})))].filter(d => d !== "unknown").sort();
   document.querySelector("#dialects thead").innerHTML = "<tr><th>System</th>" + dialects.map(d => `<th>${d}</th>`).join("") + "</tr>";
   document.querySelector("#dialects tbody").innerHTML = rows.map(m => {
-    const dd = m.scores[S.slice].dialects || {};
-    return `<tr data-id="${m.model_id}"><td><span class="model">${m.display_name}</span></td>` + dialects.map(d => { const c = dd[d] && dd[d][S.norm]; return c ? `<td class="num">${pct(c.wer.point)}<span class="ci">n=${c.n}${S.ci ? " " + fmtCI(c.wer) : ""}</span></td>` : `<td class="pending">·</td>`; }).join("") + "</tr>";
+    const dd = pick(m).dialects || {};
+    return `<tr data-id="${m.model_id}"><td><span class="model">${m.display_name}</span>${pick(m) !== m.scores[S.slice] ? '<span class="kind">common slice only</span>' : ''}</td>` + dialects.map(d => { const c = dd[d] && dd[d][S.norm]; return c ? `<td class="num">${pct(c.wer.point)}<span class="ci">n=${c.n}${S.ci ? " " + fmtCI(c.wer) : ""}</span></td>` : `<td class="pending">·</td>`; }).join("") + "</tr>";
   }).join("") || `<tr><td class="pending">No results yet.</td></tr>`;
   document.querySelectorAll("#dialects tbody tr[data-id]").forEach(tr => tr.onclick = () => openCard(tr.dataset.id));
 }

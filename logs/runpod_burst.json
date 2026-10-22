@@ -1,7 +1,7 @@
 {
  "tahqiq-3-whisper_large_v3": {
-  "pod": "4l6d9efof5lvju",
-  "status": "FAILED (lost on orchestrator restart; retry)",
+  "pod": "r068x0826y0azk",
+  "status": "RUNNING",
   "unit": {
    "slug": "whisper_large_v3",
    "nemo": false,
@@ -18,7 +18,7 @@
    "timing": true
   },
   "ip": "38.80.152.148",
-  "port": 32981
+  "port": 31892
  },
  "tahqiq-6-seamless_m4t_v2_la": {
   "pod": "lu2ldfu005h4qi",
@@ -81,8 +81,8 @@
   "port": 31337
  },
  "tahqiq-10-qwen3_asr_1.7b": {
-  "pod": "w32oh70774wmwn",
-  "status": "NO_SSH",
+  "pod": "oqm2voi6x5ujer",
+  "status": "CREATED",
   "unit": {
    "slug": "qwen3_asr_1.7b",
    "nemo": false,
@@ -121,8 +121,7 @@
   }
  },
  "tahqiq-0-openai_whisper-sma": {
-  "pod": "a4zy7u0587zytp",
-  "status": "NO_SSH",
+  "status": "NO_GPU",
   "unit": {
    "slug": "openai_whisper-small",
    "nemo": false,
@@ -142,8 +141,8 @@
   }
  },
  "tahqiq-1-openai_whisper-med": {
-  "pod": "irt44etx3s8ipx",
-  "status": "FAILED (lost on orchestrator restart; retry)",
+  "pod": "t7egyddj6038ox",
+  "status": "RUNNING",
   "unit": {
    "slug": "openai_whisper-medium",
    "nemo": false,
@@ -161,12 +160,12 @@
    ],
    "timing": true
   },
-  "ip": "38.80.152.146",
-  "port": 31959
+  "ip": "38.80.152.148",
+  "port": 31975
  },
  "tahqiq-2-openai_whisper-lar": {
-  "pod": "6u1znnafs1e4ph",
-  "status": "FAILED (lost on orchestrator restart; retry)",
+  "pod": "m4a108dybnzlvh",
+  "status": "CREATED",
   "unit": {
    "slug": "openai_whisper-large-v2",
    "nemo": false,
@@ -183,9 +182,7 @@
     "sada"
    ],
    "timing": true
-  },
-  "ip": "38.80.152.148",
-  "port": 31532
+  }
  },
  "tahqiq-4-whisper_large_v3_t": {
   "pod": "o64o8l3fngagkw",
@@ -209,8 +206,8 @@
   "port": 31318
  },
  "tahqiq-9-facebook_omniASR-L": {
-  "pod": "b1gbo1n63ctthd",
-  "status": "NO_SSH",
+  "pod": "ra5bx1u3e9r6tf",
+  "status": "RUNNING",
   "unit": {
    "slug": "facebook_omniASR-LLM-1B",
    "nemo": false,
@@ -224,7 +221,9 @@
     "mgb2"
    ],
    "timing": false
-  }
+  },
+  "ip": "38.80.152.146",
+  "port": 31998
  },
  "tahqiq-15-cohere_transcribe_": {
   "status": "NO_GPU",
@@ -245,8 +244,8 @@
   }
  },
  "tahqiq-8-facebook_omniASR-L": {
-  "pod": "y1v4qpn04ft8us",
-  "status": "FAILED (round-2 restart)",
+  "pod": "ecxt4hd0u9pbhn",
+  "status": "CREATED",
   "unit": {
    "slug": "facebook_omniASR-LLM-1B",
    "nemo": false,
@@ -306,8 +305,7 @@
   "port": 30902
  },
  "tahqiq-7-seamless_m4t_v2_la": {
-  "pod": "3wph53j1tmwfu6",
-  "status": "FAILED (partial collect; retry)",
+  "status": "NO_GPU",
   "unit": {
    "slug": "seamless_m4t_v2_large",
    "nemo": false,
@@ -319,9 +317,7 @@
     "mgb2"
    ],
    "timing": false
-  },
-  "ip": "38.80.152.148",
-  "port": 30873
+  }
  },
  "tahqiq-16-nvidia_fastconform": {
   "pod": "2o3igx32uxhoth",
