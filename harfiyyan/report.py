@@ -19,8 +19,18 @@ from .normalize.numbers import digit_string, has_number
 BASELINE = "whisper_large_v3"
 
 
+ENTITY_TYPES = {"PERS", "LOC", "ORG"}
+ENTITY_MIN_SCORE = 0.8
+ENTITY_STOPLIST = {"الله", "لله", "الرحمن", "الرحيم", "ربنا", "رب", "يا الله", "والله", "ان شاء الله", "إن شاء الله"}
+
+
 def load_entities(path: Path) -> dict[str, list[str]]:
-    """id → list of reference entity strings (from scripts/make_entities.py); {} if absent."""
+    """id → reference entity strings from scripts/make_entities.py, filtered; {} if absent.
+
+    Filter (published, part of the probe definition): PERS/LOC/ORG only, tagger
+    score >= 0.8, no sub-word fragments (``##``), at least 3 characters, and not
+    a religious formula that the tagger labels as a person.
+    """
     if not path.exists():
         return {}
     import json
@@ -29,10 +39,17 @@ def load_entities(path: Path) -> dict[str, list[str]]:
     with open(path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
-            if line:
-                d = json.loads(line)
-                if d["entities"]:
-                    out[d["id"]] = [e["text"] for e in d["entities"]]
+            if not line:
+                continue
+            d = json.loads(line)
+            keep = [
+                e["text"] for e in d["entities"]
+                if e.get("type") in ENTITY_TYPES and float(e.get("score", 0)) >= ENTITY_MIN_SCORE
+                and "##" not in e["text"] and len(e["text"].replace(" ", "")) >= 3
+                and e["text"].strip() not in ENTITY_STOPLIST
+            ]
+            if keep:
+                out[d["id"]] = keep
     return out
 
 

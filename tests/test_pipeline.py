@@ -109,3 +109,17 @@ def test_entity_probe_containment():
     assert entity_probe([u], good, ents)["k"] == 2
     r = entity_probe([u], half, ents)
     assert (r["k"], r["n"]) == (1, 2)
+
+
+def test_load_entities_filters(tmp_path):
+    from harfiyyan.report import load_entities
+    p = tmp_path / "entities.jsonl"
+    p.write_text(json.dumps({"id": "a", "dataset": "x", "entities": [
+        {"text": "أحمد", "type": "PERS", "score": 0.95},
+        {"text": "##ان", "type": "PERS", "score": 0.95},
+        {"text": "الله", "type": "PERS", "score": 0.99},
+        {"text": "سق", "type": "LOC", "score": 0.9},
+        {"text": "القاهرة", "type": "LOC", "score": 0.5},
+        {"text": "شيء", "type": "MISC", "score": 0.99},
+    ]}, ensure_ascii=False) + "\n", encoding="utf-8")
+    assert load_entities(p) == {"a": ["أحمد"]}
