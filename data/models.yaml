@@ -1,5 +1,10 @@
-# Model cards for the site. model_id must match tahqiq/models/registry.py.
-# Seeded from arabic-ai-atlas/data/asr.yaml where an entry exists.
+# Model cards for the board. model_id must match tahqiq/models/registry.py (or a submission slug).
+# Declared production fields come from the model card / paper; the source is cited per entry.
+#   streaming:  native | chunked | no       (native = the model is trained/served for streaming;
+#                                            chunked = offline model, usable with chunked pseudo-streaming)
+#   timestamps: word | segment | char | no
+#   max_audio:  what the model accepts in one call (long-form via chunking noted)
+# Community submissions get "unknown" until a maintainer fills them in.
 models:
   whisper_large_v3:
     name: Whisper large-v3
@@ -8,6 +13,12 @@ models:
     hf: https://huggingface.co/openai/whisper-large-v3
     license: apache-2.0
     params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: 99 (multilingual)
+    arabic_only: false
+    declared_source: https://huggingface.co/openai/whisper-large-v3
   whisper_large_v3_turbo:
     name: Whisper large-v3-turbo
     org: OpenAI
@@ -15,21 +26,126 @@ models:
     hf: https://huggingface.co/openai/whisper-large-v3-turbo
     license: mit
     params: 809M
-  deepgram_nova3:
-    name: Deepgram Nova-3
-    org: Deepgram
-    kind: api
-    url: https://deepgram.com/
-    language_hint: ar
-  elevenlabs_scribe:
-    name: ElevenLabs Scribe
-    org: ElevenLabs
-    kind: api
-    url: https://elevenlabs.io/speech-to-text
-    language_hint: ara
-  openai_gpt4o_transcribe:
-    name: gpt-4o-transcribe
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: 99 (multilingual)
+    arabic_only: false
+    declared_source: https://huggingface.co/openai/whisper-large-v3-turbo
+  openai_whisper-tiny:
+    name: whisper-tiny
     org: OpenAI
-    kind: api
-    url: https://platform.openai.com/docs/guides/speech-to-text
-    language_hint: ar
+    kind: open
+    hf: https://huggingface.co/openai/whisper-tiny
+    license: apache-2.0
+    params: 39M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: 99 (multilingual)
+    arabic_only: false
+    declared_source: https://huggingface.co/openai/whisper-tiny
+  qwen3_asr_0.6b:
+    name: Qwen3-ASR 0.6B
+    org: Alibaba Qwen
+    kind: open
+    hf: https://huggingface.co/Qwen/Qwen3-ASR-0.6B-hf
+    license: apache-2.0
+    params: 0.6B
+    streaming: native
+    timestamps: no (separate Qwen3-ForcedAligner model)
+    max_audio: long audio supported (streaming/offline unified)
+    languages: 30 languages + 22 Chinese dialects
+    arabic_only: false
+    declared_source: https://huggingface.co/Qwen/Qwen3-ASR-0.6B-hf
+  qwen3_asr_1.7b:
+    name: Qwen3-ASR 1.7B
+    org: Alibaba Qwen
+    kind: open
+    hf: https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf
+    license: apache-2.0
+    params: 1.7B
+    streaming: native
+    timestamps: no (separate Qwen3-ForcedAligner model)
+    max_audio: long audio supported (streaming/offline unified)
+    languages: 30 languages + 22 Chinese dialects
+    arabic_only: false
+    declared_source: https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf
+  cohere_transcribe_arabic_07_2026:
+    name: Cohere Transcribe Arabic 07-2026
+    org: Cohere Labs
+    kind: open
+    hf: https://huggingface.co/CohereLabs/cohere-transcribe-arabic-07-2026
+    license: apache-2.0
+    params: 2B
+    streaming: chunked
+    timestamps: unknown
+    max_audio: feature extractor splits long audio into chunks automatically
+    languages: Arabic (dialects), English, Arabic-English code-switching
+    arabic_only: true
+    declared_source: https://huggingface.co/CohereLabs/cohere-transcribe-arabic-07-2026
+  nvidia_fastconformer_ar_pc:
+    name: NVIDIA FastConformer Arabic (pc)
+    org: NVIDIA
+    kind: open
+    hf: https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pc_v1.0
+    license: cc-by-4.0
+    params: 115M
+    streaming: chunked
+    timestamps: word
+    max_audio: offline model; long audio via buffered/chunked inference
+    languages: Arabic
+    arabic_only: true
+    declared_source: https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pc_v1.0
+  nvidia_fastconformer_ar_pcd:
+    name: NVIDIA FastConformer Arabic (pc + diacritics)
+    org: NVIDIA
+    kind: open
+    hf: https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pcd_v1.0
+    license: cc-by-4.0
+    params: 115M
+    streaming: chunked
+    timestamps: word
+    max_audio: offline model; long audio via buffered/chunked inference
+    languages: Arabic (emits diacritics)
+    arabic_only: true
+    declared_source: https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pcd_v1.0
+  mms_1b_all:
+    name: MMS-1b-all (ara)
+    org: Meta
+    kind: open
+    hf: https://huggingface.co/facebook/mms-1b-all
+    license: cc-by-nc-4.0
+    params: 1B
+    streaming: chunked
+    timestamps: char
+    max_audio: no hard limit (CTC); memory-bound
+    languages: 1,100+ (adapter per language)
+    arabic_only: false
+    declared_source: https://huggingface.co/facebook/mms-1b-all
+  seamless_m4t_v2_large:
+    name: SeamlessM4T v2 large (arb)
+    org: Meta
+    kind: open
+    hf: https://huggingface.co/facebook/seamless-m4t-v2-large
+    license: cc-by-nc-4.0
+    params: 2.3B
+    streaming: no (SeamlessStreaming is a separate model)
+    timestamps: no
+    max_audio: short utterances; no built-in long-form
+    languages: ~100 (speech input)
+    arabic_only: false
+    declared_source: https://huggingface.co/facebook/seamless-m4t-v2-large
+  voxtral_mini_3b:
+    name: Voxtral Mini 3B
+    org: Mistral AI
+    kind: open
+    hf: https://huggingface.co/mistralai/Voxtral-Mini-3B-2507
+    license: apache-2.0
+    params: 3B
+    streaming: no (Voxtral Realtime is a separate model)
+    timestamps: no
+    max_audio: up to 30 min (32k context)
+    languages: 8 listed + others
+    arabic_only: false
+    declared_source: https://huggingface.co/mistralai/Voxtral-Mini-3B-2507

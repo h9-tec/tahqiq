@@ -34,6 +34,14 @@ Both are applied identically to reference and hypothesis. Code: `tahqiq/normaliz
 - Dialect columns pool utterances by the dialect label the source dataset provides (mapping in `tahqiq/manifest.py`); rows with fewer than 20 utterances are not shown.
 - Coverage: the number of utterances a system returned output for is shown next to its score. Errors are not silently dropped from the denominator without being counted.
 
+## Production profile
+
+Two groups of columns, kept apart on the board.
+
+**Measured (scripts/timing.py).** A fixed timing slice (`in_timing_slice` in the manifests, about 60 utterances of 3 to 15 s drawn from every set), one warm-up pass, then three timed passes at batch size 1, concurrency 1, on one NVIDIA H20. RTFx = total audio seconds / total wall seconds, median of the three passes. Latency = wall seconds per utterance, p50 and p95 over all timed utterances (this is offline, per-file latency, not streaming time-to-first-word). Peak VRAM = `torch.cuda.max_memory_allocated` after the passes. Load time = seconds from process start to a ready model, weights already on local disk. The box is shared; the number of other processes on the GPU during the measurement is stored in `timing.json` and shown as a flag when it is not zero.
+
+**Declared (data/models.yaml).** Streaming (native / chunked / no), timestamps (word / segment / char / no), maximum input per call, languages, Arabic-only, with the model card or paper cited per entry; license, release date, weight size and parameter count come from the Hub API. Community submissions start as "unknown" until a maintainer fills the entry from the card. Declared fields are never measured by us and are labelled as declared.
+
 ## Compute
 
 v0 runs were made on shared NVIDIA H20 GPUs; wall times per utterance are recorded in every results line but are not a board column, because the GPUs were shared with other jobs and the numbers would not be comparable. A controlled speed column is planned.

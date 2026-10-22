@@ -39,9 +39,10 @@ const DS_INFO = {
   masc_clean: { n: 8612, hours: 10.49, elm: 8612, dialects: "unlabelled" },
   masc_noisy: { n: 9394, hours: 8.92, elm: 9393, dialects: "unlabelled" },
 };
-const S = { slice: "full", norm: "elm", metric: "wer", ci: true, sort: "avg", dir: 1 };
-const pct = x => (100 * x).toFixed(1);
-const fmtCI = c => `[${pct(c.lo)}, ${pct(c.hi)}]`;
+const S = { slice: "full", norm: "elm", metric: "wer", ci: true, acc: false, sort: "avg", dir: 1 };
+const pct = x => (S.acc ? (100 - 100 * x) : (100 * x)).toFixed(1);
+const pctRaw = x => (100 * x).toFixed(1);
+const fmtCI = c => S.acc ? `[${pct(c.hi)}, ${pct(c.lo)}]` : `[${pct(c.lo)}, ${pct(c.hi)}]`;
 let board = { models: [], queue: [], generated_at: "" };
 
 async function loadBoard() {
@@ -53,7 +54,7 @@ async function loadBoard() {
     `${board.models.length} systems`, `${datasets.length} test sets`, `${board.queue.filter(q => ["PENDING", "RUNNING", "APPROVED"].includes(q.status)).length} in queue`,
     board.generated_at ? `updated ${board.generated_at.slice(0, 16).replace("T", " ")} UTC` : "no results yet",
   ].map(t => `<span class="pill">${t}</span>`).join("");
-  renderLB(); renderDialects(); renderDatasets(); renderQueue(); renderFoot();
+  renderLB(); renderDialects(); renderProd(); renderDatasets(); renderQueue(); renderFoot();
 }
 
 function allDatasets() {
@@ -81,19 +82,46 @@ const probeCell = p => p && p.n ? `<td class="num">${(100 * p.acc.point).toFixed
 function renderLB() {
   const datasets = allDatasets();
   const rows = rowsFor(datasets);
-  const val = (r, k) => k === "avg" ? (r.avg ?? 9) : k === "numeral" ? -(r.numeral?.acc.point ?? -1) : k === "entity" ? -(r.entity?.acc.point ?? -1) : k === "vs" ? (r.vs?.delta_wer.point ?? 9) : (r.per[k]?.point ?? 9);
+  const val = (r, k) => k === "rtfx" ? -(r.m.timing?.rtfx ?? -1) : k === "params" ? (r.m.profile?.params_m ?? 1e9) : k === "stream" ? (r.m.profile?.streaming ?? "zz") : k === "avg" ? (r.avg ?? 9) : k === "numeral" ? -(r.numeral?.acc.point ?? -1) : k === "entity" ? -(r.entity?.acc.point ?? -1) : k === "vs" ? (r.vs?.delta_wer.point ?? 9) : (r.per[k]?.point ?? 9);
   rows.sort((a, b) => (val(a, S.sort) > val(b, S.sort) ? S.dir : -S.dir));
-  const keys = ["", "", "avg", ...datasets, "numeral", "entity", "vs"];
-  const th = ["#", "System", `Avg ${S.metric.toUpperCase()}`, ...datasets.map(d => DS_LABEL[d] || d), "Numerals", "Entities", "Δ vs Whisper v3"];
+  const keys = ["", "", "avg", ...datasets, "numeral", "entity", "vs", "rtfx", "params", "stream"];
+  const th = ["#", "System", `Avg ${S.acc ? "accuracy" : S.metric.toUpperCase()}`, ...datasets.map(d => DS_LABEL[d] || d), "Numerals", "Entities", "Δ vs Whisper v3", "RTFx", "Params", "Streaming"];
   document.querySelector("#lb thead").innerHTML = "<tr>" + th.map((t, i) => `<th data-key="${keys[i]}" class="${keys[i] === S.sort ? "sorted" : ""}">${t}</th>`).join("") + "</tr>";
   document.querySelector("#lb tbody").innerHTML = rows.length ? rows.map((r, i) => {
     const d = r.vs ? 100 * r.vs.delta_wer.point : null;
     const vs = r.vs ? `<td class="num delta ${d < 0 ? "neg" : "pos"}">${d > 0 ? "+" : ""}${d.toFixed(1)}${S.ci ? `<span class="ci">${fmtCI(r.vs.delta_wer)} p=${r.vs.mcnemar.p_value.toExponential(1)}</span>` : ""}</td>` : `<td class="pending">baseline</td>`;
-    return `<tr data-id="${r.m.model_id}"><td>${i + 1}</td><td><span class="model">${r.m.display_name}</span><span class="kind">${r.m.submitted_by === "maintainer" || !r.m.submitted_by ? "" : "community"}</span></td><td class="num"><b>${r.avg == null ? "·" : pct(r.avg)}</b><span class="ci">${r.n}/${datasets.length} sets</span></td>${datasets.map(d => cell(r.per[d])).join("")}${probeCell(r.numeral)}${probeCell(r.entity)}${vs}</tr>`;
+    return `<tr data-id="${r.m.model_id}"><td>${i + 1}</td><td><span class="model">${r.m.display_name}</span><span class="kind">${r.m.submitted_by === "maintainer" || !r.m.submitted_by ? "" : "community"}</span></td><td class="num"><b>${r.avg == null ? "·" : pct(r.avg)}</b><span class="ci">${r.n}/${datasets.length} sets</span></td>${datasets.map(d => cell(r.per[d])).join("")}${probeCell(r.numeral)}${probeCell(r.entity)}${vs}${prodCells(r.m)}</tr>`;
   }).join("") : `<tr><td colspan="${th.length}" class="pending">No results published yet. The first runs are in progress.</td></tr>`;
-  document.getElementById("lb-sub").textContent = `${S.slice === "full" ? "full test sets" : "common stratified slice"} · ${S.norm} normalizer · ${S.metric.toUpperCase()} %`;
+  document.getElementById("lb-sub").textContent = `${S.slice === "full" ? "full test sets" : "common stratified slice"} · ${S.norm} normalizer · ${S.acc ? "accuracy = 100 − " + S.metric.toUpperCase() : S.metric.toUpperCase()} %`;
   document.querySelectorAll("#lb th[data-key]").forEach(h => h.onclick = () => { const k = h.dataset.key; if (!k) return; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = 1; } renderLB(); });
   document.querySelectorAll("#lb tbody tr[data-id]").forEach(tr => tr.onclick = () => openCard(tr.dataset.id));
+}
+
+function fmtParams(p) { if (!p) return "·"; return p >= 1000 ? (p / 1000).toFixed(1) + "B" : p + "M"; }
+function prodCells(m) {
+  const t = m.timing || {}, p = m.profile || {};
+  const warn = t.gpu_other_processes > 0 ? " ⚠" : "";
+  return `<td class="num">${t.rtfx != null ? t.rtfx + "×" + warn : "·"}</td><td class="num">${fmtParams(p.params_m) === "·" && p.params_label ? p.params_label : fmtParams(p.params_m)}</td><td>${p.streaming && p.streaming !== "unknown" ? p.streaming : "·"}</td>`;
+}
+function renderProd() {
+  const rows = board.models.filter(m => m.scores && m.scores[S.slice]);
+  const th = ["System", "RTFx", "Latency p50 / p95 (s)", "Peak VRAM", "Load (s)", "Params", "Weights", "License", "Released", "Streaming", "Timestamps", "Max input", "Languages"];
+  document.querySelector("#prod thead").innerHTML = "<tr>" + th.map((t, i) => `<th class="${i >= 1 && i <= 4 ? "measured" : i >= 5 ? "declared" : ""}">${t}</th>`).join("") + "</tr>";
+  document.querySelector("#prod tbody").innerHTML = rows.length ? rows.map(m => {
+    const t = m.timing || {}, p = m.profile || {};
+    const warn = t.gpu_other_processes > 0 ? ` <span title="${t.gpu_other_processes} other processes on the GPU during measurement">⚠</span>` : "";
+    const has = t.rtfx != null;
+    return `<tr data-id="${m.model_id}"><td><span class="model">${m.display_name}</span></td>
+      <td class="num">${has ? t.rtfx + "×" + warn : "pending"}</td>
+      <td class="num">${has ? t.latency_p50_s.toFixed(2) + " / " + t.latency_p95_s.toFixed(2) : "·"}</td>
+      <td class="num">${t.peak_vram_gb != null ? t.peak_vram_gb + " GB" : "·"}</td>
+      <td class="num">${has ? t.load_s : "·"}</td>
+      <td class="num">${fmtParams(p.params_m) === "·" && p.params_label ? p.params_label : fmtParams(p.params_m)}</td>
+      <td class="num">${p.weights_gb != null ? p.weights_gb + " GB" : "·"}</td>
+      <td>${p.license || "·"}</td><td class="num">${p.created_at || "·"}</td>
+      <td>${p.streaming || "unknown"}</td><td>${p.timestamps || "unknown"}</td><td>${p.max_audio || "unknown"}</td><td>${p.languages || "unknown"}</td></tr>`;
+  }).join("") : `<tr><td colspan="13" class="pending">No results yet.</td></tr>`;
+  document.querySelectorAll("#prod tbody tr[data-id]").forEach(tr => tr.onclick = () => openCard(tr.dataset.id));
 }
 
 function renderDialects() {
@@ -149,9 +177,10 @@ if (location.hash && document.querySelector(`.tabs button[data-tab="${location.h
 document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
   const k = Object.keys(b.dataset)[0]; S[k] = b.dataset[k];
   b.parentElement.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
-  renderLB(); renderDialects();
+  renderLB(); renderDialects(); renderProd();
 });
 document.getElementById("show-ci").onchange = e => { S.ci = e.target.checked; renderLB(); renderDialects(); };
+document.getElementById("show-acc").onchange = e => { S.acc = e.target.checked; S.dir = S.acc ? -1 : 1; renderLB(); renderDialects(); };
 
 /* ---------- OAuth submission ---------- */
 let oauth = null;

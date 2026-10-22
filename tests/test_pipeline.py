@@ -123,3 +123,11 @@ def test_load_entities_filters(tmp_path):
         {"text": "شيء", "type": "MISC", "score": 0.99},
     ]}, ensure_ascii=False) + "\n", encoding="utf-8")
     assert load_entities(p) == {"a": ["أحمد"]}
+
+
+def test_declared_profile_fields():
+    from tahqiq.profile import declared
+    d = declared("whisper_large_v3_turbo")
+    assert d["streaming"] == "chunked" and d["timestamps"] == "word" and d["arabic_only"] is False
+    u = declared("some_community_model")
+    assert u["streaming"] == "unknown" and u["languages"] == "unknown"

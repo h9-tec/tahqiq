@@ -81,6 +81,13 @@ def run_job(req: dict, *, exclude_gpus: set[int]) -> None:
         hub.notify(req, f"Run failed (exit {rc}). Last lines:\n```\n{tail[-800:]}\n```", close=True)
         log(f"{slug}: FAILED rc={rc}")
         return
+    tcmd = [str(py), str(ROOT / "scripts" / "timing.py"), slug, "--hf-id", hf_id, "--display-name", req.get("display_name") or hf_id]
+    if adapter and adapter != "nemo":
+        tcmd += ["--adapter", adapter]
+    with open(logf, "ab") as f:
+        trc = subprocess.call(tcmd, cwd=ROOT, env=env, stdout=f, stderr=subprocess.STDOUT)
+    if trc != 0:
+        log(f"{slug}: timing pass failed (rc={trc}); publishing accuracy only")
     doc = build_scores(slug, extra={"hf_id": hf_id, "display_name": req.get("display_name"),
                                     "submitted_by": req.get("submitted_by") or "community"})
     errors = sum(v.get("n", 0) - v.get("scored", 0) for v in doc["scores"]["full"]["coverage"].values())

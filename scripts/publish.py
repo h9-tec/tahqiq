@@ -23,6 +23,7 @@ load_dotenv(ROOT / ".env")
 import yaml  # noqa: E402
 
 from tahqiq import hub  # noqa: E402
+from tahqiq.profile import profile  # noqa: E402
 from tahqiq.manifest import manifest_paths, read_manifest_hash  # noqa: E402
 from tahqiq.report import BASELINE, score_model  # noqa: E402
 
@@ -43,7 +44,12 @@ def build_scores(slug: str, *, n_boot: int = 2000, extra: dict | None = None) ->
                         n_boot=n_boot, baseline_id=BASELINE)
         if any(s["datasets"].values()):
             scores[slice_name] = s
+    hf_id = (extra or {}).get("hf_id") or run.get("hf_id")
+    timing_path = RESULTS / slug / "timing.json"
+    timing = json.loads(timing_path.read_text(encoding="utf-8")) if timing_path.exists() else None
     doc = {
+        "profile": profile(slug, hf_id),
+        "timing": timing,
         "model_id": slug,
         "display_name": (extra or {}).get("display_name") or run.get("display_name") or slug,
         "hf_id": (extra or {}).get("hf_id") or run.get("hf_id"),
