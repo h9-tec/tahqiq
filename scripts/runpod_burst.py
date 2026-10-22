@@ -394,7 +394,7 @@ def main() -> None:
     sub = ap.add_subparsers(dest="cmd", required=True)
     pl = sub.add_parser("plan"); pl.add_argument("--from-candidates", action="store_true"); pl.add_argument("--max-priority", type=int, default=1)
     sd = sub.add_parser("seed"); sd.add_argument("--gpu", default="NVIDIA RTX A5000"); sd.add_argument("--pod-id", default=None, help="reuse an existing pod")
-    r = sub.add_parser("run"); r.add_argument("--max-pods", type=int, default=16); r.add_argument("--only", default=None, help="comma list of slugs"); r.add_argument("--from-candidates", action="store_true"); r.add_argument("--skip-done", action="store_true", help="skip slugs that already have results/<slug>/run.json"); r.add_argument("--max-priority", type=int, default=1)
+    r = sub.add_parser("run"); r.add_argument("--max-pods", type=int, default=16); r.add_argument("--only", default=None, help="comma list of slugs"); r.add_argument("--from-candidates", action="store_true"); r.add_argument("--skip-done", action="store_true", help="skip slugs that already have results/<slug>/run.json"); r.add_argument("--max-priority", type=int, default=1); r.add_argument("--exclude-slow", action="store_true", help="skip LLM-style models (Gemma, Voxtral Realtime, omniASR)")
     sub.add_parser("collect"); sub.add_parser("kill")
     a = ap.parse_args()
     if a.cmd == "seed":
@@ -420,6 +420,8 @@ def main() -> None:
     units = [u for u in units_all if not a.only or u["slug"] in a.only.split(",")]
     if a.skip_done:
         units = [u for u in units if not (ROOT / "results" / u["slug"] / "run.json").exists()]
+    if getattr(a, "exclude_slow", False):
+        units = [u for u in units if not u.get("slice") == "api"]
     print(f"{len(units)} units, {a.max_pods} pods at a time")
     with ThreadPoolExecutor(max_workers=max(1, a.max_pods)) as ex:
         list(ex.map(lambda iu: run_unit(iu[1], iu[0], state), enumerate(units)))

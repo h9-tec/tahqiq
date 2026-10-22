@@ -938,3 +938,19 @@ tahqiq-15-cohere_transcribe_: spend cap 45.0/h reached, waiting
 tahqiq-21-mistralai_Voxtral-: spend cap 45.0/h reached, waiting
 tahqiq-25-google_gemma-4-E2B: spend cap 45.0/h reached, waiting
 tahqiq-12-audarai_Audar-ASR-: spend cap 45.0/h reached, waiting
+tahqiq-15-cohere_transcribe_: spend cap 45.0/h reached, waiting
+tahqiq-21-mistralai_Voxtral-: spend cap 45.0/h reached, waiting
+tahqiq-25-google_gemma-4-E2B: spend cap 45.0/h reached, waiting
+tahqiq-12-audarai_Audar-ASR-: spend cap 45.0/h reached, waiting
+tahqiq-15-cohere_transcribe_: spend cap 45.0/h reached, waiting
+tahqiq-21-mistralai_Voxtral-: spend cap 45.0/h reached, waiting
+ssh: connect to host 38.80.152.148 port 31336: Connection refused
+rsync: connection unexpectedly closed (0 bytes received so far) [Receiver]
+rsync error: unexplained error (code 255) at io.c(232) [Receiver=3.4.1]
+ssh: connect to host 38.80.152.148 port 33154: Connection refused
+rsync: connection unexpectedly closed (0 bytes received so far) [Receiver]
+rsync error: unexplained error (code 255) at io.c(232) [Receiver=3.4.1]
+terminate failed 1ng2hrdry9y42j [{'message': 'pod not found to terminate', 'path': ['podTerminate'], 'extensions': {'code': 'POD_NOT_FOUND', 'userId': 'user_303nq6MY0uW0sokMyE5KBKaZnNL', 'podId': '1ng2hrdry9y42j'}}]
+tahqiq-23-google_gemma-4-E4B: FAILED rc=255 (terminated)
+terminate failed 6rdfut3frjij5p [{'message': 'pod not found to terminate', 'path': ['podTerminate'], 'extensions': {'code': 'POD_NOT_FOUND', 'userId': 'user_303nq6MY0uW0sokMyE5KBKaZnNL', 'podId': '6rdfut3frjij5p'}}]
+tahqiq-26-google_gemma-4-E2B: FAILED rc=255 (terminated)

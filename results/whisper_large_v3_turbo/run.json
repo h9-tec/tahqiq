@@ -1,0 +1,50 @@
+{
+  "model_id": "whisper_large_v3_turbo",
+  "display_name": "Whisper large-v3-turbo",
+  "kind": "open",
+  "hf_id": "openai/whisper-large-v3-turbo",
+  "api_version": null,
+  "language_hint": "ar",
+  "decode_params": {
+    "language": "ar",
+    "task": "transcribe",
+    "num_beams": 1,
+    "max_new_tokens": 440
+  },
+  "run_id": "6c19e1a2868c",
+  "git_sha": "unknown",
+  "manifest_sha256": "6ef6d50155f44d72166ac2860312718bc2d6e4c5488269fff80de99ad964e2ac",
+  "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+  ],
+  "slice": "full",
+  "batch_size": 32,
+  "env": {
+    "torch": "2.8.0.dev20250319+cu128",
+    "gpu": "NVIDIA B200",
+    "cuda": "12.8",
+    "transformers": "5.20.2",
+    "python": "3.11.11",
+    "machine": "f347a92e2bcc"
+  },
+  "started": "2026-10-22T13:32:33.002599+00:00",
+  "finished": "2026-10-22T13:52:35.490037+00:00",
+  "totals": {
+    "done": 46853,
+    "errors": 0,
+    "skipped": 0,
+    "audio_s": 216921.8889629252,
+    "wall_s": 1004.5231409533881
+  },
+  "assembled_from": [
+    "6c19e1a2868c"
+  ],
+  "machines": [
+    "f347a92e2bcc"
+  ]
+}

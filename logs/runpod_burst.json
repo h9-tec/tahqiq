@@ -246,7 +246,7 @@
  },
  "tahqiq-8-facebook_omniASR-L": {
   "pod": "zzeqkfloczhm7r",
-  "status": "CREATED",
+  "status": "NO_SSH",
   "unit": {
    "slug": "facebook_omniASR-LLM-1B",
    "nemo": false,
@@ -467,7 +467,7 @@
  },
  "tahqiq-23-google_gemma-4-E4B": {
   "pod": "1ng2hrdry9y42j",
-  "status": "RUNNING",
+  "status": "FAILED rc=255 (terminated)",
   "unit": {
    "slug": "google_gemma-4-E4B-it",
    "nemo": false,
@@ -522,7 +522,7 @@
  },
  "tahqiq-26-google_gemma-4-E2B": {
   "pod": "6rdfut3frjij5p",
-  "status": "RUNNING",
+  "status": "FAILED rc=255 (terminated)",
   "unit": {
    "slug": "google_gemma-4-E2B-it",
    "nemo": false,
