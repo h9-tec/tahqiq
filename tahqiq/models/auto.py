@@ -32,6 +32,7 @@ ADAPTERS = {
     "gemma4": (".open.gemma_audio", "GemmaAudio"),
     "gemma3n": (".open.gemma_audio", "GemmaAudio"),
     "omni": (".open.omniasr", "OmniASR"),      # facebook/omniASR-* (fairseq2 package, own env)
+    "audar": (".open.audar", "AudarASR"),      # audarai/Audar-ASR-V1-* (card recipe: custom code on transformers 4.57)
 }
 
 

@@ -138,6 +138,9 @@ def ssh_opts(ip: str, port: int) -> list[str]:
 
 ENSURE_DATA = """
 export HF_HUB_DISABLE_XET=1
+# a lock older than 45 min belongs to a pod that died mid-seed (seeding takes < 20 min): break it
+break_stale_lock() { if [ -d /vol/.seed.lock ] && [ $(( $(date +%s) - $(stat -c %Y /vol/.seed.lock) )) -gt 2700 ]; then echo "breaking stale seed lock"; rmdir /vol/.seed.lock 2>/dev/null || true; fi; }
+break_stale_lock
 if mkdir /vol/.seed.lock 2>/dev/null; then
   echo "seeding/verifying the volume (this pod holds the lock)"
   pip install -q huggingface_hub
@@ -170,20 +173,21 @@ PY
 
   touch /vol/.seed.done; rmdir /vol/.seed.lock
 else
-  echo "waiting for another pod to finish seeding"; while [ ! -f /vol/.seed.done ] || [ -d /vol/.seed.lock ]; do sleep 15; done
+  echo "waiting for another pod to finish seeding"; while [ ! -f /vol/.seed.done ] || [ -d /vol/.seed.lock ]; do sleep 15; break_stale_lock; done
 fi
 """
 
 
 def bootstrap_script(unit: dict) -> str:
     key = Path(os.environ["TAHQIQ_AUDIO_KEY_PATH"]).read_text()
-    pip = ("pip install -q -U 'transformers>=5.13' accelerate soundfile scipy numpy rapidfuzz jiwer pyyaml tenacity httpx tqdm "
+    tf = f"'transformers{unit['transformers_spec']}'" if unit.get("transformers_spec") else "'transformers>=5.13'"
+    pip = (f"pip install -q -U {tf} accelerate soundfile librosa scipy numpy rapidfuzz jiwer pyyaml tenacity httpx tqdm "
            "python-dotenv huggingface_hub sentencepiece protobuf tiktoken paramiko 'mistral-common[audio]'")
     if unit.get("nemo"):
         # NeMo's resolver swaps torch for a build that does not match the image's CUDA → illegal memory access.
         # Install NeMo, then pin torch/torchaudio back to the image's cu128 wheels.
         pip += (" && pip install -q 'nemo_toolkit[asr]' cython packaging"
-                " && pip install -q --force-reinstall --no-deps torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128"
+                " && pip install -q --force-reinstall torch==2.8.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128"  # with deps: NeMo also swaps nvidia-nccl, which must match (ncclCommWindowRegister)
                 " && python -c \"import torch; x=torch.randn(256,256,device='cuda'); print('cuda ok', torch.__version__, float((x@x).sum())>-1)\"")
     if unit.get("omni"):
         pip += " && pip install -q omnilingual-asr"
@@ -198,6 +202,8 @@ def bootstrap_script(unit: dict) -> str:
             c += f" --hf-id {hf_id}"
         if display:
             c += f" --display-name '{display}'"
+        if unit.get("adapter"):
+            c += f" --adapter {unit['adapter']}"
         if timing:
             c += f" && python scripts/timing.py {slug}" + (f" --hf-id {hf_id}" if hf_id else "")
         return c
@@ -227,16 +233,16 @@ tarfile.open(p).extractall("/workspace", filter="data")
 PY
 cd /workspace/tahqiq && export PYTHONPATH=/workspace/tahqiq && (pip install -q -e . --no-deps || true)
 python -c "import tahqiq, sys; print('tahqiq import ok', sys.version.split()[0])"
-{cmds}
-touch /workspace/UNIT_DONE; echo UNIT_DONE
+if ( {cmds} ); then touch /workspace/UNIT_DONE; echo UNIT_DONE; else touch /workspace/UNIT_FAILED; echo UNIT_FAILED; exit 1; fi
 """
 
 
-def run_unit(unit: dict, idx: int, state: dict, *, retry_minutes: int = 120) -> None:
+def run_unit(unit: dict, idx: int, state: dict, *, retry_minutes: int = 120, _retried: bool = False) -> None:
     name = f"tahqiq-{idx}-{unit['slug'][:18]}" + (f"-{unit['kind']}" if unit.get("kind") else "")
     prev = state.get(name) or {}
     if prev.get("status", "").startswith("FINISHED"):
         return
+    TOUCHED.add(name)
     pod_id = prev.get("pod") if prev.get("status") in ("CREATED", "RUNNING") else None
     if pod_id and not pod_ssh(pod_id) and not gql("""query($id: String!) { pod(input: {podId: $id}) { desiredStatus } }""", {"id": pod_id}).get("pod"):
         pod_id = None  # pod is gone
@@ -269,32 +275,119 @@ def run_unit(unit: dict, idx: int, state: dict, *, retry_minutes: int = 120) -> 
         if addr and subprocess.call(["ssh", *ssh_opts(*addr), "true"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0:
             break
     else:
-        state[name]["status"] = "NO_SSH"; _save(state); terminate(pod_id); return
+        state[name]["status"] = "NO_SSH"; _save(state); terminate(pod_id)
+        if not _retried:
+            print(f"{name}: pod {pod_id} never became reachable; terminated, creating another", flush=True)
+            run_unit(unit, idx, state, retry_minutes=retry_minutes, _retried=True)
+        return
     ip, port = addr
+    adopted = prev.get("status") == "RUNNING" and prev.get("pod") == pod_id
     state[name].update({"ip": ip, "port": port, "status": "RUNNING"}); _save(state)
-    script = bootstrap_script(unit)
     log = ROOT / "logs" / "runpod" / f"{name}.log"
     log.parent.mkdir(parents=True, exist_ok=True)
-    with open(log, "wb") as f:
-        rc = subprocess.run(["ssh", *ssh_opts(ip, port), "bash -s"], input=script.encode(), stdout=f, stderr=subprocess.STDOUT).returncode
+    if adopted:
+        # bootstrap was already launched (detached) by an earlier orchestrator; just wait for the marker files
+        print(f"{name}: adopted running pod {pod_id}, waiting for UNIT_DONE", flush=True)
+    else:
+        # the bootstrap runs detached from this ssh session, so an orchestrator restart never kills pod work
+        script = bootstrap_script(unit)
+        launch = ("mkdir -p /workspace && cat > /workspace/bootstrap.sh && rm -f /workspace/UNIT_DONE /workspace/UNIT_FAILED && "
+                  "(nohup setsid bash /workspace/bootstrap.sh > /workspace/bootstrap.log 2>&1 < /dev/null &) && echo launched")
+        r = subprocess.run(["ssh", *ssh_opts(ip, port), launch], input=script, capture_output=True, text=True)
+        if r.returncode != 0 or "launched" not in r.stdout:
+            state[name]["status"] = "FAILED (bootstrap launch)"; _save(state); terminate(pod_id)
+            print(f"{name}: could not launch the bootstrap: {r.stderr.strip()[-300:]}", flush=True)
+            return
+        print(f"{name}: bootstrap launched on {pod_id}", flush=True)
+    rc = wait_unit_done(ip, port)
+    subprocess.run(["scp", "-i", str(POD_KEY), "-P", str(port), "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null",
+                    f"root@{ip}:/workspace/bootstrap.log", str(log)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     state[name]["status"] = "FINISHED" if rc == 0 else f"FAILED rc={rc}"
     _save(state)
-    collect_pod(ip, port)
+    if not collect_pod(ip, port):
+        state[name]["status"] += " (UNCOLLECTED, pod kept alive)"; _save(state)
+        print(f"{name}: {state[name]['status']} -- pull results by hand from {ip}:{port}", flush=True)
+        return
     terminate(pod_id)
     state[name]["status"] += " (terminated)"; _save(state)
     print(f"{name}: {state[name]['status']}", flush=True)
 
 
-def collect_pod(ip: str, port: int) -> None:
+def collect_pod(ip: str, port: int) -> bool:
+    """Pull /workspace/tahqiq/results into results/. rsync first, tar-over-ssh when the pod lacks rsync.
+    Returns True only when every remote file exists locally afterwards; callers must not terminate otherwise."""
     dst = ROOT / "results"
     dst.mkdir(exist_ok=True)
-    subprocess.call(["rsync", "-az", "-e", f"ssh -i {POD_KEY} -p {port} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null",
-                     f"root@{ip}:/workspace/tahqiq/results/", str(dst) + "/"])
+    r = subprocess.run(["ssh", *ssh_opts(ip, port), "cd /workspace/tahqiq/results 2>/dev/null && find . -type f | sort"],
+                       capture_output=True, text=True, timeout=120)
+    if r.returncode != 0:
+        print(f"collect {ip}:{port}: cannot list remote results", flush=True)
+        return False
+    remote = [p[2:] for p in r.stdout.split("\n") if p.startswith("./")]
+    if not remote:
+        print(f"collect {ip}:{port}: remote results directory is empty", flush=True)
+        return True
+    rc = subprocess.call(["rsync", "-az", "-e", f"ssh -i {POD_KEY} -p {port} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null",
+                          f"root@{ip}:/workspace/tahqiq/results/", str(dst) + "/"])
+    if rc != 0:
+        print(f"collect {ip}:{port}: rsync rc={rc}, falling back to tar over ssh", flush=True)
+        with subprocess.Popen(["ssh", *ssh_opts(ip, port), "tar -C /workspace/tahqiq/results -cf - ."], stdout=subprocess.PIPE) as p:
+            subprocess.run(["tar", "-xf", "-", "-C", str(dst)], stdin=p.stdout)
+    missing = [f for f in remote if not (dst / f).exists()]
+    if missing:
+        print(f"collect {ip}:{port}: {len(missing)} files still missing after pull, e.g. {missing[:3]}", flush=True)
+        return False
+    return True
+
+
+def wait_unit_done(ip: str, port: int) -> int:
+    """Block until the pod's runner has written UNIT_DONE / UNIT_FAILED (or no eval process is alive).
+    Returns 0 on UNIT_DONE, 1 otherwise."""
+    probe = ("if [ -f /workspace/UNIT_DONE ]; then echo DONE; elif [ -f /workspace/UNIT_FAILED ]; then echo FAILED; else "
+             "grep -alE '[t]ahqiq.runner|[s]cripts/timing.py|[e]val_job.py|[b]ootstrap.sh|[p]ip install' /proc/[0-9]*/cmdline 2>/dev/null | wc -l; fi")
+    idle = 0
+    unreachable = 0
+    while True:
+        try:
+            r = subprocess.run(["ssh", *ssh_opts(ip, port), probe], capture_output=True, text=True, timeout=90)
+            out = (r.stdout.strip() or "").splitlines()[-1] if r.returncode == 0 and r.stdout.strip() else None
+        except subprocess.TimeoutExpired:
+            out = None
+        if out is None:
+            unreachable += 1
+            if unreachable >= 10:
+                return 1
+        elif out == "DONE":
+            return 0
+        elif out == "FAILED":
+            return 1
+        else:
+            unreachable = 0
+            idle = idle + 1 if out == "0" else 0
+            if idle >= 3:
+                return 1
+        time.sleep(30)
+
+
+TOUCHED: set[str] = set()     # unit names this process mutates; _save merges only those into the file
+_SAVE_LOCK = threading.Lock()
 
 
 def _save(state: dict) -> None:
+    """Merge-safe: two orchestrators (e.g. a main burst and a one-off --only run) may write the same file."""
     STATE.parent.mkdir(exist_ok=True)
-    STATE.write_text(json.dumps(state, indent=1), encoding="utf-8")
+    with _SAVE_LOCK:
+        if TOUCHED and STATE.exists():
+            try:
+                cur = json.loads(STATE.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                cur = {}
+            cur.update({k: state[k] for k in TOUCHED if k in state})
+        else:
+            cur = state
+        tmp = STATE.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(cur, indent=1), encoding="utf-8")
+        tmp.replace(STATE)
 
 
 SEED_SCRIPT = """set -e
@@ -392,6 +485,10 @@ def units_from_candidates(path: Path, *, max_priority: int = 1, split_over_gb: f
                 continue
         big = float(c.get("weights_gb") or 0) > split_over_gb
         base = {"slug": slug, "nemo": nemo, "omni": omni, "remote_code": remote}
+        if c.get("adapter"):
+            base["adapter"] = str(c["adapter"])
+        if c.get("transformers_spec"):
+            base["transformers_spec"] = str(c["transformers_spec"])
         if slug not in registry.REGISTRY:
             base.update({"hf_id": hf_id, "display_name": c.get("name") or hf_id})
         if big:
@@ -416,22 +513,26 @@ def cmd_collect_wait(state: dict) -> None:
                     continue
                 v["ip"], v["port"] = addr
             live[k] = v
+            TOUCHED.add(k)
     print("waiting on", list(live))
     idle = {k: 0 for k in live}
     while live:
         for k, v in list(live.items()):
             probe = ("if [ -f /workspace/UNIT_DONE ] || [ -f /workspace/UNIT_FAILED ]; then echo 0; else "
-                     "grep -alE '[t]ahqiq.runner|[s]cripts/timing.py|[e]val_job.py' /proc/[0-9]*/cmdline 2>/dev/null | wc -l; fi")
+                     "grep -alE '[t]ahqiq.runner|[s]cripts/timing.py|[e]val_job.py|[b]ootstrap.sh|[p]ip install' /proc/[0-9]*/cmdline 2>/dev/null | wc -l; fi")
             r = subprocess.run(["ssh", *ssh_opts(v["ip"], v["port"]), probe], capture_output=True, text=True, timeout=60)
             n = int((r.stdout.strip() or "0").splitlines()[-1]) if r.returncode == 0 else -1
             if n == -1:
                 print(k, "unreachable; collecting what exists and terminating"); n = 0; idle[k] = 2
             idle[k] = idle[k] + 1 if n == 0 else 0
             if idle[k] >= 3:
-                collect_pod(v["ip"], v["port"])
-                terminate(v["pod"])
-                state[k]["status"] = "FINISHED (collected after orchestrator restart)"; _save(state)
-                print(k, "collected + terminated", flush=True)
+                if collect_pod(v["ip"], v["port"]):
+                    terminate(v["pod"])
+                    state[k]["status"] = "FINISHED (collected after orchestrator restart)"; _save(state)
+                    print(k, "collected + terminated", flush=True)
+                else:
+                    state[k]["status"] = "FINISHED (UNCOLLECTED, pod kept alive)"; _save(state)
+                    print(k, "pull failed; pod kept alive at", v["ip"], v["port"], flush=True)
                 del live[k]
         time.sleep(20)
 

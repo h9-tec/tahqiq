@@ -1708,6 +1708,8 @@ models:
   model_type: qwen3_asr
   transformers_native: true
   needs_remote_code: true
+  adapter: audar            # card recipe: custom code + Arabic system prompt; see tahqiq/models/open/audar.py
+  transformers_spec: '==4.57.6'   # the shipped config class breaks under transformers 5.x validation
   nemo: false
   gated: false
   streaming: native
@@ -1732,6 +1734,8 @@ models:
   model_type: qwen3_asr
   transformers_native: true
   needs_remote_code: true
+  adapter: audar            # card recipe: custom code + Arabic system prompt; see tahqiq/models/open/audar.py
+  transformers_spec: '==4.57.6'   # the shipped config class breaks under transformers 5.x validation
   nemo: false
   gated: false
   streaming: native
