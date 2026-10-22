@@ -1,6 +1,6 @@
 ---
 title: Harfiyyan · Arabic ASR Leaderboard
-emoji: ح
+emoji: 🎙️
 colorFrom: green
 colorTo: gray
 sdk: static
@@ -10,7 +10,7 @@ license: apache-2.0
 hf_oauth: true
 hf_oauth_scopes:
   - write-discussions
-short_description: Arabic ASR scored verbatim, with confidence intervals. Submit any open model.
+short_description: Arabic ASR leaderboard with CIs. Submit any open model.
 ---
 
 # Harfiyyan (حرفياً)
