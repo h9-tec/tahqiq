@@ -60,3 +60,8 @@ def test_variants_table(tmp_path: Path):
     assert n("ليه رحت", variants_path=str(p)) == "ليش رحت"
     # Untouched words pass through.
     assert n("شلون رحت", variants_path=str(p)) == "شلون رحت"
+
+
+def test_standalone_waw_glued_like_elm():
+    assert n("و الله و  الناس") == "والله والناس"
+    assert n("وقال و قال") == "وقال وقال"

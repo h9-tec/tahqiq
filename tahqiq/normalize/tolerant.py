@@ -16,7 +16,8 @@ Pipeline (fixed order; every step has a reason):
   8. Arabic-Indic / Persian digits → Western
   9. punctuation → space (Arabic ، ؛ ؟ ٪ and Latin)
  10. whitespace collapse
- 11. optional: variant table (word-level, after everything else)
+ 11. standalone و glued to the next word (as Elm does): "و الله" → "والله"
+ 12. optional: variant table (word-level, after everything else)
 
 Not done on purpose: no de-duplication of repeated phrases, no lowercasing
 (Arabic has no case; Latin islands keep case so English errors still count),
@@ -47,6 +48,7 @@ _PUNCT_RE = re.compile(
     r"\.,;:!\?\"'`’“”\(\)\[\]\{\}\-—–_/\\|<>~@#\$%\^&\*\+=]"
 )
 _WS_RE = re.compile(r"\s+")
+_WAW_RE = re.compile(r"(^|\s)و\s+")
 
 _TASHKEEL_TABLE = {ord(c): None for c in _TASHKEEL}
 _ALEF_TABLE = {ord(c): "ا" for c in _ALEF_VARIANTS}
@@ -84,6 +86,7 @@ def _core(text: str) -> str:
     s = s.translate(_DIGITS)
     s = _PUNCT_RE.sub(" ", s)
     s = _WS_RE.sub(" ", s).strip()
+    s = _WAW_RE.sub(r"\1و", s)
     return s
 
 
