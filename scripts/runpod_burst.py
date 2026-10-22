@@ -160,7 +160,8 @@ for f in sorted(files):
     if not f.startswith("audio_tars/"): continue
     ds = os.path.basename(f)[:-4]
     have = len(os.listdir(f"/vol/audio/{ds}")) if os.path.isdir(f"/vol/audio/{ds}") else 0
-    if have and have == expected(ds): print("have", ds, have, flush=True); continue
+    exp = expected(ds)
+    if have and (exp < 0 or have == exp): print("have", ds, have, flush=True); continue
     if have: print("incomplete", ds, have, "expected", expected(ds), "-> re-pull", flush=True); import shutil; shutil.rmtree(f"/vol/audio/{ds}")
     t0 = time.time(); p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
     tarfile.open(p).extractall("/vol/audio", filter="data"); os.remove(p)
@@ -319,7 +320,8 @@ for f in sorted(files):
     if not f.startswith("audio_tars/"): continue
     ds = os.path.basename(f)[:-4]
     have = len(os.listdir(f"/vol/audio/{ds}")) if os.path.isdir(f"/vol/audio/{ds}") else 0
-    if have and have == expected(ds): print("have", ds, have, flush=True); continue
+    exp = expected(ds)
+    if have and (exp < 0 or have == exp): print("have", ds, have, flush=True); continue
     if have: print("incomplete", ds, have, "expected", expected(ds), "-> re-pull", flush=True); import shutil; shutil.rmtree(f"/vol/audio/{ds}")
     t0 = time.time(); p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
     tarfile.open(p).extractall("/vol/audio", filter="data"); os.remove(p)
@@ -405,7 +407,15 @@ def units_from_candidates(path: Path, *, max_priority: int = 1, split_over_gb: f
 def cmd_collect_wait(state: dict) -> None:
     """For pods left RUNNING by a stopped orchestrator: wait until no runner/timing process is alive,
     then pull results and terminate the pod. Three consecutive idle readings 20 s apart count as done."""
-    live = {k: v for k, v in state.items() if v.get("status") == "RUNNING" and v.get("ip")}
+    live = {}
+    for k, v in state.items():
+        if v.get("status") in ("RUNNING", "CREATED") and v.get("pod"):
+            if not v.get("ip"):
+                addr = pod_ssh(v["pod"])
+                if not addr:
+                    continue
+                v["ip"], v["port"] = addr
+            live[k] = v
     print("waiting on", list(live))
     idle = {k: 0 for k in live}
     while live:
