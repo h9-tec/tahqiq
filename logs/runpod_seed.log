@@ -1,0 +1,12 @@
+  tahqiq-seed: NVIDIA H100 NVL/COMMUNITY unavailable ([{'message': 'There are no longer any instances available with the requested spe)
+seed pod qhcemk2ralwqjk
+Traceback (most recent call last):
+  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 294, in <module>
+    main()
+  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 269, in main
+    cmd_seed(a.gpu); return
+    ^^^^^^^^^^^^^^^
+  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 254, in cmd_seed
+    script = SEED_SCRIPT.format(ssh=os.environ["TAHQIQ_AUDIO_SSH"], key=Path(os.environ["TAHQIQ_AUDIO_KEY_PATH"]).read_text())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'name'

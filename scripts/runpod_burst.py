@@ -257,20 +257,64 @@ def cmd_seed(gpu: str) -> None:
     print("seed rc", rc)
 
 
+def units_from_candidates(path: Path, *, max_priority: int = 2, split_over_gb: float = 2.0) -> list[dict]:
+    """Build work units from data/candidates.yaml: registry slugs where known, auto-detected adapters otherwise.
+
+    Models that need remote code or an unknown architecture are skipped (listed on stderr) so they
+    can get a hand-written adapter later. Models with weights above ``split_over_gb`` get two pods.
+    """
+    import yaml
+
+    from tahqiq.models import registry
+    from tahqiq.models.auto import ADAPTERS
+
+    cands = (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).get("models") or []
+    by_hf = {}
+    for slug in registry.list_models():
+        try:
+            by_hf[registry.build(slug).hf_id] = slug
+        except Exception:
+            pass
+    units, skipped = [], []
+    for c in cands:
+        if int(c.get("priority", 3)) > max_priority or not c.get("hf_id"):
+            continue
+        hf_id = c["hf_id"]
+        slug = by_hf.get(hf_id) or hub.slug_for(hf_id)
+        nemo = bool(c.get("nemo"))
+        if slug not in registry.REGISTRY:
+            if c.get("needs_remote_code") or (not nemo and str(c.get("model_type", "")) not in ADAPTERS):
+                skipped.append((hf_id, c.get("model_type"), "remote code" if c.get("needs_remote_code") else "no adapter"))
+                continue
+        big = float(c.get("weights_gb") or 0) > split_over_gb
+        base = {"slug": slug, "nemo": nemo}
+        if slug not in registry.REGISTRY:
+            base.update({"hf_id": hf_id, "display_name": c.get("name") or hf_id})
+        if big:
+            units.append({**base, "datasets": _SPLIT[0], "timing": True})
+            units.append({**base, "datasets": _SPLIT[1], "timing": False})
+        else:
+            units.append({**base, "datasets": _ALL, "timing": True})
+    for s in skipped:
+        print("skip (needs adapter):", s, file=sys.stderr)
+    return units
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("plan")
+    sub.add_parser("plan").add_argument("--from-candidates", action="store_true")
     sd = sub.add_parser("seed"); sd.add_argument("--gpu", default="NVIDIA RTX A5000")
-    r = sub.add_parser("run"); r.add_argument("--max-pods", type=int, default=16); r.add_argument("--only", default=None, help="comma list of slugs")
+    r = sub.add_parser("run"); r.add_argument("--max-pods", type=int, default=16); r.add_argument("--only", default=None, help="comma list of slugs"); r.add_argument("--from-candidates", action="store_true"); r.add_argument("--skip-done", action="store_true", help="skip slugs that already have results/<slug>/run.json")
     sub.add_parser("collect"); sub.add_parser("kill")
     a = ap.parse_args()
     if a.cmd == "seed":
         cmd_seed(a.gpu); return
+    units_all = units_from_candidates(ROOT / "data" / "candidates.yaml") if getattr(a, "from_candidates", False) else UNITS
     if a.cmd == "plan":
-        for i, u in enumerate(UNITS):
+        for i, u in enumerate(units_all):
             print(i, u["slug"], u["datasets"], "timing" if u.get("timing") else "", "+then " + u["then"] if u.get("then") else "")
-        print(len(UNITS), "pods")
+        print(len(units_all), "pods")
         return
     state = json.loads(STATE.read_text()) if STATE.exists() else {}
     if a.cmd == "kill":
@@ -284,7 +328,10 @@ def main() -> None:
             if s.get("ip"):
                 collect_pod(s["ip"], s["port"]); print("collected", name)
         return
-    units = [u for u in UNITS if not a.only or u["slug"] in a.only.split(",")][: a.max_pods]
+    units = [u for u in units_all if not a.only or u["slug"] in a.only.split(",")]
+    if a.skip_done:
+        units = [u for u in units if not (ROOT / "results" / u["slug"] / "run.json").exists()]
+    units = units[: a.max_pods]
     with ThreadPoolExecutor(max_workers=len(units)) as ex:
         list(ex.map(lambda iu: run_unit(iu[1], iu[0], state), enumerate(units)))
     print(json.dumps({k: v["status"] for k, v in state.items()}, indent=1))
