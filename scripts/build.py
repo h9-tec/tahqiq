@@ -1,0 +1,139 @@
+"""Build dist/ (summary.json, models.json, meta.json) from results/ + manifests, or check consistency.
+
+    uv run python scripts/build.py build            # scores every results/<model>/ with a run.json
+    uv run python scripts/build.py check            # every run.json hash == current manifest hash
+    uv run python scripts/build.py table            # print the headline markdown table
+
+Scoring runs through harfiyyan.report.score_model; nothing here computes a number itself.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+import yaml  # noqa: E402
+
+from harfiyyan.manifest import load_manifest, manifest_paths, read_manifest_hash  # noqa: E402
+from harfiyyan.report import BASELINE, markdown_table, score_model  # noqa: E402
+
+MANIFESTS = ROOT / "data" / "manifests"
+RESULTS = ROOT / "results"
+DIST = ROOT / "dist"
+
+
+def _git_sha() -> str:
+    try:
+        return subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, text=True).strip()
+    except Exception:
+        return "unknown"
+
+
+def _runs() -> dict[str, dict]:
+    out = {}
+    for d in sorted(RESULTS.iterdir()) if RESULTS.exists() else []:
+        rj = d / "run.json"
+        if rj.exists():
+            out[d.name] = json.loads(rj.read_text(encoding="utf-8"))
+    return out
+
+
+def dataset_cards() -> dict:
+    cards = {}
+    for p in manifest_paths(MANIFESTS):
+        utts = load_manifest(p)
+        cards[p.stem] = {
+            "n": len(utts),
+            "hours": round(sum(u.duration_s for u in utts) / 3600, 2),
+            "elm_members": sum(1 for u in utts if u.elm_member),
+            "n_api_slice": sum(1 for u in utts if u.in_api_slice),
+            "dialects": sorted({u.dialect for u in utts}),
+        }
+    return cards
+
+
+def cmd_check() -> int:
+    current = read_manifest_hash(MANIFESTS)
+    bad = []
+    for mid, run in _runs().items():
+        if run.get("manifest_sha256") != current:
+            bad.append((mid, run.get("manifest_sha256")))
+    if bad:
+        for mid, h in bad:
+            print(f"STALE {mid}: run hash {h} != current {current}")
+        return 1
+    print(f"ok: {len(_runs())} runs carry manifest {current}")
+    return 0
+
+
+def cmd_build(n_boot: int) -> None:
+    current = read_manifest_hash(MANIFESTS)
+    datasets = [p.stem for p in manifest_paths(MANIFESTS)]
+    runs = _runs()
+    models_meta = (yaml.safe_load((ROOT / "data" / "models.yaml").read_text(encoding="utf-8")) or {}).get("models", {})
+    rows = []
+    for mid, run in runs.items():
+        if run.get("manifest_sha256") != current:
+            print(f"skip {mid}: stale manifest hash")
+            continue
+        scores = {}
+        for slice_name in ("full", "api"):
+            s = score_model(mid, datasets, manifests_dir=MANIFESTS, results_dir=RESULTS,
+                            slice_name=slice_name, n_boot=n_boot, baseline_id=BASELINE)
+            if any(s["datasets"].values()):
+                scores[slice_name] = s
+        rows.append({
+            "model_id": mid,
+            "display_name": run.get("display_name") or mid,
+            "kind": run.get("kind"),
+            "hf_id": run.get("hf_id"),
+            "card": models_meta.get(mid, {}),
+            "run": {k: run.get(k) for k in ("run_id", "git_sha", "finished", "env", "decode_params", "language_hint", "slice")},
+            "scores": scores,
+        })
+        print(f"scored {mid}")
+    DIST.mkdir(exist_ok=True)
+    meta = {"generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "git_sha": _git_sha(),
+            "manifest_sha256": current, "n_boot": n_boot, "baseline": BASELINE}
+    (DIST / "summary.json").write_text(json.dumps({"meta": meta, "datasets": dataset_cards(), "models": rows},
+                                                  ensure_ascii=False, indent=1), encoding="utf-8")
+    (DIST / "models.json").write_text(json.dumps(models_meta, ensure_ascii=False, indent=1), encoding="utf-8")
+    (DIST / "meta.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
+    print(f"dist/ written: {len(rows)} models, {len(datasets)} datasets")
+
+
+def cmd_table(slice_name: str, normalizer: str) -> None:
+    summary = json.loads((DIST / "summary.json").read_text(encoding="utf-8"))
+    datasets = list(summary["datasets"])
+    scores = [m["scores"][slice_name] for m in summary["models"] if slice_name in m["scores"]]
+    scores.sort(key=lambda s: sum(s["datasets"][d][normalizer]["wer"]["point"] for d in datasets if normalizer in s["datasets"].get(d, {})) / max(1, len(datasets)))
+    print(markdown_table(scores, datasets, normalizer))
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    b = sub.add_parser("build")
+    b.add_argument("--n-boot", type=int, default=2000)
+    sub.add_parser("check")
+    t = sub.add_parser("table")
+    t.add_argument("--slice", default="full")
+    t.add_argument("--normalizer", default="elm")
+    args = ap.parse_args()
+    if args.cmd == "build":
+        cmd_build(args.n_boot)
+    elif args.cmd == "check":
+        sys.exit(cmd_check())
+    else:
+        cmd_table(args.slice, args.normalizer)
+
+
+if __name__ == "__main__":
+    main()

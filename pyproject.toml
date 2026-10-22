@@ -8,6 +8,7 @@ license = { text = "Apache-2.0" }
 authors = [{ name = "Hesham Haroon" }]
 dependencies = [
     "jiwer>=3.0",
+    "rapidfuzz>=3.0",
     "numpy>=1.26",
     "scipy>=1.11",
     "soundfile>=0.12",

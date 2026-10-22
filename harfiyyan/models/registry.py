@@ -29,6 +29,10 @@ REGISTRY: dict[str, Callable[[], ASRModel]] = {
     "cohere_transcribe_arabic_07_2026": _open(".open.cohere_transcribe", "cohere_transcribe_arabic"),
     "mms_1b_all": _open(".open.mms", "mms_1b_all"),
     "seamless_m4t_v2_large": _open(".open.seamless", "seamless_m4t_v2_large"),
+    "voxtral_mini_3b": _open(".open.voxtral", "voxtral_mini_3b"),
+    # NeMo models need .venv-nemo (scripts/setup_nemo_env.sh)
+    "nvidia_fastconformer_ar_pc": _open(".open.nemo_fastconformer", "nvidia_fastconformer_ar_pc"),
+    "nvidia_fastconformer_ar_pcd": _open(".open.nemo_fastconformer", "nvidia_fastconformer_ar_pcd"),
 }
 
 # Vendor API adapters exist under models/api/ and are tested, but are not on the

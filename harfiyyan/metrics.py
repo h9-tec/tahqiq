@@ -1,12 +1,16 @@
 """WER / CER with bootstrap confidence intervals and paired tests.
 
-Ported from the Saudi TTS bench (``bench/metrics.py``).
-
 Conventions (match Elm's board so the ``elm`` column is comparable):
-- WER and CER are corpus-level: total edits / total reference tokens.
-  jiwer computes exactly this, as does NeMo's ``word_error_rate``.
-- CER tokens are characters including spaces (NeMo ``use_cer=True`` behaviour).
+- WER and CER are corpus-level: total edits / total reference tokens, the same
+  quantity jiwer and NeMo's ``word_error_rate`` report.
+- CER tokens are characters including spaces.
 - Inputs are already-normalized strings; this module never normalizes.
+- Utterances whose normalized reference is empty are dropped (they have no
+  denominator); callers report how many.
+
+Bootstrap: per-utterance (edits, reference length) are computed once, then
+resampled with numpy, so 2,000 resamples over 40k utterances take about a
+second instead of re-aligning strings every iteration.
 """
 
 from __future__ import annotations
@@ -15,21 +19,38 @@ from dataclasses import dataclass
 from typing import Literal
 
 import numpy as np
-from jiwer import cer as _jiwer_cer
-from jiwer import wer as _jiwer_wer
+from rapidfuzz.distance import Levenshtein
 
 Metric = Literal["wer", "cer"]
 
 
+def _tokens(s: str, metric: Metric) -> list[str]:
+    return s.split() if metric == "wer" else list(s)
+
+
+def utt_stats(refs: list[str], hyps: list[str], metric: Metric = "wer") -> tuple[np.ndarray, np.ndarray]:
+    """Per-utterance (edits, reference_length). Empty references get length 0."""
+    _check_same_len(refs, hyps)
+    edits = np.empty(len(refs), dtype=np.int64)
+    lens = np.empty(len(refs), dtype=np.int64)
+    for i, (r, h) in enumerate(zip(refs, hyps)):
+        rt, ht = _tokens(r, metric), _tokens(h, metric)
+        lens[i] = len(rt)
+        edits[i] = Levenshtein.distance(rt, ht)
+    return edits, lens
+
+
+def _ratio(edits: np.ndarray, lens: np.ndarray) -> float:
+    tot = lens.sum()
+    return float(edits.sum() / tot) if tot > 0 else 0.0
+
+
 def wer(refs: list[str], hyps: list[str]) -> float:
-    return float(_jiwer_wer(refs, hyps))
+    return _ratio(*utt_stats(refs, hyps, "wer"))
 
 
 def cer(refs: list[str], hyps: list[str]) -> float:
-    return float(_jiwer_cer(refs, hyps))
-
-
-_METRIC_FN = {"wer": wer, "cer": cer}
+    return _ratio(*utt_stats(refs, hyps, "cer"))
 
 
 @dataclass(frozen=True)
@@ -51,6 +72,22 @@ def _check_same_len(*lists) -> None:
         raise ValueError(f"length mismatch: {[len(x) for x in lists]}")
 
 
+def _bootstrap_ratio(
+    num: np.ndarray, den: np.ndarray, *, n_iter: int, seed: int, alpha: float, num_b: np.ndarray | None = None
+) -> tuple[float, float]:
+    """Percentile CI of sum(num)/sum(den) (or of the difference when num_b given) under resampling."""
+    n = len(den)
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, n, size=(n_iter, n))
+    d = den[idx].sum(axis=1).astype(np.float64)
+    d[d == 0] = np.nan
+    a = num[idx].sum(axis=1) / d
+    if num_b is not None:
+        a = num_b[idx].sum(axis=1) / d - a
+    lo, hi = np.nanpercentile(a, [100 * alpha / 2, 100 * (1 - alpha / 2)])
+    return float(lo), float(hi)
+
+
 def bootstrap_ci(
     refs: list[str],
     hyps: list[str],
@@ -64,18 +101,12 @@ def bootstrap_ci(
     _check_same_len(refs, hyps)
     if not refs:
         return CI(0.0, 0.0, 0.0)
-    fn = _METRIC_FN[metric]
-    point = fn(refs, hyps)
-    n = len(refs)
-    rng = np.random.default_rng(seed)
-    refs_arr = np.array(refs, dtype=object)
-    hyps_arr = np.array(hyps, dtype=object)
-    samples = np.empty(n_iter)
-    for i in range(n_iter):
-        idx = rng.integers(0, n, size=n)
-        samples[i] = fn(refs_arr[idx].tolist(), hyps_arr[idx].tolist())
-    lo, hi = np.percentile(samples, [100 * alpha / 2, 100 * (1 - alpha / 2)])
-    return CI(float(lo), point, float(hi))
+    edits, lens = utt_stats(refs, hyps, metric)
+    point = _ratio(edits, lens)
+    if lens.sum() == 0:
+        return CI(0.0, 0.0, 0.0)
+    lo, hi = _bootstrap_ratio(edits, lens, n_iter=n_iter, seed=seed, alpha=alpha)
+    return CI(lo, point, hi)
 
 
 def paired_delta_ci(
@@ -88,29 +119,20 @@ def paired_delta_ci(
     seed: int = 0,
     alpha: float = 0.05,
 ) -> CI:
-    """Bootstrap CI of metric(B) - metric(A) resampling the same utterances for both.
+    """Bootstrap CI of metric(B) - metric(A), resampling the same utterances for both.
 
-    Negative point = B is better than A. The CI excludes 0 when the difference
-    is stable across resamples; this is the number the board's "vs baseline"
-    column shows.
+    Negative point = B is better than A. This is the "vs baseline" column.
     """
     _check_same_len(refs, hyps_a, hyps_b)
     if not refs:
         return CI(0.0, 0.0, 0.0)
-    fn = _METRIC_FN[metric]
-    point = fn(refs, hyps_b) - fn(refs, hyps_a)
-    n = len(refs)
-    rng = np.random.default_rng(seed)
-    r = np.array(refs, dtype=object)
-    a = np.array(hyps_a, dtype=object)
-    b = np.array(hyps_b, dtype=object)
-    samples = np.empty(n_iter)
-    for i in range(n_iter):
-        idx = rng.integers(0, n, size=n)
-        rr = r[idx].tolist()
-        samples[i] = fn(rr, b[idx].tolist()) - fn(rr, a[idx].tolist())
-    lo, hi = np.percentile(samples, [100 * alpha / 2, 100 * (1 - alpha / 2)])
-    return CI(float(lo), float(point), float(hi))
+    ea, lens = utt_stats(refs, hyps_a, metric)
+    eb, _ = utt_stats(refs, hyps_b, metric)
+    if lens.sum() == 0:
+        return CI(0.0, 0.0, 0.0)
+    point = _ratio(eb, lens) - _ratio(ea, lens)
+    lo, hi = _bootstrap_ratio(ea, lens, n_iter=n_iter, seed=seed, alpha=alpha, num_b=eb)
+    return CI(lo, point, hi)
 
 
 def proportion_ci(k: int, n: int, *, alpha: float = 0.05) -> CI:
