@@ -61,6 +61,7 @@ def run_model(
     hf_id: str | None = None,
     display_name: str | None = None,
     adapter: str | None = None,
+    write_run_json: bool = True,
 ) -> dict:
     model = registry.build(model_id, hf_id=hf_id, display_name=display_name, adapter=adapter)
     run_id = uuid.uuid4().hex[:12]
@@ -115,7 +116,8 @@ def run_model(
     # Keep a history: one run.json (latest) plus runs/<run_id>.json.
     (out.parent / "runs").mkdir(exist_ok=True)
     (out.parent / "runs" / f"{run_id}.json").write_text(json.dumps(run, indent=2, ensure_ascii=False))
-    out.write_text(json.dumps(run, indent=2, ensure_ascii=False))
+    if write_run_json:
+        out.write_text(json.dumps(run, indent=2, ensure_ascii=False))
     print(json.dumps(totals))
     return run
 
@@ -129,6 +131,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--hf-id", default=None, help="run an arbitrary Hub model under --model <slug>")
     ap.add_argument("--display-name", default=None)
     ap.add_argument("--adapter", default=None, help="force adapter key (see models/auto.py)")
+    ap.add_argument("--helper", action="store_true", help="fill the cache for some datasets without writing run.json")
     args = ap.parse_args(argv)
 
     from dotenv import load_dotenv
@@ -139,7 +142,7 @@ def main(argv: list[str] | None = None) -> None:
     models = registry.list_models() if args.model == "all" else [args.model]
     for m in models:
         run_model(m, datasets, slice_name=args.slice, limit=args.limit, hf_id=args.hf_id,
-                  display_name=args.display_name, adapter=args.adapter)
+                  display_name=args.display_name, adapter=args.adapter, write_run_json=not args.helper)
 
 
 if __name__ == "__main__":

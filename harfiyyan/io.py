@@ -55,6 +55,16 @@ def append_prediction(results_dir: Path, model_id: str, dataset: str, pred: Pred
         f.write(json.dumps(pred.to_dict(), ensure_ascii=False) + "\n")
 
 
+def resample_to_16k(audio: np.ndarray, sr: int) -> np.ndarray:
+    """Polyphase resampling (scipy), deterministic and dependency-light."""
+    from math import gcd
+
+    from scipy.signal import resample_poly
+
+    g = gcd(SAMPLE_RATE, sr)
+    return resample_poly(audio, SAMPLE_RATE // g, sr // g).astype(np.float32)
+
+
 def load_audio_16k_mono(path: str | Path) -> tuple[np.ndarray, float]:
     """Float32 mono at 16 kHz plus duration in seconds. Resamples only if needed."""
     audio, sr = sf.read(str(path), dtype="float32", always_2d=False)
@@ -62,9 +72,7 @@ def load_audio_16k_mono(path: str | Path) -> tuple[np.ndarray, float]:
         audio = audio.mean(axis=1)
     duration = len(audio) / sr
     if sr != SAMPLE_RATE:
-        import librosa
-
-        audio = librosa.resample(audio, orig_sr=sr, target_sr=SAMPLE_RATE).astype(np.float32)
+        audio = resample_to_16k(audio, sr)
     return audio, duration
 
 
@@ -94,8 +102,6 @@ def write_wav_16k(path: Path, audio: np.ndarray, sr: int) -> None:
         audio = audio.mean(axis=1)
     audio = audio.astype(np.float32)
     if sr != SAMPLE_RATE:
-        import librosa
-
-        audio = librosa.resample(audio, orig_sr=sr, target_sr=SAMPLE_RATE).astype(np.float32)
+        audio = resample_to_16k(audio, sr)
     path.parent.mkdir(parents=True, exist_ok=True)
     sf.write(str(path), audio, SAMPLE_RATE, subtype="PCM_16")
