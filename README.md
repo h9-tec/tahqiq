@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/banner.svg" alt="Tahqiq" width="100%"></p>
+<p align="center"><img src="assets/banner.png" alt="Tahqiq" width="100%"></p>
 
 <p align="center">
   <a href="https://huggingface.co/spaces/HeshamHaroon/tahqiq"><b>Live leaderboard</b></a> ·

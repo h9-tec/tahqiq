@@ -11,7 +11,7 @@
 <header class="hero">
   <div class="wrap">
     <div class="brand"><span class="glyph">تحقيق</span><h1>Tahqiq</h1></div>
-    <p class="tag"><em>Tahqiq</em> (تحقيق): the slowest, most exact recitation, every letter given its full right; also the Arabic word for verification. Open models on the same public test sets as Elm's leaderboard, re-run with one harness, two published normalizers, numeral and entity probes, and a 95% confidence interval on every number. Submit any open model below; it is evaluated on Hugging Face Jobs.</p>
+    <p class="tag">A reproducible leaderboard for Arabic speech recognition. Open-weight models run through one harness on six public test sets; every number carries a 95% confidence interval. <em>Tahqiq</em> is the most exact style of recitation, where every letter is given its full right; in everyday Arabic it means verification.</p>
     <div class="pills" id="meta-pills"></div>
   </div>
 </header>
@@ -44,7 +44,7 @@
   <section id="tab-prod" class="tab">
     <h2>Production profile <span class="sub">measured on one H20 (left) · declared from the model card (right)</span></h2>
     <div class="scroll"><table id="prod"><thead></thead><tbody></tbody></table></div>
-    <p class="note"><b>Measured:</b> fixed timing slice (~60 utterances, 3 to 15 s), warm, batch 1, concurrency 1, median of 3 passes. RTFx = audio seconds per wall second. Latency = seconds per file (offline), p50 / p95. VRAM = peak allocated. A ⚠ means other jobs were on the GPU during the measurement. <b>Declared:</b> taken from the model card, not verified by us; "unknown" until a maintainer fills it in. Streaming: native = trained and served for streaming; chunked = offline model usable with chunked pseudo-streaming.</p>
+    <p class="note"><b>Measured:</b> fixed timing slice (~60 utterances, 3 to 15 s), warm, batch 1, concurrency 1, median of 3 passes. RTFx = audio seconds per wall second. Latency = seconds per file (offline), p50 / p95. VRAM = peak allocated. “shared GPU” means other jobs were on the GPU during the measurement. <b>Declared:</b> taken from the model card, not verified by us; "unknown" until a maintainer fills it in. Streaming: native = trained and served for streaming; chunked = offline model usable with chunked pseudo-streaming.</p>
   </section>
 
   <section id="tab-dialects" class="tab">
@@ -54,8 +54,8 @@
 
   <section id="tab-submit" class="tab">
     <h2>Submit a model</h2>
-    <p>Any public Hugging Face model with a transformers-native ASR architecture (Whisper, wav2vec2/HuBERT CTC, Qwen3-ASR, Cohere Transcribe, Voxtral) or a NeMo <code>.nemo</code> checkpoint, up to 24 GB of weights. Repositories that need <code>trust_remote_code</code> are parked for manual review first. Each submission runs as a Hugging Face Job on an L4 GPU (1 to 3 hours); results appear here and in the queue thread.</p>
-    <div id="auth"><button id="login" class="primary">Sign in with Hugging Face to submit</button><p class="note">We only ask for permission to open a discussion in the requests repo on your behalf. Nothing else.</p></div>
+    <p>Any public Hugging Face model with a Transformers-native ASR architecture: Whisper, wav2vec2 and HuBERT CTC fine-tunes, Qwen3-ASR, Cohere Transcribe, Voxtral. Repositories that need <code>trust_remote_code</code>, NeMo checkpoints, and weights above 24 GB wait for a maintainer. The submission is evaluated on the common slice (about 1,000 utterances per set) on Hugging Face compute, usually within the hour, and the result is posted in its request thread.</p>
+    <div id="auth"><button id="login" class="primary">Sign in with Hugging Face</button><p class="note">The only permission requested is to open a discussion in the request queue on your behalf.</p></div>
     <form id="submit-form" class="form" hidden>
       <p class="note">Signed in as <b id="who"></b>.</p>
       <label>Model id <input name="hf_id" placeholder="owner/model-name" required pattern="[A-Za-z0-9_.\-]+/[A-Za-z0-9_.\-]+"></label>

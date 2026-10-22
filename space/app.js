@@ -104,7 +104,7 @@ function renderLB() {
 function fmtParams(p) { if (!p) return "·"; return p >= 1000 ? (p / 1000).toFixed(1) + "B" : p + "M"; }
 function prodCells(m) {
   const t = m.timing || {}, p = m.profile || {};
-  const warn = t.gpu_other_processes > 0 ? " ⚠" : "";
+  const warn = t.gpu_other_processes > 0 ? " (shared)" : "";
   return `<td class="num">${t.rtfx != null ? t.rtfx + "×" + warn : "·"}</td><td class="num">${fmtParams(p.params_m) === "·" && p.params_label ? p.params_label : fmtParams(p.params_m)}</td><td>${p.streaming && p.streaming !== "unknown" ? p.streaming : "·"}</td>`;
 }
 function renderProd() {
@@ -113,7 +113,7 @@ function renderProd() {
   document.querySelector("#prod thead").innerHTML = "<tr>" + th.map((t, i) => `<th class="${i >= 1 && i <= 4 ? "measured" : i >= 5 ? "declared" : ""}">${t}</th>`).join("") + "</tr>";
   document.querySelector("#prod tbody").innerHTML = rows.length ? rows.map(m => {
     const t = m.timing || {}, p = m.profile || {};
-    const warn = t.gpu_other_processes > 0 ? ` <span title="${t.gpu_other_processes} other processes on the GPU during measurement">⚠</span>` : "";
+    const warn = t.gpu_other_processes > 0 ? ` <span class="ci" title="${t.gpu_other_processes} other processes on the GPU during measurement">shared GPU</span>` : "";
     const has = t.rtfx != null;
     return `<tr data-id="${m.model_id}"><td><span class="model">${m.display_name}</span></td>
       <td class="num">${has ? t.rtfx + "×" + warn : "pending"}</td>
