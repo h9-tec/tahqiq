@@ -220,13 +220,19 @@ for f in files:
     if f.startswith("manifests/"):
         p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
         open("/vol/manifests/" + os.path.basename(f), "wb").write(open(p, "rb").read())
+import json
+def expected(ds):
+    p = f"/vol/manifests/{ds}.jsonl"
+    return sum(1 for l in open(p, encoding="utf-8") if l.strip()) if os.path.exists(p) else -1
 for f in sorted(files):
     if not f.startswith("audio_tars/"): continue
     ds = os.path.basename(f)[:-4]
-    if os.path.isdir(f"/vol/audio/{ds}") and os.listdir(f"/vol/audio/{ds}"): print("have", ds, flush=True); continue
+    have = len(os.listdir(f"/vol/audio/{ds}")) if os.path.isdir(f"/vol/audio/{ds}") else 0
+    if have and have == expected(ds): print("have", ds, have, flush=True); continue
+    if have: print("incomplete", ds, have, "expected", expected(ds), "-> re-pull", flush=True); import shutil; shutil.rmtree(f"/vol/audio/{ds}")
     t0 = time.time(); p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
     tarfile.open(p).extractall("/vol/audio", filter="data"); os.remove(p)
-    print(ds, "done", round(time.time()-t0), "s", flush=True)
+    print(ds, "done", round(time.time()-t0), "s", "files", len(os.listdir(f"/vol/audio/{ds}")), "expected", expected(ds), flush=True)
 PY
 du -sh /vol/audio/*; ls /vol/manifests; echo SEED_DONE
 """
