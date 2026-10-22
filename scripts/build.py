@@ -4,7 +4,7 @@
     uv run python scripts/build.py check            # every run.json hash == current manifest hash
     uv run python scripts/build.py table            # print the headline markdown table
 
-Scoring runs through harfiyyan.report.score_model; nothing here computes a number itself.
+Scoring runs through tahqiq.report.score_model; nothing here computes a number itself.
 """
 
 from __future__ import annotations
@@ -21,8 +21,8 @@ sys.path.insert(0, str(ROOT))
 
 import yaml  # noqa: E402
 
-from harfiyyan.manifest import load_manifest, manifest_paths, read_manifest_hash  # noqa: E402
-from harfiyyan.report import BASELINE, markdown_table, score_model  # noqa: E402
+from tahqiq.manifest import load_manifest, manifest_paths, read_manifest_hash  # noqa: E402
+from tahqiq.report import BASELINE, markdown_table, score_model  # noqa: E402
 
 MANIFESTS = ROOT / "data" / "manifests"
 RESULTS = ROOT / "results"
@@ -117,8 +117,8 @@ def cmd_table(slice_name: str, normalizer: str) -> None:
     print(markdown_table(scores, datasets, normalizer))
 
 
-README_START = "<!-- harfiyyan:table:start -->"
-README_END = "<!-- harfiyyan:table:end -->"
+README_START = "<!-- tahqiq:table:start -->"
+README_END = "<!-- tahqiq:table:end -->"
 
 
 def readme_table(slice_name: str = "full", normalizer: str = "elm") -> str:
@@ -163,7 +163,7 @@ def cmd_readme() -> None:
     p = ROOT / "README.md"
     text = p.read_text(encoding="utf-8")
     if README_START not in text or README_END not in text:
-        raise SystemExit("README.md lacks the harfiyyan table markers")
+        raise SystemExit("README.md lacks the tahqiq table markers")
     pre, rest = text.split(README_START, 1)
     _, post = rest.split(README_END, 1)
     new = f"{pre}{README_START}\n{readme_table()}\n{README_END}{post}"

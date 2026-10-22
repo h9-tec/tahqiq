@@ -17,7 +17,7 @@ from ..slices import assign_slices
 ROOT = Path(__file__).resolve().parents[2]
 ELM_DIR = ROOT / "data" / "elm"
 MANIFESTS = ROOT / "data" / "manifests"
-AUDIO = Path(os.environ.get("HARFIYYAN_AUDIO", ROOT / "audio"))
+AUDIO = Path(os.environ.get("TAHQIQ_AUDIO", ROOT / "audio"))
 
 
 def elm_members(name: str) -> dict[str, dict]:

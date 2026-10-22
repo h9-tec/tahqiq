@@ -6,7 +6,7 @@
     uv run python scripts/prepare_data.py masc --src /data/arabic_pretrain/MASC-Arabic/data
     uv run python scripts/prepare_data.py casablanca --limit 20   # smoke
 
-Set HARFIYYAN_AUDIO to put audio somewhere other than <repo>/audio.
+Set TAHQIQ_AUDIO to put audio somewhere other than <repo>/audio.
 """
 
 from __future__ import annotations
@@ -21,13 +21,13 @@ sys.path.insert(0, str(ROOT))
 
 from dotenv import load_dotenv  # noqa: E402
 
-from harfiyyan.manifest import write_manifest_hash  # noqa: E402
+from tahqiq.manifest import write_manifest_hash  # noqa: E402
 
 BUILDERS = {
-    "casablanca": "harfiyyan.data.casablanca",
-    "sada": "harfiyyan.data.sada",
-    "commonvoice": "harfiyyan.data.commonvoice",
-    "masc": "harfiyyan.data.masc",
+    "casablanca": "tahqiq.data.casablanca",
+    "sada": "tahqiq.data.sada",
+    "commonvoice": "tahqiq.data.commonvoice",
+    "masc": "tahqiq.data.masc",
 }
 
 

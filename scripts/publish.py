@@ -22,9 +22,9 @@ load_dotenv(ROOT / ".env")
 
 import yaml  # noqa: E402
 
-from harfiyyan import hub  # noqa: E402
-from harfiyyan.manifest import manifest_paths, read_manifest_hash  # noqa: E402
-from harfiyyan.report import BASELINE, score_model  # noqa: E402
+from tahqiq import hub  # noqa: E402
+from tahqiq.manifest import manifest_paths, read_manifest_hash  # noqa: E402
+from tahqiq.report import BASELINE, score_model  # noqa: E402
 
 MANIFESTS = ROOT / "data" / "manifests"
 RESULTS = ROOT / "results"

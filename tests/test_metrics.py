@@ -1,6 +1,6 @@
 import pytest
 
-from harfiyyan.metrics import (
+from tahqiq.metrics import (
     bootstrap_ci,
     cer,
     mcnemar_pair,

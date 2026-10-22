@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from harfiyyan.normalize.elm import normalize_elm
+from tahqiq.normalize.elm import normalize_elm
 
 ROOT = Path(__file__).resolve().parents[1]
 ORACLE = ROOT / "tests" / "oracle" / "elm_eval_original.py"

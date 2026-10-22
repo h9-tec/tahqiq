@@ -1,4 +1,4 @@
-# Harfiyyan: working rules
+# Tahqiq (تحقيق): working rules
 
 - Numbers on the board come only from `results/` via `scripts/build.py`. Never hand-edit a score.
 - Two normalizers, both published: `elm` (comparability with Elm's leaderboard, do not change) and `tolerant`. New folding goes in `tolerant.py` + `data/variants.yaml` with a test.

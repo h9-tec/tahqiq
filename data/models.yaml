@@ -1,4 +1,4 @@
-# Model cards for the site. model_id must match harfiyyan/models/registry.py.
+# Model cards for the site. model_id must match tahqiq/models/registry.py.
 # Seeded from arabic-ai-atlas/data/asr.yaml where an entry exists.
 models:
   whisper_large_v3:

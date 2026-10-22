@@ -1,4 +1,4 @@
-/* Harfiyyan static Space: reads board.json from the results dataset; submits via an HF discussion using OAuth. */
+/* Tahqiq static Space: reads board.json from the results dataset; submits via an HF discussion using OAuth. */
 /* OAuth (PKCE) against huggingface.co, no library: HF injects window.huggingface.variables in static Spaces. */
 const HFV = (window.huggingface && window.huggingface.variables) || {};
 const OAUTH = { clientId: HFV.OAUTH_CLIENT_ID, scopes: (HFV.OAUTH_SCOPES || "openid profile write-discussions"), provider: (HFV.OPENID_PROVIDER_URL || "https://huggingface.co") };
@@ -28,8 +28,8 @@ async function oauthHandleRedirectIfPresent() {
   return { accessToken: tok.access_token, accessTokenExpiresAt: new Date(Date.now() + (tok.expires_in || 3600) * 1000).toISOString(), userInfo };
 }
 
-const RESULTS_REPO = "HeshamHaroon/harfiyyan-results";
-const REQUESTS_REPO = "HeshamHaroon/harfiyyan-requests";
+const RESULTS_REPO = "HeshamHaroon/tahqiq-results";
+const REQUESTS_REPO = "HeshamHaroon/tahqiq-requests";
 const BOARD_URL = `https://huggingface.co/datasets/${RESULTS_REPO}/resolve/main/board.json`;
 const DS_LABEL = { sada: "SADA", casablanca: "Casablanca", commonvoice: "CV 18", masc_clean: "MASC clean", masc_noisy: "MASC noisy", mgb2: "MGB-2" };
 const DS_INFO = {
@@ -118,7 +118,7 @@ function renderQueue() {
 
 function renderFoot() {
   const first = board.models[0];
-  document.getElementById("foot").innerHTML = `${first ? `manifest ${first.manifest_sha256} · bootstrap ${first.n_boot} · baseline ${first.baseline} · ` : ""}<a href="https://huggingface.co/datasets/${RESULTS_REPO}">results</a> · <a href="https://huggingface.co/datasets/${REQUESTS_REPO}/discussions">queue</a> · <a href="https://github.com/h9-tec/harfiyyan">code</a>`;
+  document.getElementById("foot").innerHTML = `${first ? `manifest ${first.manifest_sha256} · bootstrap ${first.n_boot} · baseline ${first.baseline} · ` : ""}<a href="https://huggingface.co/datasets/${RESULTS_REPO}">results</a> · <a href="https://huggingface.co/datasets/${REQUESTS_REPO}/discussions">queue</a> · <a href="https://github.com/h9-tec/tahqiq">code</a>`;
 }
 
 function openCard(id) {
@@ -179,7 +179,7 @@ document.getElementById("submit-form").onsubmit = async e => {
     const body = JSON.stringify({ display_name: f.get("display_name") || "", notes: f.get("notes") || "", submitted_via: "space" });
     const res = await fetch(`https://huggingface.co/api/datasets/${REQUESTS_REPO}/discussions`, {
       method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${oauth.accessToken}` },
-      body: JSON.stringify({ title: `submit: ${hf_id}`, description: "```json\n" + body + "\n```\n\nSubmitted through the Harfiyyan Space." }),
+      body: JSON.stringify({ title: `submit: ${hf_id}`, description: "```json\n" + body + "\n```\n\nSubmitted through the Tahqiq Space." }),
     });
     if (!res.ok) throw new Error(`HF API ${res.status}: ${(await res.text()).slice(0, 200)}`);
     const d = await res.json();

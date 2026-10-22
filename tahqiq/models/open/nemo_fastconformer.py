@@ -3,7 +3,7 @@
 NeMo pins its own torch; run these in the separate env created by
 ``scripts/setup_nemo_env.sh`` (``.venv-nemo``), e.g.
 
-    .venv-nemo/bin/python -m harfiyyan.runner --model nvidia_fastconformer_ar_pc --dataset sada
+    .venv-nemo/bin/python -m tahqiq.runner --model nvidia_fastconformer_ar_pc --dataset sada
 
 Decoding: RNNT (transducer) greedy, the checkpoint default. Both checkpoints
 emit punctuation/casing ("pc"); the "pcd" one also emits diacritics, which the

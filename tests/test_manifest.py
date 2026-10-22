@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from harfiyyan.manifest import (
+from tahqiq.manifest import (
     Utterance,
     compute_manifest_hash,
     load_manifest,
@@ -9,7 +9,7 @@ from harfiyyan.manifest import (
     map_dialect,
     write_manifest,
 )
-from harfiyyan.slices import assign_slices
+from tahqiq.slices import assign_slices
 
 
 def _utt(i: int, dialect: str = "gulf", dur: float = 5.0) -> Utterance:

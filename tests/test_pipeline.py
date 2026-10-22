@@ -12,12 +12,12 @@ import numpy as np
 import soundfile as sf
 import pytest
 
-from harfiyyan import io as hio
-from harfiyyan.manifest import Utterance, make_id, write_manifest, write_manifest_hash
-from harfiyyan.models import registry
-from harfiyyan.models.base import ASRModel
-from harfiyyan.report import markdown_table, score_model
-from harfiyyan.runner import run_model
+from tahqiq import io as hio
+from tahqiq.manifest import Utterance, make_id, write_manifest, write_manifest_hash
+from tahqiq.models import registry
+from tahqiq.models.base import ASRModel
+from tahqiq.report import markdown_table, score_model
+from tahqiq.runner import run_model
 
 REFS = ["السلام عليكم ورحمة الله", "رقم الهاتف ٠٥٠ ١٢٣", "كيف الحال اليوم", "الحمد لله على كل حال"]
 
@@ -38,7 +38,7 @@ class Echo(ASRModel):
         pass
 
     def transcribe_path(self, wav_path: Path):
-        from harfiyyan.models.base import Transcript
+        from tahqiq.models.base import Transcript
 
         uid = wav_path.stem
         if uid == self.fail_id:
@@ -100,8 +100,8 @@ def test_run_score_roundtrip(world, monkeypatch):
 
 
 def test_entity_probe_containment():
-    from harfiyyan.report import entity_probe
-    from harfiyyan import io as hio
+    from tahqiq.report import entity_probe
+    from tahqiq import io as hio
     u = Utterance("a", "toy", "test", "0", "toy/a.wav", "0" * 64, 1.0, "سافر أحمد إلى الرياض", "", "unknown")
     ents = {"a": ["أحمد", "الرياض"]}
     good = {"a": hio.Prediction("a", "سافر احمد الى الرياض", 0.1)}
@@ -112,7 +112,7 @@ def test_entity_probe_containment():
 
 
 def test_load_entities_filters(tmp_path):
-    from harfiyyan.report import load_entities
+    from tahqiq.report import load_entities
     p = tmp_path / "entities.jsonl"
     p.write_text(json.dumps({"id": "a", "dataset": "x", "entities": [
         {"text": "أحمد", "type": "PERS", "score": 0.95},

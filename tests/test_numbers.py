@@ -1,4 +1,4 @@
-from harfiyyan.normalize.numbers import digit_string, has_written_number
+from tahqiq.normalize.numbers import digit_string, has_written_number
 
 
 def test_has_written_number():
@@ -19,7 +19,7 @@ def test_digit_string_number_words():
 
 
 def test_has_number_words_but_not_ambiguous():
-    from harfiyyan.normalize.numbers import has_number
+    from tahqiq.normalize.numbers import has_number
     assert has_number("عندي خمسة أولاد")
     assert has_number("الساعة ٣")
     assert not has_number("يا ست الكل")          # ست = lady

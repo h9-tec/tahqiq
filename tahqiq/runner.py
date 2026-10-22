@@ -1,8 +1,8 @@
 """Run one model over one or more manifests, caching predictions.
 
-    uv run python -m harfiyyan.runner --model whisper_large_v3_turbo --dataset casablanca
-    uv run python -m harfiyyan.runner --model deepgram_nova3 --slice api
-    uv run python -m harfiyyan.runner --model X --limit 5          # smoke test
+    uv run python -m tahqiq.runner --model whisper_large_v3_turbo --dataset casablanca
+    uv run python -m tahqiq.runner --model deepgram_nova3 --slice api
+    uv run python -m tahqiq.runner --model X --limit 5          # smoke test
 
 Writes ``results/<model>/<dataset>.jsonl`` (resumable) and ``results/<model>/run.json``.
 """

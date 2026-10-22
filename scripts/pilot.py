@@ -1,6 +1,6 @@
 """M0 pilot gate: a ~300-utterance slice through Whisper + 3 vendor APIs.
 
-Everything the pilot writes goes under ``--out`` (default ~/research/harfiyyan/pilot),
+Everything the pilot writes goes under ``--out`` (default ~/research/tahqiq/pilot),
 NOT under results/, so the public manifest hash and results stay clean.
 
     uv run python scripts/pilot.py build  --per-dialect 19          # 8 dialects × 19 ≈ 150 utts
@@ -25,11 +25,11 @@ sys.path.insert(0, str(ROOT))
 
 from dotenv import load_dotenv  # noqa: E402
 
-from harfiyyan.manifest import load_manifest, write_manifest, write_manifest_hash  # noqa: E402
-from harfiyyan.report import markdown_table, score_model  # noqa: E402
-from harfiyyan.runner import AUDIO, MANIFESTS, run_model  # noqa: E402
+from tahqiq.manifest import load_manifest, write_manifest, write_manifest_hash  # noqa: E402
+from tahqiq.report import markdown_table, score_model  # noqa: E402
+from tahqiq.runner import AUDIO, MANIFESTS, run_model  # noqa: E402
 
-DEFAULT_OUT = Path.home() / "research" / "harfiyyan" / "pilot"
+DEFAULT_OUT = Path.home() / "research" / "tahqiq" / "pilot"
 PILOT_MODELS = ["whisper_large_v3_turbo", "deepgram_nova3", "elevenlabs_scribe", "openai_gpt4o_transcribe"]
 
 

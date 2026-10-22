@@ -383,66 +383,6 @@ wheels = [
 ]
 
 [[package]]
-name = "harfiyyan"
-version = "0.0.1"
-source = { editable = "." }
-dependencies = [
-    { name = "httpx" },
-    { name = "huggingface-hub" },
-    { name = "jiwer" },
-    { name = "numpy" },
-    { name = "python-dotenv" },
-    { name = "pyyaml" },
-    { name = "rapidfuzz" },
-    { name = "scipy" },
-    { name = "soundfile" },
-    { name = "tenacity" },
-    { name = "tqdm" },
-]
-
-[package.optional-dependencies]
-data = [
-    { name = "datasets" },
-    { name = "librosa" },
-    { name = "pyarrow" },
-]
-dev = [
-    { name = "pytest" },
-    { name = "ruff" },
-]
-gpu = [
-    { name = "accelerate" },
-    { name = "librosa" },
-    { name = "torch" },
-    { name = "transformers" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "accelerate", marker = "extra == 'gpu'", specifier = ">=0.33" },
-    { name = "datasets", marker = "extra == 'data'", specifier = ">=2.20" },
-    { name = "httpx", specifier = ">=0.27" },
-    { name = "huggingface-hub", specifier = ">=0.24" },
-    { name = "jiwer", specifier = ">=3.0" },
-    { name = "librosa", marker = "extra == 'data'", specifier = ">=0.10" },
-    { name = "librosa", marker = "extra == 'gpu'", specifier = ">=0.10" },
-    { name = "numpy", specifier = ">=1.26" },
-    { name = "pyarrow", marker = "extra == 'data'", specifier = ">=15" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "python-dotenv", specifier = ">=1.0" },
-    { name = "pyyaml", specifier = ">=6.0" },
-    { name = "rapidfuzz", specifier = ">=3.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.5" },
-    { name = "scipy", specifier = ">=1.11" },
-    { name = "soundfile", specifier = ">=0.12" },
-    { name = "tenacity", specifier = ">=8.2" },
-    { name = "torch", marker = "extra == 'gpu'", specifier = ">=2.3" },
-    { name = "tqdm", specifier = ">=4.66" },
-    { name = "transformers", marker = "extra == 'gpu'", specifier = ">=4.44" },
-]
-provides-extras = ["data", "gpu", "dev"]
-
-[[package]]
 name = "hf-xet"
 version = "1.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1403,6 +1343,66 @@ sdist = { url = "https://files.pythonhosted.org/packages/83/d3/803453b36afefb7c2
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a2/09/77d55d46fd61b4a135c444fc97158ef34a095e5681d0a6c10b75bf356191/sympy-1.14.0-py3-none-any.whl", hash = "sha256:e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5", size = 6299353, upload-time = "2025-04-27T18:04:59.103Z" },
 ]
+
+[[package]]
+name = "tahqiq"
+version = "0.0.1"
+source = { editable = "." }
+dependencies = [
+    { name = "httpx" },
+    { name = "huggingface-hub" },
+    { name = "jiwer" },
+    { name = "numpy" },
+    { name = "python-dotenv" },
+    { name = "pyyaml" },
+    { name = "rapidfuzz" },
+    { name = "scipy" },
+    { name = "soundfile" },
+    { name = "tenacity" },
+    { name = "tqdm" },
+]
+
+[package.optional-dependencies]
+data = [
+    { name = "datasets" },
+    { name = "librosa" },
+    { name = "pyarrow" },
+]
+dev = [
+    { name = "pytest" },
+    { name = "ruff" },
+]
+gpu = [
+    { name = "accelerate" },
+    { name = "librosa" },
+    { name = "torch" },
+    { name = "transformers" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "accelerate", marker = "extra == 'gpu'", specifier = ">=0.33" },
+    { name = "datasets", marker = "extra == 'data'", specifier = ">=2.20" },
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "huggingface-hub", specifier = ">=0.24" },
+    { name = "jiwer", specifier = ">=3.0" },
+    { name = "librosa", marker = "extra == 'data'", specifier = ">=0.10" },
+    { name = "librosa", marker = "extra == 'gpu'", specifier = ">=0.10" },
+    { name = "numpy", specifier = ">=1.26" },
+    { name = "pyarrow", marker = "extra == 'data'", specifier = ">=15" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "python-dotenv", specifier = ">=1.0" },
+    { name = "pyyaml", specifier = ">=6.0" },
+    { name = "rapidfuzz", specifier = ">=3.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.5" },
+    { name = "scipy", specifier = ">=1.11" },
+    { name = "soundfile", specifier = ">=0.12" },
+    { name = "tenacity", specifier = ">=8.2" },
+    { name = "torch", marker = "extra == 'gpu'", specifier = ">=2.3" },
+    { name = "tqdm", specifier = ">=4.66" },
+    { name = "transformers", marker = "extra == 'gpu'", specifier = ">=4.44" },
+]
+provides-extras = ["data", "gpu", "dev"]
 
 [[package]]
 name = "tenacity"

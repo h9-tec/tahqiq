@@ -3,7 +3,7 @@
     nohup .venv/bin/python scripts/worker.py --poll 120 > logs/worker.log 2>&1 &
     .venv/bin/python scripts/worker.py --once          # one job then exit
 
-Each job runs in a subprocess (``python -m harfiyyan.runner``) on the GPU with the
+Each job runs in a subprocess (``python -m tahqiq.runner``) on the GPU with the
 most free memory at that moment, in the main env or the NeMo env depending on the
 adapter. Models that need remote code, exceed the size limit, or have an unknown
 architecture are parked as NEEDS_REVIEW; set their status to APPROVED by hand to run.
@@ -27,8 +27,8 @@ from dotenv import load_dotenv  # noqa: E402
 
 load_dotenv(ROOT / ".env")
 
-from harfiyyan import hub  # noqa: E402
-from harfiyyan.models.auto import detect  # noqa: E402
+from tahqiq import hub  # noqa: E402
+from tahqiq.models.auto import detect  # noqa: E402
 
 sys.path.insert(0, str(ROOT / "scripts"))
 from publish import build_scores  # noqa: E402
@@ -65,8 +65,8 @@ def run_job(req: dict, *, exclude_gpus: set[int]) -> None:
     gpu = pick_gpu(exclude_gpus)
     py = PY_NEMO if dec.env == "nemo" else PY_MAIN
     env = {**os.environ, "CUDA_VISIBLE_DEVICES": gpu, "TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD": "1",
-           "HARFIYYAN_AUDIO": os.environ.get("HARFIYYAN_AUDIO", str(ROOT / "audio"))}
-    cmd = [str(py), "-m", "harfiyyan.runner", "--model", slug, "--hf-id", hf_id,
+           "TAHQIQ_AUDIO": os.environ.get("TAHQIQ_AUDIO", str(ROOT / "audio"))}
+    cmd = [str(py), "-m", "tahqiq.runner", "--model", slug, "--hf-id", hf_id,
            "--display-name", req.get("display_name") or hf_id]
     if adapter and adapter != "nemo":
         cmd += ["--adapter", adapter]

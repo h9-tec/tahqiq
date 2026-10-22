@@ -22,16 +22,16 @@ The manifest hash (`data/manifests/MANIFEST_SHA256`) covers utterance ids, refer
 - `elm`: a line-for-line port of Elm's `normalize_arabic_text`, tested for string equality against the vendored original. Use this column to compare with Elm's board.
 - `tolerant`: NFC, tashkeel, tatweel, alef/alef-maksura/ta-marbuta/hamza folding, digit unification, punctuation to space, whitespace, then an optional published spelling-variant table (`data/variants.yaml`).
 
-Both are applied identically to reference and hypothesis. Code: `harfiyyan/normalize/`.
+Both are applied identically to reference and hypothesis. Code: `tahqiq/normalize/`.
 
 ## Metrics
 
 - WER and CER are corpus-level (total edits / total reference tokens), as in Elm and NeMo.
 - Every number carries a 95% utterance-level percentile bootstrap interval (2,000 resamples, seed 0).
 - "vs baseline" is the paired bootstrap of WER(system) minus WER(Whisper large-v3) on shared utterances, plus McNemar's test on exact-match correctness.
-- Numeral probe: on utterances whose reference contains digits or an unambiguous spoken number word (`harfiyyan/normalize/numbers.py`), 1 if reference and hypothesis give the same digit string with number words mapped to digits on both sides, else 0. Wilson interval.
+- Numeral probe: on utterances whose reference contains digits or an unambiguous spoken number word (`tahqiq/normalize/numbers.py`), 1 if reference and hypothesis give the same digit string with number words mapped to digits on both sides, else 0. Wilson interval.
 - Entity probe: reference entities are tagged once with CAMeL-Lab's `bert-base-arabic-camelbert-mix-ner` (`data/probes/entities.jsonl`, published), filtered to PERS/LOC/ORG with tagger score >= 0.8, no sub-word fragments, >= 3 characters, religious formulas removed. Score = share of reference entities whose tolerant-normalized form appears in the tolerant-normalized hypothesis. Wilson interval. Both probes are computed at scoring time from the reference text, so they never touch the manifest hash.
-- Dialect columns pool utterances by the dialect label the source dataset provides (mapping in `harfiyyan/manifest.py`); rows with fewer than 20 utterances are not shown.
+- Dialect columns pool utterances by the dialect label the source dataset provides (mapping in `tahqiq/manifest.py`); rows with fewer than 20 utterances are not shown.
 - Coverage: the number of utterances a system returned output for is shown next to its score. Errors are not silently dropped from the denominator without being counted.
 
 ## Compute
@@ -45,9 +45,9 @@ Systems on the board in v0 are open-weight models. A later version may add the s
 ## Reproduce one row
 
 ```
-git clone https://github.com/h9-tec/harfiyyan && cd harfiyyan
+git clone https://github.com/h9-tec/tahqiq && cd tahqiq
 uv sync --extra data --extra gpu
 uv run python scripts/prepare_data.py casablanca            # needs the dataset's own access terms accepted
-uv run python -m harfiyyan.runner --model whisper_large_v3_turbo --dataset casablanca --slice api
+uv run python -m tahqiq.runner --model whisper_large_v3_turbo --dataset casablanca --slice api
 uv run python scripts/build.py build
 ```

@@ -1,8 +1,8 @@
 """Hugging Face Hub storage for the board: a public request queue and a public results store.
 
 Repos (datasets):
-  HeshamHaroon/harfiyyan-requests   requests/<slug>.json   one file per submission, status machine
-  HeshamHaroon/harfiyyan-results    scores/<slug>.json     aggregated scores for the board
+  HeshamHaroon/tahqiq-requests   requests/<slug>.json   one file per submission, status machine
+  HeshamHaroon/tahqiq-results    scores/<slug>.json     aggregated scores for the board
                                     results/<slug>/        per-utterance outputs + run.json
 
 Status machine: PENDING → RUNNING → DONE | FAILED ; PENDING → NEEDS_REVIEW → (human sets) APPROVED → RUNNING.
@@ -21,8 +21,8 @@ from pathlib import Path
 
 from huggingface_hub import HfApi, hf_hub_download, snapshot_download
 
-REQUESTS_REPO = os.environ.get("HARFIYYAN_REQUESTS_REPO", "HeshamHaroon/harfiyyan-requests")
-RESULTS_REPO = os.environ.get("HARFIYYAN_RESULTS_REPO", "HeshamHaroon/harfiyyan-results")
+REQUESTS_REPO = os.environ.get("TAHQIQ_REQUESTS_REPO", "HeshamHaroon/tahqiq-requests")
+RESULTS_REPO = os.environ.get("TAHQIQ_RESULTS_REPO", "HeshamHaroon/tahqiq-results")
 STATUSES = ("PENDING", "APPROVED", "RUNNING", "DONE", "FAILED", "NEEDS_REVIEW")
 
 

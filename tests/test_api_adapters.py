@@ -10,9 +10,9 @@ import numpy as np
 import pytest
 import soundfile as sf
 
-from harfiyyan.models.api.deepgram import Deepgram
-from harfiyyan.models.api.elevenlabs import ElevenLabsScribe
-from harfiyyan.models.api.openai import OpenAITranscribe
+from tahqiq.models.api.deepgram import Deepgram
+from tahqiq.models.api.elevenlabs import ElevenLabsScribe
+from tahqiq.models.api.openai import OpenAITranscribe
 
 
 @pytest.fixture
@@ -73,7 +73,7 @@ def test_openai_retries_on_429_then_succeeds(monkeypatch, wav):
     m.max_attempts = 5
     _mount(m, handler)
     # Make the retry wait instant.
-    import harfiyyan.models.api._http as h
+    import tahqiq.models.api._http as h
 
     monkeypatch.setattr(h, "wait_exponential_jitter", lambda **k: __import__("tenacity").wait_none())
     t = m.transcribe_path(wav)

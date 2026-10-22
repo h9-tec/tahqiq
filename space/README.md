@@ -1,5 +1,5 @@
 ---
-title: Harfiyyan · Arabic ASR Leaderboard
+title: Tahqiq · Arabic ASR Leaderboard
 emoji: 🎙️
 colorFrom: green
 colorTo: gray
@@ -10,9 +10,9 @@ license: apache-2.0
 hf_oauth: true
 hf_oauth_scopes:
   - write-discussions
-short_description: Arabic ASR leaderboard with CIs. Submit any open model.
+short_description: Arabic ASR, verified. CIs, dialects, submit any model.
 ---
 
-# Harfiyyan (حرفياً)
+# Tahqiq (تحقيق)
 
-Reproducible Arabic ASR leaderboard. Scores come from `HeshamHaroon/harfiyyan-results`; the queue is `HeshamHaroon/harfiyyan-requests`. Code: https://github.com/h9-tec/harfiyyan
+Reproducible Arabic ASR leaderboard. Scores come from `HeshamHaroon/tahqiq-results`; the queue is `HeshamHaroon/tahqiq-requests`. Code: https://github.com/h9-tec/tahqiq

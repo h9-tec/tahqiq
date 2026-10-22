@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from harfiyyan.normalize.tolerant import normalize_tolerant as n
+from tahqiq.normalize.tolerant import normalize_tolerant as n
 
 
 def test_diacritized_equals_undiacritized():

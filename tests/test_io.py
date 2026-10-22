@@ -3,7 +3,7 @@ import io
 import numpy as np
 import soundfile as sf
 
-from harfiyyan.io import decode_audio_bytes, load_audio_16k_mono, write_wav_16k
+from tahqiq.io import decode_audio_bytes, load_audio_16k_mono, write_wav_16k
 
 
 def _wav_bytes(sr: int, seconds: float, channels: int = 1) -> bytes:

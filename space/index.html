@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Harfiyyan · Arabic ASR Leaderboard</title>
+<title>Tahqiq · Arabic ASR Leaderboard</title>
 <meta name="description" content="Reproducible Arabic ASR leaderboard: Elm-compatible WER, variant-tolerant WER, numeral and entity probes, 95% confidence intervals, per dataset and per dialect. Submit any open model.">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="hero">
   <div class="wrap">
-    <div class="brand"><span class="glyph">حرفياً</span><h1>Harfiyyan</h1></div>
-    <p class="tag">Arabic ASR, scored <em>verbatim</em>. Open models on the same public test sets as Elm's leaderboard, re-run with one harness, two published normalizers, numeral and entity probes, and a 95% confidence interval on every number. Submit any open model below and it gets queued on our GPUs.</p>
+    <div class="brand"><span class="glyph">تحقيق</span><h1>Tahqiq</h1></div>
+    <p class="tag"><em>Tahqiq</em> (تحقيق): the slowest, most exact recitation, every letter given its full right; also the Arabic word for verification. Open models on the same public test sets as Elm's leaderboard, re-run with one harness, two published normalizers, numeral and entity probes, and a 95% confidence interval on every number. Submit any open model below and it gets queued on our GPUs.</p>
     <div class="pills" id="meta-pills"></div>
   </div>
 </header>
@@ -68,7 +68,7 @@
     <p>Every system is run zero-shot, as released, with the decode settings recorded in its <code>run.json</code>. Hypotheses and references go through the same published normalizer. WER and CER are corpus-level. Every number carries a 95% utterance-level percentile bootstrap interval (2,000 resamples). Test sets are the six public ones used by Elm's Open Universal Arabic ASR Leaderboard, reconstructed utterance for utterance from Elm's manifests (MGB-2 pending); audio stays on our machine, only outputs are published. The <em>common slice</em> is a fixed, seeded, dialect-stratified sample of about 1,000 utterances per set.</p>
     <p><b>Normalizers.</b> <code>elm</code> is a line-for-line port of Elm's, tested for string equality against the original, so that column is comparable to Elm's board. <code>tolerant</code> adds NFC, tatweel, alef/alef-maksura/ta-marbuta/hamza folding and a published spelling-variant table.</p>
     <p><b>Probes.</b> Numeral: references with digits or an unambiguous spoken number word, scored on digit-string equality with number words mapped on both sides. Entity: reference PERS/LOC/ORG spans from CAMeL-Lab's NER tagger (score ≥ 0.8, published side file), scored by containment after tolerant normalization.</p>
-    <p><b>Scope.</b> Open-weight models and global vendors only. Vendors domiciled in the GCC appear only after written opt-in. This page reports measured values and makes no other claims. Full details, code, manifests and every per-utterance output: <a href="https://github.com/h9-tec/harfiyyan">github.com/h9-tec/harfiyyan</a> and <a href="https://huggingface.co/datasets/HeshamHaroon/harfiyyan-results">harfiyyan-results</a>.</p>
+    <p><b>Scope.</b> Open-weight models and global vendors only. Vendors domiciled in the GCC appear only after written opt-in. This page reports measured values and makes no other claims. Full details, code, manifests and every per-utterance output: <a href="https://github.com/h9-tec/tahqiq">github.com/h9-tec/tahqiq</a> and <a href="https://huggingface.co/datasets/HeshamHaroon/tahqiq-results">tahqiq-results</a>.</p>
   </section>
 </main>
 

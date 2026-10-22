@@ -20,7 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from harfiyyan.manifest import load_manifest, manifest_paths  # noqa: E402
+from tahqiq.manifest import load_manifest, manifest_paths  # noqa: E402
 
 MODEL = "CAMeL-Lab/bert-base-arabic-camelbert-mix-ner"
 OUT = ROOT / "data" / "probes" / "entities.jsonl"
