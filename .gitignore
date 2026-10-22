@@ -1,13 +1,32 @@
-audio/
+# secrets and local environment
 .env
+.env.*
+!.env.example
 .venv/
+.venv-*/
+
+# python
 __pycache__/
 *.pyc
-dist/
-_site/
 .pytest_cache/
 .ruff_cache/
+
+# data that is never redistributed from this repo
+audio/
+audio_tars/
+raw/
 *.wav
 *.flac
 *.mp3
 hf_cache/
+
+# run artefacts: results are published to the Hugging Face results dataset, not committed here
+results/
+dist/
+_site/
+logs/
+*.pid
+*.log
+
+# worker space scratch
+space_worker/code/
