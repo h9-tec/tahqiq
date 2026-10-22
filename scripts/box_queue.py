@@ -48,6 +48,43 @@ def _save(state: dict) -> None:
     tmp.replace(STATE)
 
 
+class _FileLock:
+    """Cross-process lock so several queue processes (different GPU sets) can share the state file."""
+
+    def __enter__(self):
+        import fcntl
+        STATE.parent.mkdir(parents=True, exist_ok=True)
+        self.f = open(STATE.with_suffix(".lock"), "w")
+        fcntl.flock(self.f, fcntl.LOCK_EX)
+        return self
+
+    def __exit__(self, *a):
+        import fcntl
+        fcntl.flock(self.f, fcntl.LOCK_UN)
+        self.f.close()
+
+
+def _update(slug: str, **fields) -> dict:
+    """Read-modify-write one unit's entry under the file lock; returns the fresh state."""
+    with _FileLock():
+        st = _load()
+        st.setdefault(slug, {}).update(fields)
+        _save(st)
+        return st
+
+
+def _claim(queue: list[dict], gpu: int) -> dict | None:
+    """Atomically take the next PENDING unit (queue order) for this GPU."""
+    with _FileLock():
+        st = _load()
+        for u in queue:
+            if st.get(u["slug"], {}).get("status") == "PENDING":
+                st[u["slug"]].update({"status": "WAITING_GPU", "gpu": gpu})
+                _save(st)
+                return u
+    return None
+
+
 def build_units(priorities: set[int], max_weight_gb: float) -> tuple[list[dict], list[tuple]]:
     import yaml
     from runpod_burst import units_from_candidates
@@ -105,11 +142,9 @@ def gpu_free_gb(gpu: int) -> float:
 
 def worker(gpu: int, queue: list[dict], state: dict) -> None:
     while True:
-        with LOCK:
-            unit = next((u for u in queue if state.get(u["slug"], {}).get("status") == "PENDING"), None)
-            if unit is None:
-                return
-            state[unit["slug"]].update({"status": "WAITING_GPU", "gpu": gpu}); _save(state)
+        unit = _claim(queue, gpu)
+        if unit is None:
+            return
         need = 2.5 * unit["weights_gb"] + 6
         waited = 0
         while gpu_free_gb(gpu) < need and waited < 3600:
@@ -119,8 +154,7 @@ def worker(gpu: int, queue: list[dict], state: dict) -> None:
         env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(gpu), HF_HUB_DISABLE_XET="1", TOKENIZERS_PARALLELISM="false",
                    TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD="1", PYTHONPATH=str(ROOT))
         env.pop("TAHQIQ_TRUST_REMOTE_CODE", None)
-        with LOCK:
-            state[unit["slug"]].update({"status": "RUNNING", "started": time.strftime("%Y-%m-%dT%H:%M:%S")}); _save(state)
+        _update(unit["slug"], status="RUNNING", started=time.strftime("%Y-%m-%dT%H:%M:%S"), pid=os.getpid())
         print(f"[gpu{gpu}] start {unit['slug']} ({unit['weights_gb']} GB)", flush=True)
         t0 = time.time()
         with open(log, "ab") as f:
@@ -132,10 +166,8 @@ def worker(gpu: int, queue: list[dict], state: dict) -> None:
                 rc = subprocess.call(pub, shell=True, cwd=ROOT, env=env, stdout=f, stderr=subprocess.STDOUT)
                 if rc != 0:
                     rc = 1000 + rc  # distinguishes a publish failure from a runner failure
-        with LOCK:
-            state[unit["slug"]].update({"status": "DONE" if rc == 0 else f"FAILED rc={rc}", "rc": rc,
-                                        "ended": time.strftime("%Y-%m-%dT%H:%M:%S"), "minutes": round((time.time() - t0) / 60, 1)})
-            _save(state)
+        _update(unit["slug"], status="DONE" if rc == 0 else f"FAILED rc={rc}", rc=rc,
+                ended=time.strftime("%Y-%m-%dT%H:%M:%S"), minutes=round((time.time() - t0) / 60, 1))
         print(f"[gpu{gpu}] {unit['slug']}: {'done' if rc == 0 else 'FAILED rc=' + str(rc)} in {round((time.time() - t0) / 60)} min", flush=True)
 
 
@@ -148,6 +180,7 @@ def main() -> None:
     ap.add_argument("--only", default=None)
     ap.add_argument("--exclude", default=None)
     ap.add_argument("--retry", action="store_true", help="re-run FAILED units too")
+    ap.add_argument("--reset-running", action="store_true", help="treat RUNNING/WAITING_GPU entries as pending (after killing a previous queue)")
     a = ap.parse_args()
     state = _load()
     if a.cmd == "status":
@@ -178,11 +211,15 @@ def main() -> None:
             print(f"  skip {s}: {why}")
         return
     LOGS.mkdir(parents=True, exist_ok=True)
-    for u in queue:
-        state[u["slug"]] = {"status": "PENDING", "hf_id": u.get("hf_id"), "weights_gb": u["weights_gb"]}
-    for s, why in skipped:
-        state.setdefault(s, {"status": "SKIPPED", "why": why})
-    _save(state)
+    with _FileLock():
+        state = _load()
+        for u in queue:
+            cur = state.get(u["slug"], {}).get("status", "")
+            if a.reset_running or cur not in ("RUNNING", "WAITING_GPU"):   # another queue process may be on it
+                state[u["slug"]] = {"status": "PENDING", "hf_id": u.get("hf_id"), "weights_gb": u["weights_gb"]}
+        for s, why in skipped:
+            state.setdefault(s, {"status": "SKIPPED", "why": why})
+        _save(state)
     gpus = [int(g) for g in a.gpus.split(",")]
     print(f"{len(queue)} units on GPUs {gpus}", flush=True)
     threads = [threading.Thread(target=worker, args=(g, queue, state), daemon=True) for g in gpus]
@@ -191,7 +228,7 @@ def main() -> None:
     for t in threads:
         t.join()
     from collections import Counter
-    print("BOX_QUEUE_DONE", dict(Counter(v["status"].split(" ")[0] for v in state.values())), flush=True)
+    print("BOX_QUEUE_DONE", dict(Counter(v["status"].split(" ")[0] for v in _load().values())), flush=True)
 
 
 if __name__ == "__main__":
