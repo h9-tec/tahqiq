@@ -186,6 +186,8 @@ def bootstrap_script(unit: dict) -> str:
         pip += " && pip install -q omnilingual-asr"
     def eval_cmd(slug: str, datasets: list[str], timing: bool, hf_id: str | None, display: str | None) -> str:
         sl = f" --slice {unit['slice']}" if unit.get("slice") else ""
+        if unit.get("nemo"):
+            sl += " --batch 1"
         c = f"python scripts/eval_job.py --slug {slug} --datasets {','.join(datasets)} --helper{sl}"
         if hf_id:
             c += f" --hf-id {hf_id}"
