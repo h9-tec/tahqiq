@@ -278,6 +278,11 @@ with gr.Blocks(title="Tahqiq worker") as demo:
         gr.Button("start_job").click(start_job, inputs=[a_slug], outputs=[a_out], api_name="start_job")
         gr.Button("evaluate_dataset").click(evaluate_dataset, inputs=[a_slug, a_hf, a_name, a_ad, a_ds], outputs=[a_out], api_name="evaluate_dataset")
         gr.Button("finalize_job").click(finalize_job, inputs=[a_slug, a_hf, a_name, a_ad, a_dsj], outputs=[a_out], api_name="finalize_job")
+    def _status():
+        return json.dumps(STATE), "\n".join(LOG[-60:])
+
+    refresh.click(_status, outputs=[status, logbox])
+    poll_btn.click(lambda: poll_once(), outputs=[a_out]).then(_status, outputs=[status, logbox])
     demo.load(_status, outputs=[status, logbox])
 
 demo.queue(default_concurrency_limit=1).launch()

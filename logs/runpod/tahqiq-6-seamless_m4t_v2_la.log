@@ -1,0 +1,123 @@
+Warning: Permanently added '[38.80.152.146]:31896' (ED25519) to the list of known hosts.
+seeding/verifying the volume (this pod holds the lock)
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+httpcore 1.0.7 requires h11<0.15,>=0.13, but you have h11 0.16.0 which is incompatible.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: python -m pip install --upgrade pip
+have casablanca 6818
+have commonvoice 10471
+have masc_clean 8612
+have masc_noisy 9394
+have mgb2 5365
+have sada 6193
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: python -m pip install --upgrade pip
+tahqiq import ok 3.11.11
+[13:14:37] volume /vol: audio linked, manifests ['MANIFEST_SHA256', 'casablanca.jsonl', 'commonvoice.jsonl', 'masc_clean.jsonl', 'masc_noisy.jsonl', 'mgb2.jsonl', 'sada.jsonl']
+[13:14:37] run: tahqiq.runner --model seamless_m4t_v2_large --dataset casablanca --dataset masc_clean --dataset sada --helper
+== seamless_m4t_v2_large (open) run_id=a39a4daf355b
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:16<00:16, 16.23s/it]Fetching 2 files: 100%|██████████| 2/2 [00:19<00:00,  8.57s/it]Fetching 2 files: 100%|██████████| 2/2 [00:19<00:00,  9.72s/it]
+Loading weights:   0%|          | 0/1429 [00:00<?, ?it/s]Loading weights:  80%|████████  | 1147/1429 [00:00<00:00, 11447.52it/s]Loading weights: 100%|██████████| 1429/1429 [00:00<00:00, 8581.62it/s] 
+[transformers] [1mSeamlessM4Tv2ForSpeechToText LOAD REPORT[0m from: facebook/seamless-m4t-v2-large
+Key                                                                           | Status     |  | 
+------------------------------------------------------------------------------+------------+--+-
+text_encoder.layers.{0...23}.ffn.fc1.bias                                     | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.ffn_layer_norm.bias                              | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.ffn.fc2.weight                                   | UNEXPECTED |  | 
+vocoder.hifi_gan.resblocks.{0...14}.convs1.{0, 1, 2}.bias                     | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.self_attn.v_proj.bias                            | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.ffn_layer_norm.bias         | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.self_attn_layer_norm.weight | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.self_attn.q_proj.weight                          | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.self_attn.v_proj.weight                          | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.v_proj.bias       | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.self_attn.out_proj.weight                        | UNEXPECTED |  | 
+t2u_model.model.decoder.pos_emb_alpha_char                                    | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.conv2.weight                | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.self_attn_layer_norm.bias                        | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.self_attn.q_proj.bias                            | UNEXPECTED |  | 
+vocoder.hifi_gan.resblocks.{0...14}.convs1.{0, 1, 2}.weight                   | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.self_attn.k_proj.weight                          | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.ffn.fc2.weight              | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.ffn_layer_norm.weight                            | UNEXPECTED |  | 
+vocoder.hifi_gan.resblocks.{0...14}.convs2.{0, 1, 2}.bias                     | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.self_attn.k_proj.bias                            | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.q_proj.weight     | UNEXPECTED |  | 
+vocoder.dur_predictor.ln2.weight                                              | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.out_proj.weight   | UNEXPECTED |  | 
+vocoder.hifi_gan.resblocks.{0...14}.convs2.{0, 1, 2}.weight                   | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.self_attn_layer_norm.weight                      | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.ffn.fc1.bias                | UNEXPECTED |  | 
+t2u_model.model.decoder.layer_norm.bias                                       | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.k_proj.bias       | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.out_proj.bias     | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.self_attn.out_proj.bias                          | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.ffn.fc2.bias                | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.self_attn_layer_norm.bias   | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.ffn.fc1.weight                                   | UNEXPECTED |  | 
+text_encoder.layers.{0...23}.ffn.fc2.bias                                     | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.v_proj.weight     | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.conv_layer_norm.weight      | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.k_proj.weight     | UNEXPECTED |  | 
+t2u_model.model.decoder.duration_predictor.proj.bias                          | UNEXPECTED |  | 
+vocoder.speaker_embedding.weight                                              | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.out_proj.bias     | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.q_proj.bias       | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.q_proj.weight     | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.conv1.weight                | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.conv2.bias                  | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.conv_layer_norm.bias        | UNEXPECTED |  | 
+t2u_model.model.decoder.pos_emb_alpha                                         | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.k_proj.weight     | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.conv1.bias                  | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.ffn.fc1.weight              | UNEXPECTED |  | 
+vocoder.hifi_gan.upsampler.{0, 1, 2, 3, 4}.bias                               | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.self_attn_layer_norm.bias   | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.self_attn_layer_norm.weight | UNEXPECTED |  | 
+t2u_model.model.decoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.v_proj.weight     | UNEXPECTED |  | 
+t2u_model.model.decoder.duration_predictor.conv2.bias                         | UNEXPECTED |  | 
+vocoder.hifi_gan.conv_post.weight                                             | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.q_proj.bias       | UNEXPECTED |  | 
+t2u_model.model.decoder.embed_char.weight                                     | UNEXPECTED |  | 
+vocoder.unit_embedding.weight                                                 | UNEXPECTED |  | 
+vocoder.dur_predictor.conv2.weight                                            | UNEXPECTED |  | 
+vocoder.hifi_gan.upsampler.{0, 1, 2, 3, 4}.weight                             | UNEXPECTED |  | 
+text_encoder.layer_norm.weight                                                | UNEXPECTED |  | 
+vocoder.dur_predictor.proj.weight                                             | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.k_proj.bias       | UNEXPECTED |  | 
+vocoder.hifi_gan.conv_pre.bias                                                | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.ffn_layer_norm.weight       | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.out_proj.weight   | UNEXPECTED |  | 
+t2u_model.model.decoder.layer_norm.weight                                     | UNEXPECTED |  | 
+t2u_model.model.decoder.duration_predictor.conv1.weight                       | UNEXPECTED |  | 
+t2u_model.model.decoder.duration_predictor.ln1.bias                           | UNEXPECTED |  | 
+t2u_model.model.decoder.duration_predictor.ln2.weight                         | UNEXPECTED |  | 
+t2u_model.model.decoder.duration_predictor.ln1.weight                         | UNEXPECTED |  | 
+vocoder.dur_predictor.ln2.bias                                                | UNEXPECTED |  | 
+vocoder.dur_predictor.proj.bias                                               | UNEXPECTED |  | 
+text_encoder.layer_norm.bias                                                  | UNEXPECTED |  | 
+t2u_model.model.encoder.layers.{0, 1, 2, 3, 4, 5}.self_attn.v_proj.bias       | UNEXPECTED |  | 
+t2u_model.model.decoder.embed_tokens.weight                                   | UNEXPECTED |  | 
+t2u_model.model.decoder.duration_predictor.conv2.weight                       | UNEXPECTED |  | 
+t2u_model.model.decoder.duration_predictor.proj.weight                        | UNEXPECTED |  | 
+t2u_model.model.decoder.duration_predictor.conv1.bias                         | UNEXPECTED |  | 
+vocoder.dur_predictor.conv1.weight                                            | UNEXPECTED |  | 
+vocoder.dur_predictor.conv2.bias                                              | UNEXPECTED |  | 
+t2u_model.model.encoder.layer_norm.bias                                       | UNEXPECTED |  | 
+vocoder.hifi_gan.conv_post.bias                                               | UNEXPECTED |  | 
+vocoder.language_embedding.weight                                             | UNEXPECTED |  | 
+vocoder.dur_predictor.conv1.bias                                              | UNEXPECTED |  | 
+vocoder.hifi_gan.conv_pre.weight                                              | UNEXPECTED |  | 
+vocoder.dur_predictor.ln1.weight                                              | UNEXPECTED |  | 
+vocoder.dur_predictor.ln1.bias                                                | UNEXPECTED |  | 
+t2u_model.model.decoder.duration_predictor.ln2.bias                           | UNEXPECTED |  | 
+t2u_model.model.encoder.layer_norm.weight                                     | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+seamless_m4t_v2_large/casablanca:   0%|          | 0/6818 [00:00<?, ?utt/s][transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer SeamlessM4TTokenizer. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+seamless_m4t_v2_large/casablanca:   0%|          | 16/6818 [00:00<05:25, 20.91utt/s]seamless_m4t_v2_large/casablanca:   0%|          | 32/6818 [00:01<03:18, 34.15utt/s]seamless_m4t_v2_large/casablanca:   1%|          | 48/6818 [00:01<04:05, 27.60utt/s]seamless_m4t_v2_large/casablanca:   1%|          | 64/6818 [00:01<03:10, 35.45utt/s]seamless_m4t_v2_large/casablanca:   1%|          | 80/6818 [00:02<02:40, 41.88utt/s]seamless_m4t_v2_large/casablanca:   1%|▏         | 96/6818 [00:02<02:26, 46.03utt/s]seamless_m4t_v2_large/casablanca:   2%|▏         | 112/6818 [00:02<02:15, 49.44utt/s]seamless_m4t_v2_large/casablanca:   2%|▏         | 128/6818 [00:03<02:09, 51.46utt/s]seamless_m4t_v2_large/casablanca:   2%|▏         | 144/6818 [00:03<02:04, 53.50utt/s]seamless_m4t_v2_large/casablanca:   2%|▏         | 160/6818 [00:03<01:59, 55.81utt/s]seamless_m4t_v2_large/casablanca:   3%|▎         | 176/6818 [00:03<01:56, 57.18utt/s]seamless_m4t_v2_large/casablanca:   3%|▎         | 192/6818 [00:04<01:54, 57.89utt/s]seamless_m4t_v2_large/casablanca:   3%|▎         | 208/6818 [00:04<01:53, 58.39utt/s]seamless_m4t_v2_large/casablanca:   3%|▎         | 224/6818 [00:04<01:51, 59.35utt/s]seamless_m4t_v2_large/casablanca:   4%|▎         | 240/6818 [00:04<01:53, 57.99utt/s]seamless_m4t_v2_large/casablanca:   4%|▍         | 256/6818 [00:05<01:53, 57.65utt/s]seamless_m4t_v2_large/casablanca:   4%|▍         | 272/6818 [00:05<01:51, 58.47utt/s]seamless_m4t_v2_large/casablanca:   4%|▍         | 288/6818 [00:05<01:50, 58.85utt/s]seamless_m4t_v2_large/casablanca:   4%|▍         | 304/6818 [00:06<01:50, 59.15utt/s]seamless_m4t_v2_large/casablanca:   5%|▍         | 320/6818 [00:07<04:30, 24.00utt/s]seamless_m4t_v2_large/casablanca:   5%|▍         | 336/6818 [00:07<03:41, 29.25utt/s]seamless_m4t_v2_large/casablanca:   5%|▌         | 352/6818 [00:08<03:09, 34.04utt/s]seamless_m4t_v2_large/casablanca:   5%|▌         | 368/6818 [00:08<02:48, 38.36utt/s]seamless_m4t_v2_large/casablanca:   6%|▌         | 384/6818 [00:08<02:33, 42.05utt/s]seamless_m4t_v2_large/casablanca:   6%|▌         | 400/6818 [00:09<02:25, 44.13utt/s]seamless_m4t_v2_large/casablanca:   6%|▌         | 416/6818 [00:09<02:15, 47.22utt/s]seamless_m4t_v2_large/casablanca:   6%|▋         | 432/6818 [00:09<02:13, 47.82utt/s]seamless_m4t_v2_large/casablanca:   7%|▋         | 448/6818 [00:10<02:07, 50.10utt/s]seamless_m4t_v2_large/casablanca:   7%|▋         | 464/6818 [00:10<01:59, 53.25utt/s]seamless_m4t_v2_large/casablanca:   7%|▋         | 480/6818 [00:10<01:57, 53.81utt/s]seamless_m4t_v2_large/casablanca:   7%|▋         | 496/6818 [00:10<01:54, 54.99utt/s]seamless_m4t_v2_large/casablanca:   8%|▊         | 512/6818 [00:11<01:57, 53.59utt/s]seamless_m4t_v2_large/casablanca:   8%|▊         | 528/6818 [00:11<01:56, 54.07utt/s]seamless_m4t_v2_large/casablanca:   8%|▊         | 544/6818 [00:11<01:53, 55.20utt/s]seamless_m4t_v2_large/casablanca:   8%|▊         | 560/6818 [00:11<01:53, 55.37utt/s]seamless_m4t_v2_large/casablanca:   8%|▊         | 576/6818 [00:12<01:52, 55.45utt/s]seamless_m4t_v2_large/casablanca:   9%|▊         | 592/6818 [00:12<01:55, 54.13utt/s]seamless_m4t_v2_large/casablanca:   9%|▉         | 608/6818 [00:12<02:03, 50.44utt/s]seamless_m4t_v2_large/casablanca:   9%|▉         | 624/6818 [00:13<02:02, 50.61utt/s]seamless_m4t_v2_large/casablanca:   9%|▉         | 640/6818 [00:13<01:59, 51.63utt/s]seamless_m4t_v2_large/casablanca:  10%|▉         | 656/6818 [00:13<01:56, 52.95utt/s]seamless_m4t_v2_large/casablanca:  10%|▉         | 672/6818 [00:14<01:56, 52.88utt/s]seamless_m4t_v2_large/casablanca:  10%|█         | 688/6818 [00:14<01:55, 53.20utt/s]seamless_m4t_v2_large/casablanca:  10%|█         | 704/6818 [00:14<01:52, 54.28utt/s]seamless_m4t_v2_large/casablanca:  11%|█         | 720/6818 [00:15<01:53, 53.80utt/s]seamless_m4t_v2_large/casablanca:  11%|█         | 736/6818 [00:15<02:40, 37.81utt/s]seamless_m4t_v2_large/casablanca:  11%|█         | 752/6818 [00:16<02:24, 42.04utt/s]seamless_m4t_v2_large/casablanca:  11%|█▏        | 768/6818 [00:16<02:12, 45.56utt/s]seamless_m4t_v2_large/casablanca:  11%|█▏        | 784/6818 [00:16<02:05, 48.17utt/s]seamless_m4t_v2_large/casablanca:  12%|█▏        | 800/6818 [00:16<01:58, 50.61utt/s]seamless_m4t_v2_large/casablanca:  12%|█▏        | 816/6818 [00:17<01:58, 50.82utt/s]seamless_m4t_v2_large/casablanca:  12%|█▏        | 832/6818 [00:17<01:58, 50.47utt/s]seamless_m4t_v2_large/casablanca:  12%|█▏        | 848/6818 [00:19<04:20, 22.95utt/s]seamless_m4t_v2_large/casablanca:  13%|█▎        | 864/6818 [00:19<03:36, 27.48utt/s]seamless_m4t_v2_large/casablanca:  13%|█▎        | 880/6818 [00:20<04:26, 22.25utt/s]seamless_m4t_v2_large/casablanca:  13%|█▎        | 896/6818 [00:20<03:41, 26.75utt/s]seamless_m4t_v2_large/casablanca:  13%|█▎        | 912/6818 [00:21<03:07, 31.53utt/s]seamless_m4t_v2_large/casablanca:  14%|█▎        | 928/6818 [00:21<02:47, 35.14utt/s]seamless_m4t_v2_large/casablanca:  14%|█▍        | 944/6818 [00:21<02:34, 38.14utt/s]seamless_m4t_v2_large/casablanca:  14%|█▍        | 960/6818 [00:22<02:25, 40.31utt/s]seamless_m4t_v2_large/casablanca:  14%|█▍        | 976/6818 [00:22<02:15, 42.99utt/s]seamless_m4t_v2_large/casablanca:  15%|█▍        | 992/6818 [00:22<02:08, 45.38utt/s]seamless_m4t_v2_large/casablanca:  15%|█▍        | 1008/6818 [00:23<02:04, 46.72utt/s]seamless_m4t_v2_large/casablanca:  15%|█▌        | 1024/6818 [00:23<01:58, 48.87utt/s]seamless_m4t_v2_large/casablanca:  15%|█▌        | 1040/6818 [00:23<01:59, 48.36utt/s]seamless_m4t_v2_large/casablanca:  15%|█▌        | 1056/6818 [00:23<01:56, 49.52utt/s]seamless_m4t_v2_large/casablanca:  16%|█▌        | 1072/6818 [00:24<01:57, 49.06utt/s]seamless_m4t_v2_large/casablanca:  16%|█▌        | 1088/6818 [00:24<01:57, 48.89utt/s]seamless_m4t_v2_large/casablanca:  16%|█▌        | 1104/6818 [00:25<02:52, 33.07utt/s]seamless_m4t_v2_large/casablanca:  16%|█▋        | 1120/6818 [00:25<02:43, 34.79utt/s]seamless_m4t_v2_large/casablanca:  17%|█▋        | 1136/6818 [00:26<02:31, 37.40utt/s]seamless_m4t_v2_large/casablanca:  17%|█▋        | 1152/6818 [00:26<02:21, 40.02utt/s]seamless_m4t_v2_large/casablanca:  17%|█▋        | 1168/6818 [00:27<03:09, 29.78utt/s]seamless_m4t_v2_large/casablanca:  17%|█▋        | 1184/6818 [00:27<02:44, 34.35utt/s]seamless_m4t_v2_large/casablanca:  18%|█▊        | 1200/6818 [00:28<02:30, 37.21utt/s]seamless_m4t_v2_large/casablanca:  18%|█▊        | 1216/6818 [00:28<02:23, 39.08utt/s]seamless_m4t_v2_large/casablanca:  18%|█▊        | 1232/6818 [00:28<02:21, 39.40utt/s]seamless_m4t_v2_large/casablanca:  18%|█▊        | 1248/6818 [00:29<02:15, 41.23utt/s]seamless_m4t_v2_large/casablanca:  19%|█▊        | 1264/6818 [00:29<02:37, 35.35utt/s]seamless_m4t_v2_large/casablanca:  19%|█▉        | 1280/6818 [00:30<02:28, 37.39utt/s]seamless_m4t_v2_large/casablanca:  19%|█▉        | 1296/6818 [00:30<02:15, 40.79utt/s]seamless_m4t_v2_large/casablanca:  19%|█▉        | 1312/6818 [00:30<02:08, 42.88utt/s]seamless_m4t_v2_large/casablanca:  19%|█▉        | 1328/6818 [00:31<02:02, 44.79utt/s]seamless_m4t_v2_large/casablanca:  20%|█▉        | 1344/6818 [00:31<01:58, 46.14utt/s]seamless_m4t_v2_large/casablanca:  20%|█▉        | 1360/6818 [00:31<01:55, 47.28utt/s]seamless_m4t_v2_large/casablanca:  20%|██        | 1376/6818 [00:32<01:54, 47.32utt/s]seamless_m4t_v2_large/casablanca:  20%|██        | 1392/6818 [00:32<01:57, 46.38utt/s]seamless_m4t_v2_large/casablanca:  21%|██        | 1408/6818 [00:32<01:56, 46.51utt/s]seamless_m4t_v2_large/casablanca:  21%|██        | 1424/6818 [00:33<01:54, 47.04utt/s]seamless_m4t_v2_large/casablanca:  21%|██        | 1440/6818 [00:33<01:56, 46.18utt/s]seamless_m4t_v2_large/casablanca:  21%|██▏       | 1456/6818 [00:34<02:48, 31.83utt/s]seamless_m4t_v2_large/casablanca:  22%|██▏       | 1472/6818 [00:34<02:32, 35.10utt/s]seamless_m4t_v2_large/casablanca:  22%|██▏       | 1488/6818 [00:36<04:25, 20.07utt/s]seamless_m4t_v2_large/casablanca:  22%|██▏       | 1504/6818 [00:36<03:35, 24.61utt/s]seamless_m4t_v2_large/casablanca:  22%|██▏       | 1520/6818 [00:36<03:04, 28.78utt/s]seamless_m4t_v2_large/casablanca:  23%|██▎       | 1536/6818 [00:37<02:38, 33.28utt/s]seamless_m4t_v2_large/casablanca:  23%|██▎       | 1552/6818 [00:37<02:22, 37.03utt/s]seamless_m4t_v2_large/casablanca:  23%|██▎       | 1568/6818 [00:37<02:16, 38.41utt/s]seamless_m4t_v2_large/casablanca:  23%|██▎       | 1584/6818 [00:38<02:07, 41.11utt/s]seamless_m4t_v2_large/casablanca:  23%|██▎       | 1600/6818 [00:38<02:06, 41.22utt/s]seamless_m4t_v2_large/casablanca:  24%|██▎       | 1616/6818 [00:38<02:01, 42.90utt/s]seamless_m4t_v2_large/casablanca:  24%|██▍       | 1632/6818 [00:39<01:58, 43.59utt/s]seamless_m4t_v2_large/casablanca:  24%|██▍       | 1648/6818 [00:39<01:57, 43.88utt/s]seamless_m4t_v2_large/casablanca:  24%|██▍       | 1664/6818 [00:40<01:58, 43.51utt/s]seamless_m4t_v2_large/casablanca:  25%|██▍       | 1680/6818 [00:40<01:54, 45.01utt/s]seamless_m4t_v2_large/casablanca:  25%|██▍       | 1696/6818 [00:41<02:40, 31.89utt/s]seamless_m4t_v2_large/casablanca:  25%|██▌       | 1712/6818 [00:41<02:24, 35.41utt/s]seamless_m4t_v2_large/casablanca:  25%|██▌       | 1728/6818 [00:42<03:49, 22.17utt/s]seamless_m4t_v2_large/casablanca:  26%|██▌       | 1744/6818 [00:43<03:13, 26.22utt/s]
