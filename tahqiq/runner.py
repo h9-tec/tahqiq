@@ -106,6 +106,10 @@ def run_model(
                     hio.append_prediction(results_dir, model_id, ds, pred)
                 totals["done"] += len(group)
                 pbar.update(len(group))
+                if totals["done"] >= 40 and totals["errors"] == totals["done"]:
+                    # every utterance so far failed: a broken environment, not bad audio. Stop instead of
+                    # writing 46k error rows (the errored ids are retried on the next run).
+                    raise RuntimeError(f"all {totals['done']} utterances errored; last: {preds[-1].error if preds else '?'}")
             pbar.close()
     finally:
         model.unload()
