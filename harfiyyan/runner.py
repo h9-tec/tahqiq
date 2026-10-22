@@ -58,8 +58,11 @@ def run_model(
     manifests_dir: Path = MANIFESTS,
     audio_dir: Path = AUDIO,
     results_dir: Path = RESULTS,
+    hf_id: str | None = None,
+    display_name: str | None = None,
+    adapter: str | None = None,
 ) -> dict:
-    model = registry.build(model_id)
+    model = registry.build(model_id, hf_id=hf_id, display_name=display_name, adapter=adapter)
     run_id = uuid.uuid4().hex[:12]
     started = datetime.now(timezone.utc).isoformat()
     print(f"== {model_id} ({model.kind}) run_id={run_id}")
@@ -123,6 +126,9 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--dataset", action="append", help="dataset name; repeatable; default all manifests")
     ap.add_argument("--slice", default=None, choices=[None, "full", "api", "timing"])
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--hf-id", default=None, help="run an arbitrary Hub model under --model <slug>")
+    ap.add_argument("--display-name", default=None)
+    ap.add_argument("--adapter", default=None, help="force adapter key (see models/auto.py)")
     args = ap.parse_args(argv)
 
     from dotenv import load_dotenv
@@ -132,7 +138,8 @@ def main(argv: list[str] | None = None) -> None:
     datasets = args.dataset or [p.stem for p in manifest_paths(MANIFESTS)]
     models = registry.list_models() if args.model == "all" else [args.model]
     for m in models:
-        run_model(m, datasets, slice_name=args.slice, limit=args.limit)
+        run_model(m, datasets, slice_name=args.slice, limit=args.limit, hf_id=args.hf_id,
+                  display_name=args.display_name, adapter=args.adapter)
 
 
 if __name__ == "__main__":

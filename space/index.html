@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harfiyyan · Arabic ASR Leaderboard</title>
+<meta name="description" content="Reproducible Arabic ASR leaderboard: Elm-compatible WER, variant-tolerant WER, numeral and entity probes, 95% confidence intervals, per dataset and per dialect. Submit any open model.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="brand"><span class="glyph">حرفياً</span><h1>Harfiyyan</h1></div>
+    <p class="tag">Arabic ASR, scored <em>verbatim</em>. Open models on the same public test sets as Elm's leaderboard, re-run with one harness, two published normalizers, numeral and entity probes, and a 95% confidence interval on every number. Submit any open model below and it gets queued on our GPUs.</p>
+    <div class="pills" id="meta-pills"></div>
+  </div>
+</header>
+
+<nav class="wrap tabs" role="tablist">
+  <button class="on" data-tab="board" role="tab">Leaderboard</button>
+  <button data-tab="dialects" role="tab">By dialect</button>
+  <button data-tab="submit" role="tab">Submit a model</button>
+  <button data-tab="queue" role="tab">Queue</button>
+  <button data-tab="method" role="tab">Method</button>
+</nav>
+
+<main class="wrap">
+  <section id="tab-board" class="tab on">
+    <div class="controls">
+      <div class="seg" aria-label="Slice"><button class="on" data-slice="full">Full test sets</button><button data-slice="api">Common slice</button></div>
+      <div class="seg" aria-label="Normalizer"><button class="on" data-norm="elm">Elm normalizer</button><button data-norm="tolerant">Tolerant normalizer</button></div>
+      <div class="seg" aria-label="Metric"><button class="on" data-metric="wer">WER</button><button data-metric="cer">CER</button></div>
+      <label class="chk"><input type="checkbox" id="show-ci" checked> show 95% CI</label>
+    </div>
+    <h2>Leaderboard <span class="sub" id="lb-sub"></span></h2>
+    <div class="scroll"><table id="lb"><thead></thead><tbody></tbody></table></div>
+    <p class="note">Average = unweighted mean over the sets shown (Elm's convention). “Δ vs Whisper v3” = paired bootstrap difference in WER on shared utterances, Elm normalizer; negative is better than the baseline. Numeral probe: share of references containing a number where the hypothesis has the same digits. Entity probe: share of reference names/places/orgs found in the hypothesis. Click a row for the model card and the per-utterance outputs.</p>
+    <h2>Test sets</h2>
+    <div class="cards" id="datasets"></div>
+  </section>
+
+  <section id="tab-dialects" class="tab">
+    <h2>By dialect <span class="sub">WER, pooled across sets that carry dialect labels (SADA, Casablanca)</span></h2>
+    <div class="scroll"><table id="dialects"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <section id="tab-submit" class="tab">
+    <h2>Submit a model</h2>
+    <p>Any public Hugging Face model with a transformers-native ASR architecture (Whisper, wav2vec2/HuBERT CTC, Qwen3-ASR, Cohere Transcribe, Voxtral) or a NeMo <code>.nemo</code> checkpoint, up to 24 GB of weights. Repositories that need <code>trust_remote_code</code> are parked for manual review first. The run takes 1 to 6 hours on our GPUs; results appear here and in the queue thread.</p>
+    <div id="auth"><button id="login" class="primary">Sign in with Hugging Face to submit</button><p class="note">We only ask for permission to open a discussion in the requests repo on your behalf. Nothing else.</p></div>
+    <form id="submit-form" class="form" hidden>
+      <p class="note">Signed in as <b id="who"></b>.</p>
+      <label>Model id <input name="hf_id" placeholder="owner/model-name" required pattern="[A-Za-z0-9_.\-]+/[A-Za-z0-9_.\-]+"></label>
+      <label>Display name (optional) <input name="display_name" placeholder="My Arabic ASR v2"></label>
+      <label>Notes (optional) <textarea name="notes" rows="3" placeholder="training data, anything we should know (e.g. trained on SADA train)"></textarea></label>
+      <button class="primary" type="submit">Submit</button>
+      <p id="submit-msg" class="note"></p>
+    </form>
+  </section>
+
+  <section id="tab-queue" class="tab">
+    <h2>Queue <span class="sub">every submission and its status</span></h2>
+    <div class="scroll"><table id="queue"><thead><tr><th>Model</th><th>Status</th><th>Submitted</th><th>By</th><th>Note</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section id="tab-method" class="tab method">
+    <h2>Method</h2>
+    <p>Every system is run zero-shot, as released, with the decode settings recorded in its <code>run.json</code>. Hypotheses and references go through the same published normalizer. WER and CER are corpus-level. Every number carries a 95% utterance-level percentile bootstrap interval (2,000 resamples). Test sets are the six public ones used by Elm's Open Universal Arabic ASR Leaderboard, reconstructed utterance for utterance from Elm's manifests (MGB-2 pending); audio stays on our machine, only outputs are published. The <em>common slice</em> is a fixed, seeded, dialect-stratified sample of about 1,000 utterances per set.</p>
+    <p><b>Normalizers.</b> <code>elm</code> is a line-for-line port of Elm's, tested for string equality against the original, so that column is comparable to Elm's board. <code>tolerant</code> adds NFC, tatweel, alef/alef-maksura/ta-marbuta/hamza folding and a published spelling-variant table.</p>
+    <p><b>Probes.</b> Numeral: references with digits or an unambiguous spoken number word, scored on digit-string equality with number words mapped on both sides. Entity: reference PERS/LOC/ORG spans from CAMeL-Lab's NER tagger (score ≥ 0.8, published side file), scored by containment after tolerant normalization.</p>
+    <p><b>Scope.</b> Open-weight models and global vendors only. Vendors domiciled in the GCC appear only after written opt-in. This page reports measured values and makes no other claims. Full details, code, manifests and every per-utterance output: <a href="https://github.com/h9-tec/harfiyyan">github.com/h9-tec/harfiyyan</a> and <a href="https://huggingface.co/datasets/HeshamHaroon/harfiyyan-results">harfiyyan-results</a>.</p>
+  </section>
+</main>
+
+<dialog id="card"><div class="card-body"></div><form method="dialog"><button>Close</button></form></dialog>
+<footer class="wrap foot" id="foot"></footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

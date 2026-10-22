@@ -48,9 +48,14 @@ def list_models() -> list[str]:
     return list(REGISTRY)
 
 
-def build(model_id: str) -> ASRModel:
+def build(model_id: str, *, hf_id: str | None = None, display_name: str | None = None, adapter: str | None = None) -> ASRModel:
+    """Registry model by id, or any Hub model when ``hf_id`` is given (adapter auto-detected)."""
     if model_id in REGISTRY:
         return REGISTRY[model_id]()
     if model_id in API_REGISTRY:
         return API_REGISTRY[model_id]()
+    if hf_id:
+        from .auto import build_from_hub
+
+        return build_from_hub(model_id, hf_id, display_name, adapter=adapter)
     raise KeyError(f"unknown model_id {model_id!r}; known: {list_models()} + api: {list(API_REGISTRY)}")
