@@ -2,12 +2,13 @@
 
     model = registry.build("whisper_large_v3_turbo")
     model.load()
-    t = model.transcribe_path(Path("audio/x.wav"))   # Transcript(text, wall_s, attempts)
+    t = model.transcribe_path(Path("audio/x.wav"))            # Transcript(text, wall_s, attempts)
+    ts = model.transcribe_paths([Path(...), Path(...)])        # batched; falls back to one by one
     model.unload()
 
-Open models implement ``transcribe(audio)`` on a float32 16 kHz array; the
-default ``transcribe_path`` loads the file and times the call. API adapters
-override ``transcribe_path`` so the timed region includes upload and network.
+Open models implement ``transcribe(audio)`` on a float32 16 kHz array and, when the
+architecture batches well, ``transcribe_batch(audios)``. API adapters override
+``transcribe_path`` so the timed region includes upload and network.
 """
 
 from __future__ import annotations
@@ -48,6 +49,8 @@ class ASRModel(ABC):
     language_hint: str | None = "ar"
     pricing: Pricing | None = None
     decode_params: dict = {}
+    batch_size: int = 1            # >1 only when transcribe_batch is implemented
+    max_batch_audio_s: float = 40.0  # utterances longer than this are never batched
 
     def load(self) -> None:  # noqa: B027
         pass
@@ -68,6 +71,10 @@ class ASRModel(ABC):
     def transcribe(self, audio: np.ndarray) -> str:
         raise NotImplementedError(f"{self.model_id} does not transcribe arrays")
 
+    def transcribe_batch(self, audios: list[np.ndarray]) -> list[str]:
+        """Default: one at a time. Override for architectures that batch well."""
+        return [self.transcribe(a) for a in audios]
+
     def transcribe_path(self, wav_path: Path) -> Transcript:
         from ..io import load_audio_16k_mono
 
@@ -75,6 +82,37 @@ class ASRModel(ABC):
         t0 = time.perf_counter()
         text = self.transcribe(audio)
         return Transcript(text=text, wall_s=time.perf_counter() - t0)
+
+    def transcribe_paths(self, wav_paths: list[Path]) -> list[Transcript]:
+        """Batched transcription; wall time is the batch time divided evenly.
+
+        Long clips (> max_batch_audio_s) go one by one. If the batched call fails,
+        every clip in the batch is retried individually so one bad file cannot
+        take the others down.
+        """
+        from ..io import load_audio_16k_mono
+
+        if self.batch_size <= 1 or len(wav_paths) == 1:
+            return [self.transcribe_path(p) for p in wav_paths]
+        audios = [load_audio_16k_mono(p)[0] for p in wav_paths]
+        short_idx = [i for i, a in enumerate(audios) if len(a) <= self.max_batch_audio_s * SAMPLE_RATE]
+        out: list[Transcript | None] = [None] * len(wav_paths)
+        if short_idx:
+            t0 = time.perf_counter()
+            try:
+                texts = self.transcribe_batch([audios[i] for i in short_idx])
+                per = (time.perf_counter() - t0) / len(short_idx)
+                for i, text in zip(short_idx, texts):
+                    out[i] = Transcript(text=text, wall_s=per)
+            except Exception:
+                for i in short_idx:
+                    out[i] = None
+        for i in range(len(wav_paths)):
+            if out[i] is None:
+                t0 = time.perf_counter()
+                text = self.transcribe(audios[i])
+                out[i] = Transcript(text=text, wall_s=time.perf_counter() - t0)
+        return out  # type: ignore[return-value]
 
     def env_info(self) -> dict:
         """Versions worth recording in run.json. Overridden per adapter."""

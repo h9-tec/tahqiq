@@ -1,4 +1,4 @@
-"""Cohere Transcribe Arabic (open weights, Apache-2.0; transformers >= 5.4). Language forced to ar."""
+"""Cohere Transcribe Arabic (open weights, Apache-2.0; transformers >= 5.4). Language forced to ar. Batched for short clips."""
 
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ from ..base import SAMPLE_RATE, ASRModel
 class CohereTranscribe(ASRModel):
     kind = "open"
     decode_params = {"language": "ar", "max_new_tokens": 256}
+    batch_size = 16
+    max_batch_audio_s = 30.0
 
     def __init__(self, model_id: str, hf_id: str, display_name: str):
         self.model_id = model_id
@@ -44,6 +46,22 @@ class CohereTranscribe(ASRModel):
         if isinstance(text, list):
             text = text[0]
         return str(text).strip()
+
+    def transcribe_batch(self, audios: list[np.ndarray]) -> list[str]:
+        import torch
+
+        inputs = self.processor(audio=list(audios), sampling_rate=SAMPLE_RATE, return_tensors="pt", language="ar")
+        if inputs.get("audio_chunk_index") is not None and len(set(inputs["audio_chunk_index"].tolist())) != len(audios):
+            raise RuntimeError("chunked input in batch; falling back")
+        inputs = inputs.to(self.model.device, dtype=self.model.dtype)
+        with torch.no_grad():
+            out = self.model.generate(**inputs, max_new_tokens=self.decode_params["max_new_tokens"])
+        texts = self.processor.decode(out, skip_special_tokens=True)
+        if isinstance(texts, str):
+            texts = [texts]
+        if len(texts) != len(audios):
+            raise RuntimeError("batched decode count mismatch; falling back")
+        return [str(t).strip() for t in texts]
 
 
 def cohere_transcribe_arabic() -> CohereTranscribe:

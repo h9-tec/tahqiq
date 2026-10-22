@@ -62,6 +62,7 @@ def run_model(
     display_name: str | None = None,
     adapter: str | None = None,
     write_run_json: bool = True,
+    batch: int | None = None,
 ) -> dict:
     model = registry.build(model_id, hf_id=hf_id, display_name=display_name, adapter=adapter)
     run_id = uuid.uuid4().hex[:12]
@@ -77,19 +78,35 @@ def run_model(
             if limit is not None:
                 todo = todo[:limit]
             totals["skipped"] += len(utts) - len(todo)
-            for u in tqdm(todo, desc=f"{model_id}/{ds}", unit="utt"):
-                wav = audio_dir / u.audio_rel
+            bs = batch if batch is not None else model.batch_size
+            # Group by duration so padding inside a batch is small.
+            todo.sort(key=lambda u: u.duration_s)
+            groups = [todo[i: i + max(1, bs)] for i in range(0, len(todo), max(1, bs))] if bs > 1 else [[u] for u in todo]
+            pbar = tqdm(total=len(todo), desc=f"{model_id}/{ds}", unit="utt")
+            for group in groups:
+                paths = [audio_dir / u.audio_rel for u in group]
                 try:
-                    t = model.transcribe_path(wav)
-                    pred = hio.Prediction(u.id, t.text, t.wall_s, t.attempts, None, run_id)
-                    totals["audio_s"] += u.duration_s
-                    totals["wall_s"] += t.wall_s
-                except Exception as e:  # noqa: BLE001
-                    pred = hio.Prediction(u.id, "", 0.0, 1, f"{type(e).__name__}: {e}", run_id)
-                    totals["errors"] += 1
+                    ts = model.transcribe_paths(paths) if len(group) > 1 else [model.transcribe_path(paths[0])]
+                    preds = [hio.Prediction(u.id, t.text, t.wall_s, t.attempts, None, run_id) for u, t in zip(group, ts)]
+                    totals["audio_s"] += sum(u.duration_s for u in group)
+                    totals["wall_s"] += sum(t.wall_s for t in ts)
+                except Exception:  # noqa: BLE001
                     traceback.print_exc(limit=1)
-                hio.append_prediction(results_dir, model_id, ds, pred)
-                totals["done"] += 1
+                    preds = []
+                    for u in group:  # last resort: one by one, record per-utterance errors
+                        try:
+                            t = model.transcribe_path(audio_dir / u.audio_rel)
+                            preds.append(hio.Prediction(u.id, t.text, t.wall_s, t.attempts, None, run_id))
+                            totals["audio_s"] += u.duration_s
+                            totals["wall_s"] += t.wall_s
+                        except Exception as e:  # noqa: BLE001
+                            preds.append(hio.Prediction(u.id, "", 0.0, 1, f"{type(e).__name__}: {e}", run_id))
+                            totals["errors"] += 1
+                for pred in preds:
+                    hio.append_prediction(results_dir, model_id, ds, pred)
+                totals["done"] += len(group)
+                pbar.update(len(group))
+            pbar.close()
     finally:
         model.unload()
 
@@ -106,6 +123,7 @@ def run_model(
         "manifest_sha256": read_manifest_hash(manifests_dir),
         "datasets": datasets,
         "slice": slice_name or "full",
+        "batch_size": batch if batch is not None else model.batch_size,
         "env": {**model.env_info(), "python": platform.python_version(), "machine": platform.node()},
         "started": started,
         "finished": datetime.now(timezone.utc).isoformat(),
@@ -132,6 +150,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--display-name", default=None)
     ap.add_argument("--adapter", default=None, help="force adapter key (see models/auto.py)")
     ap.add_argument("--helper", action="store_true", help="fill the cache for some datasets without writing run.json")
+    ap.add_argument("--batch", type=int, default=None, help="override the adapter batch size (1 = no batching)")
     args = ap.parse_args(argv)
 
     from dotenv import load_dotenv
@@ -142,7 +161,7 @@ def main(argv: list[str] | None = None) -> None:
     models = registry.list_models() if args.model == "all" else [args.model]
     for m in models:
         run_model(m, datasets, slice_name=args.slice, limit=args.limit, hf_id=args.hf_id,
-                  display_name=args.display_name, adapter=args.adapter, write_run_json=not args.helper)
+                  display_name=args.display_name, adapter=args.adapter, write_run_json=not args.helper, batch=args.batch)
 
 
 if __name__ == "__main__":

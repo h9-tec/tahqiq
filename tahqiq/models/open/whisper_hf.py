@@ -1,4 +1,4 @@
-"""Whisper via Transformers. Forces language=ar, task=transcribe, greedy decoding."""
+"""Whisper via Transformers. Forces language=ar, task=transcribe, greedy decoding. Batched for clips <= 30 s."""
 
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ from ..base import SAMPLE_RATE, ASRModel
 class WhisperHF(ASRModel):
     kind = "open"
     decode_params = {"language": "ar", "task": "transcribe", "num_beams": 1, "max_new_tokens": 440}
+    batch_size = 32
+    max_batch_audio_s = 30.0
 
     def __init__(self, model_id: str, hf_id: str, display_name: str):
         self.model_id = model_id
@@ -33,17 +35,22 @@ class WhisperHF(ASRModel):
         ).to(self._device)
         self.model.eval()
 
-    def transcribe(self, audio: np.ndarray) -> str:
+    def _generate(self, audios: list[np.ndarray]) -> list[str]:
         import torch
 
-        # Whisper's window is 30 s; longer clips go through the chunked pipeline path.
-        if len(audio) > 30 * SAMPLE_RATE:
-            return self._transcribe_long(audio)
-        feats = self.processor(audio, sampling_rate=SAMPLE_RATE, return_tensors="pt").input_features
+        feats = self.processor(audios, sampling_rate=SAMPLE_RATE, return_tensors="pt").input_features
         feats = feats.to(self._device, dtype=self._dtype)
         with torch.no_grad():
             ids = self.model.generate(feats, do_sample=False, **self.decode_params)
-        return self.processor.batch_decode(ids, skip_special_tokens=True)[0].strip()
+        return [t.strip() for t in self.processor.batch_decode(ids, skip_special_tokens=True)]
+
+    def transcribe(self, audio: np.ndarray) -> str:
+        if len(audio) > 30 * SAMPLE_RATE:
+            return self._transcribe_long(audio)
+        return self._generate([audio])[0]
+
+    def transcribe_batch(self, audios: list[np.ndarray]) -> list[str]:
+        return self._generate(audios)
 
     def _transcribe_long(self, audio: np.ndarray) -> str:
         import torch
@@ -56,7 +63,7 @@ class WhisperHF(ASRModel):
                 tokenizer=self.processor.tokenizer,
                 feature_extractor=self.processor.feature_extractor,
                 chunk_length_s=30,
-                torch_dtype=self._dtype,
+                dtype=self._dtype,
                 device=0 if self._device == "cuda" else -1,
             )
         with torch.no_grad():

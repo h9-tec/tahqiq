@@ -1,25 +1,24 @@
-"""NVIDIA FastConformer Hybrid (CTC/RNNT) Arabic checkpoints via NeMo.
+"""NVIDIA FastConformer Hybrid (CTC/RNNT) Arabic checkpoints via NeMo. Batched.
 
 NeMo pins its own torch; run these in the separate env created by
-``scripts/setup_nemo_env.sh`` (``.venv-nemo``), e.g.
-
-    .venv-nemo/bin/python -m tahqiq.runner --model nvidia_fastconformer_ar_pc --dataset sada
+``scripts/setup_nemo_env.sh`` (``.venv-nemo``).
 
 Decoding: RNNT (transducer) greedy, the checkpoint default. Both checkpoints
-emit punctuation/casing ("pc"); the "pcd" one also emits diacritics, which the
-``elm`` normalizer strips and the tolerant one strips too.
+emit punctuation/casing ("pc"); the "pcd" one also emits diacritics, which
+both normalizers strip.
 """
 
 from __future__ import annotations
 
 import numpy as np
 
-from ..base import SAMPLE_RATE, ASRModel
+from ..base import ASRModel
 
 
 class NemoFastConformer(ASRModel):
     kind = "open"
     decode_params = {"decoder": "rnnt", "strategy": "greedy_batch"}
+    batch_size = 32
 
     def __init__(self, model_id: str, hf_id: str, display_name: str):
         self.model_id = model_id
@@ -40,13 +39,20 @@ class NemoFastConformer(ASRModel):
         except Exception:
             pass
 
-    def transcribe(self, audio: np.ndarray) -> str:
-        out = self.asr_model.transcribe([audio.astype(np.float32)], batch_size=1, verbose=False)
-        hyp = out[0]
+    @staticmethod
+    def _text(hyp) -> str:
         if isinstance(hyp, list):
             hyp = hyp[0]
-        text = getattr(hyp, "text", hyp)
-        return str(text).strip()
+        return str(getattr(hyp, "text", hyp)).strip()
+
+    def transcribe_batch(self, audios: list[np.ndarray]) -> list[str]:
+        out = self.asr_model.transcribe([a.astype(np.float32) for a in audios], batch_size=len(audios), verbose=False)
+        if isinstance(out, tuple):  # (best, all) in some NeMo versions
+            out = out[0]
+        return [self._text(h) for h in out]
+
+    def transcribe(self, audio: np.ndarray) -> str:
+        return self.transcribe_batch([audio])[0]
 
     def env_info(self) -> dict:
         info = super().env_info()

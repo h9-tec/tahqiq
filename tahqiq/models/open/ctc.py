@@ -1,4 +1,4 @@
-"""Generic CTC adapter (wav2vec2 / HuBERT / WavLM / w2v-BERT fine-tunes), greedy decoding."""
+"""Generic CTC adapter (wav2vec2 / HuBERT / WavLM / w2v-BERT fine-tunes), greedy decoding, batched with padding."""
 
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ from ..base import SAMPLE_RATE, ASRModel
 class CTCModel(ASRModel):
     kind = "open"
     decode_params = {"decoding": "greedy"}
+    batch_size = 16
+    max_batch_audio_s = 40.0
 
     def __init__(self, model_id: str, hf_id: str, display_name: str, *, target_lang: str | None = None):
         self.model_id = model_id
@@ -30,11 +32,14 @@ class CTCModel(ASRModel):
         self.model = AutoModelForCTC.from_pretrained(self.hf_id, **({**kw, "ignore_mismatched_sizes": True} if kw else {})).to("cuda")
         self.model.eval()
 
-    def transcribe(self, audio: np.ndarray) -> str:
+    def transcribe_batch(self, audios: list[np.ndarray]) -> list[str]:
         import torch
 
-        inputs = self.processor(audio, sampling_rate=SAMPLE_RATE, return_tensors="pt", padding=True).to("cuda")
+        inputs = self.processor(audios, sampling_rate=SAMPLE_RATE, return_tensors="pt", padding=True).to("cuda")
         with torch.no_grad():
             logits = self.model(**inputs).logits
-        ids = torch.argmax(logits, dim=-1)[0]
-        return self.processor.decode(ids).strip()
+        ids = torch.argmax(logits, dim=-1)
+        return [t.strip() for t in self.processor.batch_decode(ids)]
+
+    def transcribe(self, audio: np.ndarray) -> str:
+        return self.transcribe_batch([audio])[0]

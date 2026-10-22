@@ -131,3 +131,30 @@ def test_declared_profile_fields():
     assert d["streaming"] == "chunked" and d["timestamps"] == "word" and d["arabic_only"] is False
     u = declared("some_community_model")
     assert u["streaming"] == "unknown" and u["languages"] == "unknown"
+
+
+def test_batched_runner_matches_single(world, monkeypatch):
+    """Batched path yields the same per-utterance predictions and handles a failing batch."""
+    manifests, audio, results, utts = world
+    table = {u.id: u.reference for u in utts}
+
+    class EchoBatch(Echo):
+        batch_size = 3
+        calls = {"batch": 0}
+
+        def transcribe_batch(self, audios):
+            EchoBatch.calls["batch"] += 1
+            raise RuntimeError("batch path broken on purpose")
+
+        def transcribe_path(self, wav_path):
+            from tahqiq.models.base import Transcript
+            return Transcript(text=self.table[wav_path.stem], wall_s=0.001)
+
+        def transcribe(self, audio):
+            raise AssertionError("not used")
+
+    monkeypatch.setitem(registry.REGISTRY, "eb", lambda: EchoBatch("eb", table))
+    run = run_model("eb", ["toy"], manifests_dir=manifests, audio_dir=audio, results_dir=results, batch=3)
+    assert run["totals"]["done"] == 4 and run["totals"]["errors"] == 0 and run["batch_size"] == 3
+    preds = hio.load_predictions(results, "eb", "toy")
+    assert {k: v.hyp for k, v in preds.items()} == table
