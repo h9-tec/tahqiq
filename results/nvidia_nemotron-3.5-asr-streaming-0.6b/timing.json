@@ -1,0 +1,21 @@
+{
+ "slug": "nvidia_nemotron-3.5-asr-streaming-0.6b",
+ "n_utts": 72,
+ "audio_s": 387.5,
+ "passes_wall_s": [
+  2.53,
+  2.32,
+  2.35
+ ],
+ "rtfx": 165.1,
+ "latency_p50_s": 0.028,
+ "latency_p95_s": 0.039,
+ "load_s": 36.3,
+ "peak_vram_gb": 5.21,
+ "gpu": "NVIDIA B200",
+ "gpu_other_processes": 0,
+ "batch_size": 1,
+ "concurrency": 1,
+ "machine": "12291e5cc005",
+ "measured_at": "2026-10-22T13:41:06Z"
+}

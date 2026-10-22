@@ -1,0 +1,42 @@
+{
+  "model_id": "mms_1b_all",
+  "display_name": "MMS-1b-all (ara)",
+  "kind": "open",
+  "hf_id": "facebook/mms-1b-all",
+  "api_version": null,
+  "language_hint": "ar",
+  "decode_params": {
+    "target_lang": "ara",
+    "decoding": "greedy"
+  },
+  "run_id": "144f2f22efed",
+  "git_sha": "unknown",
+  "manifest_sha256": "6ef6d50155f44d72166ac2860312718bc2d6e4c5488269fff80de99ad964e2ac",
+  "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+  ],
+  "slice": "full",
+  "batch_size": 16,
+  "env": {
+    "torch": "2.8.0.dev20250319+cu128",
+    "gpu": "NVIDIA B200",
+    "cuda": "12.8",
+    "transformers": "5.20.2",
+    "python": "3.11.11",
+    "machine": "6ff7e759a6b0"
+  },
+  "started": "2026-10-22T13:14:31.155244+00:00",
+  "finished": "2026-10-22T13:27:16.523106+00:00",
+  "totals": {
+    "done": 46853,
+    "errors": 0,
+    "skipped": 0,
+    "audio_s": 216921.88896292538,
+    "wall_s": 506.24244388737134
+  }
+}

@@ -228,12 +228,13 @@ def run_unit(unit: dict, idx: int, state: dict, *, retry_minutes: int = 120) -> 
     pod_id = prev.get("pod") if prev.get("status") in ("CREATED", "RUNNING") else None
     if pod_id and not pod_ssh(pod_id) and not gql("""query($id: String!) { pod(input: {podId: $id}) { desiredStatus } }""", {"id": pod_id}).get("pod"):
         pod_id = None  # pod is gone
+    prefs = [g for g in GPU_PREFS if not (unit.get("nemo") and "B200" in g)]
     deadline = time.time() + retry_minutes * 60
     while not pod_id:
         if spend_per_hr() >= MAX_SPEND_HR:
             print(f"{name}: spend cap {MAX_SPEND_HR}/h reached, waiting", flush=True)
         else:
-            for gpu in GPU_PREFS:
+            for gpu in prefs:
                 for cloud in ("COMMUNITY", "SECURE"):
                     pod_id = create_pod(name, gpu, cloud)
                     if pod_id:

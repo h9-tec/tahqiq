@@ -1,0 +1,43 @@
+{
+  "model_id": "nvidia_nemotron-3.5-asr-streaming-0.6b",
+  "display_name": "Nemotron 3.5 ASR streaming 0.6B",
+  "kind": "open",
+  "hf_id": "nvidia/nemotron-3.5-asr-streaming-0.6b",
+  "api_version": null,
+  "language_hint": "ar",
+  "decode_params": {
+    "decoder": "rnnt",
+    "strategy": "greedy_batch"
+  },
+  "run_id": "a179b755f9ca",
+  "git_sha": "unknown",
+  "manifest_sha256": "6ef6d50155f44d72166ac2860312718bc2d6e4c5488269fff80de99ad964e2ac",
+  "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+  ],
+  "slice": "full",
+  "batch_size": 32,
+  "env": {
+    "torch": "2.8.0.dev20250319+cu128",
+    "gpu": "NVIDIA B200",
+    "cuda": "12.8",
+    "transformers": "5.20.2",
+    "nemo": "3.0.0",
+    "python": "3.11.11",
+    "machine": "12291e5cc005"
+  },
+  "started": "2026-10-22T13:33:46.048848+00:00",
+  "finished": "2026-10-22T13:40:16.519607+00:00",
+  "totals": {
+    "done": 46853,
+    "errors": 273,
+    "skipped": 0,
+    "audio_s": 208687.35421622574,
+    "wall_s": 145.49509465321898
+  }
+}

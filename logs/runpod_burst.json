@@ -22,7 +22,7 @@
  },
  "tahqiq-6-seamless_m4t_v2_la": {
   "pod": "lu2ldfu005h4qi",
-  "status": "RUNNING",
+  "status": "FINISHED (terminated)",
   "unit": {
    "slug": "seamless_m4t_v2_large",
    "nemo": false,
@@ -40,7 +40,7 @@
  },
  "tahqiq-11-qwen3_asr_0.6b": {
   "pod": "xhoat4utn9qk7u",
-  "status": "RUNNING",
+  "status": "FINISHED (terminated)",
   "unit": {
    "slug": "qwen3_asr_0.6b",
    "nemo": false,
@@ -61,7 +61,7 @@
  },
  "tahqiq-5-mms_1b_all": {
   "pod": "2y8hgw55xpz44u",
-  "status": "RUNNING",
+  "status": "FINISHED (terminated)",
   "unit": {
    "slug": "mms_1b_all",
    "nemo": false,
@@ -82,7 +82,7 @@
  },
  "tahqiq-10-qwen3_asr_1.7b": {
   "pod": "w32oh70774wmwn",
-  "status": "CREATED",
+  "status": "NO_SSH",
   "unit": {
    "slug": "qwen3_asr_1.7b",
    "nemo": false,
@@ -101,7 +101,7 @@
  },
  "tahqiq-14-CohereLabs_cohere-": {
   "pod": "hrk2sj5hj5nmun",
-  "status": "CREATED",
+  "status": "NO_SSH",
   "unit": {
    "slug": "CohereLabs_cohere-transcribe-03-2026",
    "nemo": false,
@@ -121,7 +121,8 @@
   }
  },
  "tahqiq-0-openai_whisper-sma": {
-  "status": "NO_GPU",
+  "pod": "a4zy7u0587zytp",
+  "status": "CREATED",
   "unit": {
    "slug": "openai_whisper-small",
    "nemo": false,
@@ -141,7 +142,8 @@
   }
  },
  "tahqiq-1-openai_whisper-med": {
-  "status": "NO_GPU",
+  "pod": "irt44etx3s8ipx",
+  "status": "RUNNING",
   "unit": {
    "slug": "openai_whisper-medium",
    "nemo": false,
@@ -158,7 +160,9 @@
     "sada"
    ],
    "timing": true
-  }
+  },
+  "ip": "38.80.152.146",
+  "port": 31959
  },
  "tahqiq-2-openai_whisper-lar": {
   "status": "NO_GPU",
@@ -181,7 +185,8 @@
   }
  },
  "tahqiq-4-whisper_large_v3_t": {
-  "status": "NO_GPU",
+  "pod": "o64o8l3fngagkw",
+  "status": "RUNNING",
   "unit": {
    "slug": "whisper_large_v3_turbo",
    "nemo": false,
@@ -196,10 +201,13 @@
     "sada"
    ],
    "timing": true
-  }
+  },
+  "ip": "38.80.152.146",
+  "port": 31318
  },
  "tahqiq-9-facebook_omniASR-L": {
-  "status": "NO_GPU",
+  "pod": "b1gbo1n63ctthd",
+  "status": "CREATED",
   "unit": {
    "slug": "facebook_omniASR-LLM-1B",
    "nemo": false,
@@ -234,7 +242,8 @@
   }
  },
  "tahqiq-8-facebook_omniASR-L": {
-  "status": "NO_GPU",
+  "pod": "zzeqkfloczhm7r",
+  "status": "CREATED",
   "unit": {
    "slug": "facebook_omniASR-LLM-1B",
    "nemo": false,
@@ -303,6 +312,122 @@
     "mgb2"
    ],
    "timing": false
+  }
+ },
+ "tahqiq-16-nvidia_fastconform": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "nvidia_fastconformer_ar_pc",
+   "nemo": true,
+   "omni": false,
+   "remote_code": false,
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-17-nvidia_fastconform": {
+  "pod": "y45rexwmngzzn3",
+  "status": "RUNNING",
+  "unit": {
+   "slug": "nvidia_fastconformer_ar_pcd",
+   "nemo": true,
+   "omni": false,
+   "remote_code": false,
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  },
+  "ip": "38.80.152.148",
+  "port": 31808
+ },
+ "tahqiq-18-nvidia_nemotron-3.": {
+  "pod": "tt1fqln1enqi72",
+  "status": "FINISHED (terminated)",
+  "unit": {
+   "slug": "nvidia_nemotron-3.5-asr-streaming-0.6b",
+   "nemo": true,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "nvidia/nemotron-3.5-asr-streaming-0.6b",
+   "display_name": "Nemotron 3.5 ASR streaming 0.6B",
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  },
+  "ip": "38.80.152.146",
+  "port": 31310
+ },
+ "tahqiq-19-mistralai_Voxtral-": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "mistralai_Voxtral-Mini-4B-Realtime-2602",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "mistralai/Voxtral-Mini-4B-Realtime-2602",
+   "display_name": "Voxtral Mini 4B Realtime (2602)",
+   "datasets": [
+    "casablanca",
+    "masc_clean",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-20-mistralai_Voxtral-": {
+  "pod": "x1y8y3ojy9c4ep",
+  "status": "RUNNING",
+  "unit": {
+   "slug": "mistralai_Voxtral-Mini-4B-Realtime-2602",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "mistralai/Voxtral-Mini-4B-Realtime-2602",
+   "display_name": "Voxtral Mini 4B Realtime (2602)",
+   "datasets": [
+    "commonvoice",
+    "masc_noisy",
+    "mgb2"
+   ],
+   "timing": false
+  },
+  "ip": "38.80.152.146",
+  "port": 30967
+ },
+ "tahqiq-21-mistralai_Voxtral-": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "mistralai_Voxtral-Mini-4B-Realtime-Arabic",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "mistralai/Voxtral-Mini-4B-Realtime-Arabic",
+   "display_name": "Voxtral Mini 4B Realtime Arabic",
+   "datasets": [
+    "casablanca",
+    "masc_clean",
+    "sada"
+   ],
+   "timing": true
   }
  }
 }
