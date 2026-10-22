@@ -64,6 +64,17 @@ def fetch_data(datasets: list[str]) -> None:
     mdir = ROOT / "data" / "manifests"
     mdir.mkdir(parents=True, exist_ok=True)
     audio = ROOT / "audio"
+    vol = os.environ.get("TAHQIQ_VOLUME")
+    if vol and Path(vol, "audio").exists():
+        # Shared network volume seeded once: link it in, copy manifests, done.
+        if audio.exists() and not audio.is_symlink():
+            audio.rmdir()
+        if not audio.exists():
+            audio.symlink_to(Path(vol, "audio"))
+        for p in Path(vol, "manifests").iterdir():
+            (mdir / p.name).write_bytes(p.read_bytes())
+        log(f"volume {vol}: audio linked, manifests {sorted(p.name for p in mdir.iterdir())}")
+        return
     audio.mkdir(exist_ok=True)
     use_ssh = bool(os.environ.get("TAHQIQ_AUDIO_SSH"))
     if use_ssh:

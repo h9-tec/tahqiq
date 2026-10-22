@@ -41,6 +41,8 @@ POD_KEY = Path.home() / ".runpod" / "ssh" / "RunPod-Key-Go"
 IMAGE = os.environ.get("TAHQIQ_POD_IMAGE", "runpod/pytorch:2.8.0-py3.11-cuda12.8.1-cudnn-devel-ubuntu22.04")
 GPU_PREFS = [g for g in os.environ.get("TAHQIQ_POD_GPUS", "NVIDIA H200,NVIDIA H100 80GB HBM3,NVIDIA H100 NVL,NVIDIA B200").split(",")]
 STATE = ROOT / "logs" / "runpod_burst.json"
+VOLUME_ID = os.environ.get("TAHQIQ_RUNPOD_VOLUME", "")
+DATACENTER = os.environ.get("TAHQIQ_RUNPOD_DC", "")
 
 # model → (datasets per pod, timing on the first pod). Slow models are split in two.
 UNITS: list[dict] = []
@@ -76,8 +78,12 @@ def create_pod(name: str, gpu: str, cloud: str) -> str | None:
     pub = (POD_KEY.with_suffix(".pub")).read_text().strip()
     q = """mutation($in: PodFindAndDeployOnDemandInput!) { podFindAndDeployOnDemand(input: $in) { id } }"""
     inp = {"cloudType": cloud, "gpuCount": 1, "volumeInGb": 0, "containerDiskInGb": 120, "minVcpuCount": 8, "minMemoryInGb": 48,
-           "gpuTypeId": gpu, "name": name, "imageName": IMAGE, "ports": "22/tcp", "volumeMountPath": "/workspace",
+           "gpuTypeId": gpu, "name": name, "imageName": IMAGE, "ports": "22/tcp", "volumeMountPath": "/vol",
            "env": [{"key": "PUBLIC_KEY", "value": pub}]}
+    if VOLUME_ID:
+        inp["networkVolumeId"] = VOLUME_ID
+    if DATACENTER:
+        inp["dataCenterId"] = DATACENTER
     try:
         d = gql(q, {"in": inp})
         return d["podFindAndDeployOnDemand"]["id"]
@@ -126,7 +132,7 @@ def bootstrap_script(unit: dict) -> str:
     if unit.get("then"):
         cmds += " && " + eval_cmd(unit["then"], unit["datasets"], True, None, None)
     return f"""set -e
-export HF_HUB_DISABLE_XET=1 HF_HOME=/workspace/hf TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 TOKENIZERS_PARALLELISM=false
+export HF_HUB_DISABLE_XET=1 HF_HOME=/workspace/hf TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 TOKENIZERS_PARALLELISM=false TAHQIQ_VOLUME=/vol
 export HF_TOKEN='{os.environ["HF_TOKEN"]}' TAHQIQ_AUDIO_SSH='{os.environ["TAHQIQ_AUDIO_SSH"]}' TAHQIQ_RESULTS_REPO='{hub.RESULTS_REPO}' TAHQIQ_REQUESTS_REPO='{hub.REQUESTS_REPO}'
 export TAHQIQ_AUDIO_KEY=$(cat <<'KEYEOF'
 {key}KEYEOF
@@ -196,13 +202,71 @@ def _save(state: dict) -> None:
     STATE.write_text(json.dumps(state, indent=1), encoding="utf-8")
 
 
+SEED_SCRIPT = """set -e
+export TAHQIQ_AUDIO_SSH='{ssh}'
+export TAHQIQ_AUDIO_KEY=$(cat <<'KEYEOF'
+{key}KEYEOF
+)
+pip install -q paramiko
+mkdir -p /vol/audio /vol/manifests /vol/hf && cd /vol
+python - <<'PY'
+import io, os, tarfile, time, paramiko
+user, host = os.environ["TAHQIQ_AUDIO_SSH"].split("@", 1)
+key = paramiko.Ed25519Key.from_private_key(io.StringIO(os.environ["TAHQIQ_AUDIO_KEY"]))
+t = paramiko.Transport((host, 22)); t.connect(username=user, pkey=key); s = paramiko.SFTPClient.from_transport(t)
+for name in s.listdir("manifests"):
+    with s.open(f"manifests/{name}", "rb") as f, open(f"/vol/manifests/{name}", "wb") as o: o.write(f.read())
+for name in s.listdir("audio_tars"):
+    ds = name[:-4]
+    if os.path.isdir(f"/vol/audio/{ds}") and os.listdir(f"/vol/audio/{ds}"): print("have", ds, flush=True); continue
+    t0 = time.time()
+    with s.open(f"audio_tars/{name}", "rb") as f, open(f"/vol/{name}", "wb") as o:
+        f.prefetch()
+        while True:
+            b = f.read(8_000_000)
+            if not b: break
+            o.write(b)
+    tarfile.open(f"/vol/{name}").extractall("/vol/audio", filter="data"); os.remove(f"/vol/{name}")
+    print(ds, "done", round(time.time()-t0), "s", flush=True)
+t.close()
+PY
+du -sh /vol/audio/*; echo SEED_DONE
+"""
+
+
+def cmd_seed(gpu: str) -> None:
+    pub = POD_KEY.with_suffix(".pub").read_text().strip()
+    pod_id = None
+    for cloud in ("COMMUNITY", "SECURE"):
+        pod_id = create_pod("tahqiq-seed", gpu, cloud)
+        if pod_id:
+            break
+    if not pod_id:
+        raise SystemExit("no pod for seeding")
+    print("seed pod", pod_id)
+    for _ in range(60):
+        time.sleep(10)
+        addr = pod_ssh(pod_id)
+        if addr and subprocess.call(["ssh", *ssh_opts(*addr), "true"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0:
+            break
+    else:
+        terminate(pod_id); raise SystemExit("seed pod never came up")
+    script = SEED_SCRIPT.format(ssh=os.environ["TAHQIQ_AUDIO_SSH"], key=Path(os.environ["TAHQIQ_AUDIO_KEY_PATH"]).read_text())
+    rc = subprocess.call(["ssh", *ssh_opts(*addr), "bash -s"], input=script.encode())
+    terminate(pod_id)
+    print("seed rc", rc)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("plan")
+    sd = sub.add_parser("seed"); sd.add_argument("--gpu", default="NVIDIA RTX A5000")
     r = sub.add_parser("run"); r.add_argument("--max-pods", type=int, default=16); r.add_argument("--only", default=None, help="comma list of slugs")
     sub.add_parser("collect"); sub.add_parser("kill")
     a = ap.parse_args()
+    if a.cmd == "seed":
+        cmd_seed(a.gpu); return
     if a.cmd == "plan":
         for i, u in enumerate(UNITS):
             print(i, u["slug"], u["datasets"], "timing" if u.get("timing") else "", "+then " + u["then"] if u.get("then") else "")
