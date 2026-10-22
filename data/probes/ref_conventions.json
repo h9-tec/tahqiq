@@ -1,0 +1,128 @@
+{
+ "casablanca": {
+  "all": {
+   "hamza_forms": 0.10501607906341075,
+   "ta_marbuta": 0.3115931738129557,
+   "alef_maksura": 0.07392328345687077,
+   "diacritics": 0.0010081447148375413,
+   "punctuation": 0.1117675588458172,
+   "digits": 0.0005866823115283074,
+   "latin": 0.004304625818339935
+  },
+  "api": {
+   "hamza_forms": 0.10170982198921859,
+   "ta_marbuta": 0.29837243867243857,
+   "alef_maksura": 0.07280396825396823,
+   "diacritics": 0.001217547735778796,
+   "punctuation": 0.1097181112844445,
+   "digits": 0.002,
+   "latin": 0.003435558069381599
+  },
+  "n": 6818
+ },
+ "commonvoice": {
+  "all": {
+   "hamza_forms": 0.24721434936156791,
+   "ta_marbuta": 0.22235698596122622,
+   "alef_maksura": 0.15485467799955427,
+   "diacritics": 0.053679605659801365,
+   "punctuation": 0.0004930638764561026,
+   "digits": 0.0,
+   "latin": 0.0003440564146734375
+  },
+  "api": {
+   "hamza_forms": 0.24352136384300133,
+   "ta_marbuta": 0.20687134502923976,
+   "alef_maksura": 0.15151072124756337,
+   "diacritics": 0.05381325797985473,
+   "punctuation": 0.0005798024803872758,
+   "digits": 0.0,
+   "latin": 0.0001605320490769407
+  },
+  "n": 10471
+ },
+ "masc_clean": {
+  "all": {
+   "hamza_forms": 0.0,
+   "ta_marbuta": 0.0,
+   "alef_maksura": 0.21151450055595403,
+   "diacritics": 0.0,
+   "punctuation": 0.0,
+   "digits": 0.0,
+   "latin": 0.0
+  },
+  "api": {
+   "hamza_forms": 0.0,
+   "ta_marbuta": 0.0,
+   "alef_maksura": 0.21750952380952387,
+   "diacritics": 0.0,
+   "punctuation": 0.0,
+   "digits": 0.0,
+   "latin": 0.0
+  },
+  "n": 8612
+ },
+ "masc_noisy": {
+  "all": {
+   "hamza_forms": 0.0,
+   "ta_marbuta": 0.0,
+   "alef_maksura": 0.14664666909983082,
+   "diacritics": 0.0,
+   "punctuation": 0.0,
+   "digits": 0.0,
+   "latin": 0.0
+  },
+  "api": {
+   "hamza_forms": 0.0,
+   "ta_marbuta": 0.0,
+   "alef_maksura": 0.12808333333333333,
+   "diacritics": 0.0,
+   "punctuation": 0.0,
+   "digits": 0.0,
+   "latin": 0.0
+  },
+  "n": 9394
+ },
+ "mgb2": {
+  "all": {
+   "hamza_forms": 0.1951511678113294,
+   "ta_marbuta": 0.6122591310522335,
+   "alef_maksura": 0.20243280226038884,
+   "diacritics": 0.0,
+   "punctuation": 3.994141925176408e-05,
+   "digits": 0.0,
+   "latin": 0.0013484349107022483
+  },
+  "api": {
+   "hamza_forms": 0.19583499649917868,
+   "ta_marbuta": 0.5969547619047622,
+   "alef_maksura": 0.19694285714285714,
+   "diacritics": 0.0,
+   "punctuation": 0.00021428571428571427,
+   "digits": 0.0,
+   "latin": 0.002330282894800673
+  },
+  "n": 5365
+ },
+ "sada": {
+  "all": {
+   "hamza_forms": 1.795009872554299e-05,
+   "ta_marbuta": 0.3054742175033779,
+   "alef_maksura": 0.10082621536657058,
+   "diacritics": 0.0,
+   "punctuation": 0.0,
+   "digits": 0.00016155088852988692,
+   "latin": 0.0
+  },
+  "api": {
+   "hamza_forms": 0.0,
+   "ta_marbuta": 0.2926859519826835,
+   "alef_maksura": 0.10151265597119366,
+   "diacritics": 0.0,
+   "punctuation": 0.0,
+   "digits": 0.0,
+   "latin": 0.0
+  },
+  "n": 6193
+ }
+}

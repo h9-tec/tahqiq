@@ -151,17 +151,25 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--adapter", default=None, help="force adapter key (see models/auto.py)")
     ap.add_argument("--helper", action="store_true", help="fill the cache for some datasets without writing run.json")
     ap.add_argument("--batch", type=int, default=None, help="override the adapter batch size (1 = no batching)")
+    ap.add_argument("--manifests-dir", default=None, help="e.g. data/dev_manifests or data/pert_manifests")
+    ap.add_argument("--results-sub", default=None, help="write to results/<model>/<sub>/ (e.g. dev, pert)")
     args = ap.parse_args(argv)
 
     from dotenv import load_dotenv
 
     load_dotenv(ROOT / ".env")
 
-    datasets = args.dataset or [p.stem for p in manifest_paths(MANIFESTS)]
+    mdir = Path(args.manifests_dir) if args.manifests_dir else MANIFESTS
+    if mdir.exists() and not mdir.is_absolute():
+        mdir = (ROOT / mdir).resolve() if not mdir.exists() else mdir.resolve()
+    rdir = RESULTS
+    datasets = args.dataset or [p.stem for p in manifest_paths(mdir)]
     models = registry.list_models() if args.model == "all" else [args.model]
     for m in models:
+        results_dir = RESULTS if not args.results_sub else RESULTS  # per-model sub-folder handled below
         run_model(m, datasets, slice_name=args.slice, limit=args.limit, hf_id=args.hf_id,
-                  display_name=args.display_name, adapter=args.adapter, write_run_json=not args.helper, batch=args.batch)
+                  display_name=args.display_name, adapter=args.adapter, write_run_json=not args.helper, batch=args.batch,
+                  manifests_dir=mdir, results_dir=(RESULTS / "_sub" / args.results_sub) if args.results_sub else RESULTS)
 
 
 if __name__ == "__main__":

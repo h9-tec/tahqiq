@@ -114,6 +114,7 @@ def main() -> None:
     ap.add_argument("--datasets", default=",".join(DATASETS))
     ap.add_argument("--batch", type=int, default=None)
     ap.add_argument("--slice", default=None, choices=[None, "full", "api"], help="api = common slice only")
+    ap.add_argument("--kind", default="test", choices=["test", "dev", "pert"], help="which manifest family to run")
     ap.add_argument("--no-timing", action="store_true")
     ap.add_argument("--no-publish", action="store_true")
     ap.add_argument("--helper", action="store_true", help="partial run: write cache only, no run.json/publish")
@@ -125,6 +126,17 @@ def main() -> None:
     fetch_data(datasets)
     py = sys.executable
     cmd = [py, "-m", "tahqiq.runner", "--model", args.slug]
+    if args.kind != "test":
+        mdir = {"dev": "data/dev_manifests", "pert": "data/pert_manifests"}[args.kind]
+        vol = os.environ.get("TAHQIQ_VOLUME")
+        src = Path(vol, f"{args.kind}_manifests") if vol and Path(vol, f"{args.kind}_manifests").exists() else None
+        if src:
+            dst = ROOT / mdir
+            dst.mkdir(parents=True, exist_ok=True)
+            for p in src.iterdir():
+                (dst / p.name).write_bytes(p.read_bytes())
+        cmd += ["--manifests-dir", mdir, "--results-sub", args.kind]
+        datasets = datasets if args.datasets != ",".join(DATASETS) else [p.stem for p in (ROOT / mdir).glob("*.jsonl")]
     for d in datasets:
         cmd += ["--dataset", d]
     if args.hf_id:

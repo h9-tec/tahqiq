@@ -20,6 +20,13 @@ MANIFESTS = ROOT / "data" / "manifests"
 AUDIO = Path(os.environ.get("TAHQIQ_AUDIO", ROOT / "audio"))
 
 
+def keep(dataset: str, source_id: str, every: int) -> bool:
+    """Deterministic subsample: keep one row in ``every`` by id hash (same choice on every machine)."""
+    if every <= 1:
+        return True
+    return int(make_id(dataset, source_id), 16) % every == 0
+
+
 def elm_members(name: str) -> dict[str, dict]:
     """Elm manifest rows keyed by audio basename without extension."""
     out: dict[str, dict] = {}

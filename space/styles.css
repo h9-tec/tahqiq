@@ -105,3 +105,4 @@ dialog button { background: var(--fg); color: var(--bg); border: 0; border-radiu
 .flag.decl { border-color: var(--accent-2); color: var(--accent-2); }
 .flag.anom { border-color: var(--bad); color: var(--bad); }
 td.excluded { color: var(--muted); }
+.flag.fp { border-color: var(--accent); color: var(--accent); }

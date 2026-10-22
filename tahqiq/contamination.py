@@ -87,8 +87,31 @@ def anomalies(table: dict[str, dict[str, float]]) -> dict[str, dict[str, dict]]:
     return out
 
 
+REF_CONVENTIONS = ROOT / "data" / "probes" / "ref_conventions.json"
+
+
+def fingerprint_flags(scores: list[dict]) -> dict:
+    """Convention-fingerprint report from the per-system vectors stored at publish time."""
+    import json
+
+    from .fingerprint import fingerprint_report
+
+    if not REF_CONVENTIONS.exists():
+        return {}
+    refs = json.loads(REF_CONVENTIONS.read_text(encoding="utf-8"))
+    hyp: dict[str, dict[str, dict]] = {}
+    for s in scores:
+        fp = s.get("fingerprint") or {}
+        sl = "all" if "full" in s.get("scores", {}) else "api"
+        row = {d: v[sl] for d, v in fp.items() if sl in v}
+        if row:
+            hyp[s["model_id"]] = row
+    ref_vec = {d: r["all"] for d, r in refs.items()}
+    return fingerprint_report(ref_vec, hyp)
+
+
 def contamination_report(scores: list[dict], *, slice_pref: tuple[str, ...] = ("full", "api"), normalizer: str = "elm") -> dict:
-    """Combine declared overlap and empirical anomalies for every system on the board."""
+    """Combine declared overlap, empirical WER anomalies and convention fingerprints for every system."""
     declared = load_declared()
     table: dict[str, dict[str, float]] = {}
     for s in scores:
@@ -99,11 +122,16 @@ def contamination_report(scores: list[dict], *, slice_pref: tuple[str, ...] = ("
         if row:
             table[s["model_id"]] = row
     anom = anomalies(table)
+    try:
+        fpf = fingerprint_flags(scores).get("flags", {})
+    except Exception:  # noqa: BLE001
+        fpf = {}
     cells: dict[str, dict[str, dict]] = {}
-    for m in set(declared) | set(anom):
+    for m in set(declared) | set(anom) | set(fpf):
         cells[m] = {}
-        for d in set(declared.get(m, {})) | set(anom.get(m, {})):
+        for d in set(declared.get(m, {})) | set(anom.get(m, {})) | set(fpf.get(m, {})):
             cells[m][d] = {"declared": d in declared.get(m, {}), **declared.get(m, {}).get(d, {}),
-                           "anomaly": d in anom.get(m, {}), **anom.get(m, {}).get(d, {})}
-    return {"cells": cells, "thresholds": {"residual": RESIDUAL_T, "z": Z_T, "min_models": MIN_MODELS},
+                           "anomaly": d in anom.get(m, {}), **anom.get(m, {}).get(d, {}),
+                           "fingerprint": d in fpf.get(m, {}), **({"fp_" + k: v for k, v in fpf[m][d].items()} if d in fpf.get(m, {}) else {})}
+    return {"cells": cells, "thresholds": {"residual": RESIDUAL_T, "z": Z_T, "min_models": MIN_MODELS, "fingerprint_z": -2.5},
             "n_models_in_fit": len(table), "normalizer": normalizer}

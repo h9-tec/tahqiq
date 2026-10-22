@@ -81,7 +81,7 @@ function cell(ci, mid, d) {
   const w = Math.min(1, ci.hi) * 60, l = Math.max(0, ci.lo) * 60;
   const bar = S.ci ? `<span class="bar"><b style="left:${l}px;width:${Math.max(1, w - l)}px"></b><i style="left:${Math.min(1, ci.point) * 60}px"></i></span>` : "";
   const k = mid ? contam(mid, d) : null;
-  const flag = k ? `<sup class="flag ${k.declared ? "decl" : ""} ${k.anomaly ? "anom" : ""}" title="${k.declared ? "in-domain (declared): " + (k.note || "") + " " : ""}${k.anomaly ? "anomalous advantage: residual " + k.residual + ", z " + k.z + ", expected WER " + (100 * k.expected_wer).toFixed(1) : ""}">${k.declared ? "D" : ""}${k.anomaly ? "A" : ""}</sup>` : "";
+  const flag = k ? `<sup class="flag ${k.declared ? "decl" : ""} ${k.anomaly ? "anom" : ""} ${k.fingerprint ? "fp" : ""}" title="${k.declared ? "in-domain (declared): " + (k.note || "") + " " : ""}${k.anomaly ? "anomalous advantage: residual " + k.residual + ", z " + k.z + ", expected WER " + (100 * k.expected_wer).toFixed(1) + " " : ""}${k.fingerprint ? "convention match: distance " + k.fp_distance + " vs typical " + k.fp_typical + ", z " + k.fp_z : ""}">${k.declared ? "D" : ""}${k.anomaly ? "A" : ""}${k.fingerprint ? "F" : ""}</sup>` : "";
   return `<td class="num ${k && k.declared && S.excl ? "excluded" : ""}">${pct(ci.point)}${flag}${bar}${S.ci ? `<span class="ci">${fmtCI(ci)}</span>` : ""}</td>`;
 }
 const probeCell = p => p && p.n ? `<td class="num">${(100 * p.acc.point).toFixed(0)}%<span class="ci">n=${p.n}${S.ci ? " " + fmtCI(p.acc) : ""}</span></td>` : `<td class="pending">·</td>`;

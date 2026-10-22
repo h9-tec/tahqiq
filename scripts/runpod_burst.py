@@ -147,9 +147,11 @@ from huggingface_hub import hf_hub_download, list_repo_files
 repo = "HeshamHaroon/tahqiq-audio-private"; tok = os.environ["HF_TOKEN"]
 files = list_repo_files(repo, repo_type="dataset", token=tok)
 for f in files:
-    if f.startswith("manifests/"):
-        p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
-        open("/vol/manifests/" + os.path.basename(f), "wb").write(open(p, "rb").read())
+    for sub in ("manifests", "dev_manifests", "pert_manifests"):
+        if f.startswith(sub + "/"):
+            os.makedirs("/vol/" + sub, exist_ok=True)
+            p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
+            open("/vol/" + sub + "/" + os.path.basename(f), "wb").write(open(p, "rb").read())
 import json
 def expected(ds):
     p = f"/vol/manifests/{ds}.jsonl"
@@ -302,9 +304,11 @@ from huggingface_hub import hf_hub_download, list_repo_files
 repo = "HeshamHaroon/tahqiq-audio-private"; tok = os.environ["HF_TOKEN"]
 files = list_repo_files(repo, repo_type="dataset", token=tok)
 for f in files:
-    if f.startswith("manifests/"):
-        p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
-        open("/vol/manifests/" + os.path.basename(f), "wb").write(open(p, "rb").read())
+    for sub in ("manifests", "dev_manifests", "pert_manifests"):
+        if f.startswith(sub + "/"):
+            os.makedirs("/vol/" + sub, exist_ok=True)
+            p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
+            open("/vol/" + sub + "/" + os.path.basename(f), "wb").write(open(p, "rb").read())
 import json
 def expected(ds):
     p = f"/vol/manifests/{ds}.jsonl"

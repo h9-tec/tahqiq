@@ -33,9 +33,15 @@ def build(
     n_api: int = 1000,
     n_timing: int = 12,
     seed: int = 0,
+    split: str = "test",
+    every: int = 1,
+    name: str = NAME,
 ) -> list[Utterance]:
-    elm = elm_members("sada_test")
-    rows = list(csv.DictReader(open(src / "test.csv", encoding="utf-8")))
+    from . import keep
+
+    elm = elm_members("sada_test") if split == "test" else {}
+    csv_name = {"test": "test.csv", "validation": "valid.csv", "train": "train.csv"}[split]
+    rows = [r for r in csv.DictReader(open(src / csv_name, encoding="utf-8")) if keep(name, r["SegmentID"], every)]
     if per_config_limit:
         rows = rows[:per_config_limit]
     utts: list[Utterance] = []
@@ -43,7 +49,7 @@ def build(
     cache: dict[str, tuple[np.ndarray, int]] = {}
     for r in tqdm(rows, desc=NAME, unit="utt"):
         seg = r["SegmentID"]
-        rel = f"{NAME}/{make_id(NAME, seg)}.wav"
+        rel = f"{name}/{make_id(name, seg)}.wav"
         wav = audio_dir / rel
         start, end = float(r["SegmentStart"]), float(r["SegmentEnd"])
         if not wav.exists():
@@ -62,5 +68,5 @@ def build(
             seen_elm.add(seg)
         ref = elm[seg]["text"] if in_elm else (r.get("ProcessedText") or r.get("GroundTruthText") or "")
         dialect_raw = (r.get("SpeakerDialect") or "").strip()
-        utts.append(make_utt(NAME, seg, wav, rel, ref, duration_s=end - start, dialect_raw=dialect_raw, in_elm=in_elm))
-    return finalize(NAME, utts, elm, seen_elm, manifests_dir=manifests_dir, n_api=n_api, n_timing=n_timing, seed=seed)
+        utts.append(make_utt(name, seg, wav, rel, ref, duration_s=end - start, dialect_raw=dialect_raw, in_elm=in_elm))
+    return finalize(name, utts, elm, seen_elm, manifests_dir=manifests_dir, n_api=n_api, n_timing=n_timing, seed=seed)

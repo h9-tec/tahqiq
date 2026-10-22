@@ -27,22 +27,29 @@ def build(
     n_api: int = 1000,
     n_timing: int = 12,
     seed: int = 0,
+    split: str = "test",
+    every: int = 1,
+    name: str = NAME,
 ) -> list[Utterance]:
     from datasets import Audio, load_dataset
 
-    elm = elm_members("mgb2_test")
+    from . import keep
+
+    elm = elm_members("mgb2_test") if split == "test" else {}
     src = str(src)
     if Path(src).is_dir():
-        ds = load_dataset("parquet", data_files=str(Path(src) / "test-*.parquet"), split="train")
+        ds = load_dataset("parquet", data_files=str(Path(src) / f"{split}-*.parquet"), split="train")
     else:
-        ds = load_dataset(src, data_files={"test": "data/test-*.parquet"}, split="test")
+        ds = load_dataset(src, data_files={split: f"data/{split}-*.parquet"}, split=split)
     ds = ds.cast_column("audio", Audio(decode=False))
     utts: list[Utterance] = []
     seen_elm: set[str] = set()
     n = 0
     for row in tqdm(ds, desc=NAME, unit="utt"):
         seg = str(row["segment_id"])
-        rel = f"{NAME}/{make_id(NAME, seg)}.wav"
+        if not keep(name, seg, every):
+            continue
+        rel = f"{name}/{make_id(name, seg)}.wav"
         wav = audio_dir / rel
         arr, sr = hio.decode_audio_bytes(row["audio"]["bytes"])
         if not wav.exists():
@@ -52,8 +59,8 @@ def build(
             seen_elm.add(seg)
         ref = elm[seg]["text"] if in_elm else (row["transcript"] or "")
         dur = float(row.get("duration") or 0.0) or len(arr) / sr
-        utts.append(make_utt(NAME, seg, wav, rel, ref, duration_s=dur, dialect_raw="", in_elm=in_elm))
+        utts.append(make_utt(name, seg, wav, rel, ref, duration_s=dur, dialect_raw="", in_elm=in_elm))
         n += 1
         if per_config_limit and n >= per_config_limit:
             break
-    return finalize(NAME, utts, elm, seen_elm, manifests_dir=manifests_dir, n_api=n_api, n_timing=n_timing, seed=seed)
+    return finalize(name, utts, elm, seen_elm, manifests_dir=manifests_dir, n_api=n_api, n_timing=n_timing, seed=seed)

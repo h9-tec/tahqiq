@@ -24,6 +24,9 @@ import yaml  # noqa: E402
 
 from tahqiq import hub  # noqa: E402
 from tahqiq.profile import profile  # noqa: E402
+from tahqiq.fingerprint import mean_vector  # noqa: E402
+from tahqiq import io as hio  # noqa: E402
+from tahqiq.manifest import load_manifest  # noqa: E402
 from tahqiq.manifest import manifest_paths, read_manifest_hash  # noqa: E402
 from tahqiq.report import BASELINE, score_model  # noqa: E402
 
@@ -47,7 +50,18 @@ def build_scores(slug: str, *, n_boot: int = 2000, extra: dict | None = None, sl
     hf_id = (extra or {}).get("hf_id") or run.get("hf_id")
     timing_path = RESULTS / slug / "timing.json"
     timing = json.loads(timing_path.read_text(encoding="utf-8")) if timing_path.exists() else None
+    # Transcript-convention fingerprint: mean feature vector of this system's hypotheses per set and slice.
+    fp = {}
+    for ds in datasets:
+        preds = hio.load_predictions(RESULTS, slug, ds)
+        utts = load_manifest(MANIFESTS / f"{ds}.jsonl")
+        for sl, sel in (("all", utts), ("api", [u for u in utts if u.in_api_slice])):
+            hyps = [preds[u.id].hyp for u in sel if u.id in preds and not preds[u.id].error]
+            v = mean_vector(hyps) if len(hyps) >= 50 else None
+            if v:
+                fp.setdefault(ds, {})[sl] = v
     doc = {
+        "fingerprint": fp,
         "profile": profile(slug, hf_id),
         "timing": timing,
         "model_id": slug,

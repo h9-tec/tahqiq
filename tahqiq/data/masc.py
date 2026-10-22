@@ -44,21 +44,27 @@ def build(
     n_api: int = 1000,
     n_timing: int = 12,
     seed: int = 0,
+    split: str = "test",
+    every: int = 1,
+    name_prefix: str = "",
 ) -> list[Utterance]:
     from datasets import Audio, load_dataset
 
+    from . import keep
+
     src = str(src)
     if Path(src).is_dir():
-        ds = load_dataset("parquet", data_files=str(Path(src) / "test-*.parquet"), split="train")
+        ds = load_dataset("parquet", data_files=str(Path(src) / f"{split}-*.parquet"), split="train")
     else:
-        ds = load_dataset(src, split="test")
+        ds = load_dataset(src, data_files={split: f"data/{split}-*.parquet"}, split=split)
+    names = {t: name_prefix + n for t, n in NAMES.items()}
     ds = ds.cast_column("audio", Audio(decode=False))
 
     elm_files = {"c": "masc_test_clean", "n": "masc_test_noisy"}
-    elm_idx = {t: _elm_index(elm_files[t]) for t in NAMES}
-    elm_all = {t: elm_members(elm_files[t]) for t in NAMES}
-    utts: dict[str, list[Utterance]] = {n: [] for n in NAMES.values()}
-    seen: dict[str, set[str]] = {n: set() for n in NAMES.values()}
+    elm_idx = {t: (_elm_index(elm_files[t]) if split == "test" else {}) for t in NAMES}
+    elm_all = {t: (elm_members(elm_files[t]) if split == "test" else {}) for t in NAMES}
+    utts: dict[str, list[Utterance]] = {n: [] for n in names.values()}
+    seen: dict[str, set[str]] = {n: set() for n in names.values()}
     counts = {"c": 0, "n": 0}
     for i, row in enumerate(tqdm(ds, desc="masc", unit="utt")):
         t = (row.get("type") or "").strip().lower()[:1]
@@ -68,8 +74,10 @@ def build(
             if all(counts[k] >= per_config_limit for k in NAMES):
                 break
             continue
-        name = NAMES[t]
+        name = names[t]
         video_id = str(row["video_id"])
+        if not keep(name, f"{video_id}_row{i}", every):
+            continue
         arr, sr = hio.decode_audio_bytes(row["audio"]["bytes"])
         dur = float(row.get("duration") or 0.0) or len(arr) / sr
         text = row.get("text") or ""
@@ -95,7 +103,7 @@ def build(
         counts[t] += 1
 
     out: list[Utterance] = []
-    for t, name in NAMES.items():
+    for t, name in names.items():
         out += finalize(name, utts[name], elm_all[t], seen[name], manifests_dir=manifests_dir,
                         n_api=n_api, n_timing=n_timing, seed=seed)
     return out
