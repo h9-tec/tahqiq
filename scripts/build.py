@@ -121,9 +121,17 @@ README_START = "<!-- tahqiq:table:start -->"
 README_END = "<!-- tahqiq:table:end -->"
 
 
-def readme_table(slice_name: str = "full", normalizer: str = "elm") -> str:
+def readme_table(slice_name: str = "full", normalizer: str = "elm", *, from_hub: bool = True) -> str:
     """Headline table for README: avg WER, per-set WER, probes, Δ vs baseline. Generated only."""
-    summary = json.loads((DIST / "summary.json").read_text(encoding="utf-8"))
+    if from_hub:
+        from tahqiq import hub
+
+        models = hub.load_all_scores(force=True)
+        datasets = sorted({d for m in models for sl in m["scores"].values() for d in sl["datasets"]})
+        summary = {"models": models, "datasets": {d: {} for d in datasets},
+                   "meta": {"manifest_sha256": (models[0]["manifest_sha256"] if models else "n/a"), "generated_at": hub.now()}}
+    else:
+        summary = json.loads((DIST / "summary.json").read_text(encoding="utf-8"))
     datasets = list(summary["datasets"])
     label = {"sada": "SADA", "casablanca": "Casablanca", "commonvoice": "CV18", "masc_clean": "MASC-c", "masc_noisy": "MASC-n", "mgb2": "MGB-2"}
     rows = []
@@ -155,7 +163,8 @@ def readme_table(slice_name: str = "full", normalizer: str = "elm") -> str:
     out.append("")
     out.append(f"WER % on the {'full test sets' if slice_name == 'full' else 'common stratified slice'}, `{normalizer}` normalizer, "
                f"corpus-level, sorted by unweighted average over {len(datasets)} sets. Confidence intervals, CER, the tolerant "
-               f"normalizer and per-dialect numbers are on the site. Manifest `{meta['manifest_sha256'][:12]}`, built {meta['generated_at'][:10]}.")
+               f"normalizer and per-dialect numbers are on the [live board](https://huggingface.co/spaces/HeshamHaroon/tahqiq). "
+               f"Snapshot of {len(rows)} systems, manifest `{meta['manifest_sha256'][:12]}`, {meta['generated_at'][:10]}.")
     return "\n".join(out)
 
 
