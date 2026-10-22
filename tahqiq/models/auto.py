@@ -28,6 +28,10 @@ ADAPTERS = {
     "wavlm": (".open.ctc", "CTCModel"),
     "wav2vec2-bert": (".open.ctc", "CTCModel"),
     "voxtral": (".open.voxtral", "Voxtral"),
+    "voxtral_realtime": (".open.voxtral_realtime", "VoxtralRealtime"),
+    "gemma4": (".open.gemma_audio", "GemmaAudio"),
+    "gemma3n": (".open.gemma_audio", "GemmaAudio"),
+    "omni": (".open.omniasr", "OmniASR"),      # facebook/omniASR-* (fairseq2 package, own env)
 }
 
 
@@ -52,15 +56,20 @@ def detect(hf_id: str, *, revision: str | None = None) -> Decision:
     files = [s.rfilename for s in info.siblings or []]
     d.weight_gb = round(sum((s.size or 0) for s in info.siblings or []
                             if s.rfilename.endswith((".safetensors", ".bin", ".pt", ".nemo", ".ckpt"))) / 1e9, 2)
-    if any(f.endswith(".nemo") for f in files):
+    if hf_id.startswith("facebook/omniASR-"):
+        d.adapter, d.env, d.model_type = "omni", "omni", "omniasr"
+    elif any(f.endswith(".nemo") for f in files):
         d.adapter, d.env = "nemo", "nemo"
     elif "config.json" in files:
         p = hf_hub_download(hf_id, "config.json", revision=revision, token=os.environ.get("HF_TOKEN") or None)
         cfg = json.loads(open(p, encoding="utf-8").read())
         d.model_type = str(cfg.get("model_type", ""))
         if cfg.get("auto_map") or any(f.endswith(".py") for f in files):
-            d.needs_review = True
-            d.reasons.append("repository ships custom code (trust_remote_code); needs manual review")
+            if os.environ.get("TAHQIQ_TRUST_REMOTE_CODE") == "1":
+                d.reasons.append("custom code allowed by TAHQIQ_TRUST_REMOTE_CODE=1 (isolated pod, no secrets)")
+            else:
+                d.needs_review = True
+                d.reasons.append("repository ships custom code (trust_remote_code); needs manual review")
         if d.model_type in ADAPTERS:
             d.adapter = d.model_type
         else:

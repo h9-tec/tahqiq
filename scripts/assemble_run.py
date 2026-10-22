@@ -34,16 +34,19 @@ def assemble(slug: str) -> dict:
     if bad:
         raise SystemExit(f"{slug}: units with a stale manifest hash: {bad}")
     datasets = [p.stem for p in manifest_paths(MANIFESTS)]
+    slice_name = "api" if all(u.get("slice") == "api" for u in units) else "full"
     coverage = {}
     for ds in datasets:
         utts = load_manifest(MANIFESTS / f"{ds}.jsonl")
+        if slice_name == "api":
+            utts = [u for u in utts if u.in_api_slice]
         preds = hio.load_predictions(RESULTS, slug, ds)
         ok = sum(1 for u in utts if u.id in preds and not preds[u.id].error)
         coverage[ds] = (ok, len(utts))
     missing = {ds: v for ds, v in coverage.items() if v[0] < v[1]}
     base = units[0]
     totals = {k: sum(u["totals"].get(k, 0) for u in units) for k in ("done", "errors", "skipped", "audio_s", "wall_s")}
-    run = {**base, "run_id": "+".join(u["run_id"] for u in units), "datasets": datasets, "slice": "full",
+    run = {**base, "run_id": "+".join(u["run_id"] for u in units), "datasets": datasets, "slice": slice_name,
            "started": min(u["started"] for u in units), "finished": max(u["finished"] for u in units),
            "totals": totals, "assembled_from": [u["run_id"] for u in units],
            "machines": sorted({u.get("env", {}).get("machine", "?") for u in units})}

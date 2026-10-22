@@ -113,6 +113,7 @@ def main() -> None:
     ap.add_argument("--adapter", default=None)
     ap.add_argument("--datasets", default=",".join(DATASETS))
     ap.add_argument("--batch", type=int, default=None)
+    ap.add_argument("--slice", default=None, choices=[None, "full", "api"], help="api = common slice only")
     ap.add_argument("--no-timing", action="store_true")
     ap.add_argument("--no-publish", action="store_true")
     ap.add_argument("--helper", action="store_true", help="partial run: write cache only, no run.json/publish")
@@ -134,6 +135,8 @@ def main() -> None:
         cmd += ["--adapter", args.adapter]
     if args.batch:
         cmd += ["--batch", str(args.batch)]
+    if args.slice:
+        cmd += ["--slice", args.slice]
     if args.helper:
         cmd += ["--helper"]
     log("run: " + " ".join(cmd[2:]))

@@ -26,8 +26,11 @@ class Qwen3ASR(ASRModel):
         import torch
         from transformers import AutoModelForMultimodalLM, AutoProcessor
 
-        self.processor = AutoProcessor.from_pretrained(self.hf_id)
-        self.model = AutoModelForMultimodalLM.from_pretrained(self.hf_id, device_map="cuda", dtype=torch.bfloat16)
+        import os
+
+        trc = os.environ.get("TAHQIQ_TRUST_REMOTE_CODE") == "1"
+        self.processor = AutoProcessor.from_pretrained(self.hf_id, trust_remote_code=trc)
+        self.model = AutoModelForMultimodalLM.from_pretrained(self.hf_id, device_map="cuda", dtype=torch.bfloat16, trust_remote_code=trc)
         self.model.eval()
 
     def _run(self, audio) -> list[str]:

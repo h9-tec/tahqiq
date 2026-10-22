@@ -46,8 +46,8 @@ DATACENTER = os.environ.get("TAHQIQ_RUNPOD_DC", "")
 
 # model → (datasets per pod, timing on the first pod). Slow models are split in two.
 UNITS: list[dict] = []
-_ALL = ["casablanca", "commonvoice", "masc_clean", "masc_noisy", "sada"]
-_SPLIT = (["casablanca", "masc_clean", "sada"], ["commonvoice", "masc_noisy"])
+_ALL = ["casablanca", "commonvoice", "masc_clean", "masc_noisy", "mgb2", "sada"]
+_SPLIT = (["casablanca", "masc_clean", "sada"], ["commonvoice", "masc_noisy", "mgb2"])
 for slug in ["whisper_large_v3", "qwen3_asr_1.7b", "qwen3_asr_0.6b", "seamless_m4t_v2_large", "cohere_transcribe_arabic_07_2026"]:
     UNITS.append({"slug": slug, "datasets": _SPLIT[0], "timing": True})
     UNITS.append({"slug": slug, "datasets": _SPLIT[1], "timing": False})
@@ -117,25 +117,31 @@ def bootstrap_script(unit: dict) -> str:
            "python-dotenv huggingface_hub sentencepiece protobuf tiktoken paramiko")
     if unit.get("nemo"):
         pip += " && pip install -q 'nemo_toolkit[asr]' cython packaging"
+    if unit.get("omni"):
+        pip += " && pip install -q omnilingual-asr"
     def eval_cmd(slug: str, datasets: list[str], timing: bool, hf_id: str | None, display: str | None) -> str:
-        c = f"python scripts/eval_job.py --slug {slug} --datasets {','.join(datasets)} --helper"
+        sl = f" --slice {unit['slice']}" if unit.get("slice") else ""
+        c = f"python scripts/eval_job.py --slug {slug} --datasets {','.join(datasets)} --helper{sl}"
         if hf_id:
             c += f" --hf-id {hf_id}"
         if display:
             c += f" --display-name '{display}'"
-        c += " && python -m tahqiq.runner --model " + slug + "".join(f" --dataset {d}" for d in datasets) + (f" --hf-id {hf_id}" if hf_id else "") + " --helper"
         if timing:
             c += f" && python scripts/timing.py {slug}" + (f" --hf-id {hf_id}" if hf_id else "")
         return c
     cmds = eval_cmd(unit["slug"], unit["datasets"], unit.get("timing", False), unit.get("hf_id"), unit.get("display_name"))
     if unit.get("then"):
         cmds += " && " + eval_cmd(unit["then"], unit["datasets"], True, None, None)
-    return f"""set -e
-export HF_HUB_DISABLE_XET=1 HF_HOME=/workspace/hf TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 TOKENIZERS_PARALLELISM=false TAHQIQ_VOLUME=/vol
-export HF_TOKEN='{os.environ["HF_TOKEN"]}' TAHQIQ_AUDIO_SSH='{os.environ["TAHQIQ_AUDIO_SSH"]}' TAHQIQ_RESULTS_REPO='{hub.RESULTS_REPO}' TAHQIQ_REQUESTS_REPO='{hub.REQUESTS_REPO}'
+    secrets = "" if unit.get("remote_code") else f"""export HF_TOKEN='{os.environ["HF_TOKEN"]}' TAHQIQ_AUDIO_SSH='{os.environ["TAHQIQ_AUDIO_SSH"]}'
 export TAHQIQ_AUDIO_KEY=$(cat <<'KEYEOF'
 {key}KEYEOF
-)
+)"""
+    trc = "export TAHQIQ_TRUST_REMOTE_CODE=1" if unit.get("remote_code") else ""
+    return f"""set -e
+export HF_HUB_DISABLE_XET=1 HF_HOME=/workspace/hf TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 TOKENIZERS_PARALLELISM=false TAHQIQ_VOLUME=/vol
+export TAHQIQ_RESULTS_REPO='{hub.RESULTS_REPO}' TAHQIQ_REQUESTS_REPO='{hub.REQUESTS_REPO}'
+{secrets}
+{trc}
 apt-get update -qq >/dev/null 2>&1 && apt-get install -y -qq libsndfile1 rsync >/dev/null 2>&1 || true
 mkdir -p /workspace && cd /workspace
 {pip} > /workspace/pip.log 2>&1
@@ -247,7 +253,11 @@ def cmd_seed(gpu: str, pod_id: str | None = None) -> None:
     print("seed rc", rc)
 
 
-def units_from_candidates(path: Path, *, max_priority: int = 2, split_over_gb: float = 2.0) -> list[dict]:
+SLOW_TYPES = {"gemma4", "gemma3n", "voxtral_realtime", "omniasr", "qwen2_5_omni", "qwen3_omni_moe"}
+SLOW_PREFIXES = ("facebook/omniASR-LLM-",)
+
+
+def units_from_candidates(path: Path, *, max_priority: int = 1, split_over_gb: float = 8.0) -> list[dict]:
     """Build work units from data/candidates.yaml: registry slugs where known, auto-detected adapters otherwise.
 
     Models that need remote code or an unknown architecture are skipped (listed on stderr) so they
@@ -272,12 +282,14 @@ def units_from_candidates(path: Path, *, max_priority: int = 2, split_over_gb: f
         hf_id = c["hf_id"]
         slug = by_hf.get(hf_id) or hub.slug_for(hf_id)
         nemo = bool(c.get("nemo"))
-        if slug not in registry.REGISTRY:
-            if c.get("needs_remote_code") or (not nemo and str(c.get("model_type", "")) not in ADAPTERS):
-                skipped.append((hf_id, c.get("model_type"), "remote code" if c.get("needs_remote_code") else "no adapter"))
+        omni = hf_id.startswith("facebook/omniASR-")
+        remote = bool(c.get("needs_remote_code"))
+        if slug not in registry.REGISTRY and not (nemo or omni):
+            if str(c.get("model_type", "")) not in ADAPTERS:
+                skipped.append((hf_id, c.get("model_type"), "no adapter"))
                 continue
         big = float(c.get("weights_gb") or 0) > split_over_gb
-        base = {"slug": slug, "nemo": nemo}
+        base = {"slug": slug, "nemo": nemo, "omni": omni, "remote_code": remote}
         if slug not in registry.REGISTRY:
             base.update({"hf_id": hf_id, "display_name": c.get("name") or hf_id})
         if big:
@@ -293,14 +305,14 @@ def units_from_candidates(path: Path, *, max_priority: int = 2, split_over_gb: f
 def main() -> None:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("plan").add_argument("--from-candidates", action="store_true")
+    pl = sub.add_parser("plan"); pl.add_argument("--from-candidates", action="store_true"); pl.add_argument("--max-priority", type=int, default=1)
     sd = sub.add_parser("seed"); sd.add_argument("--gpu", default="NVIDIA RTX A5000"); sd.add_argument("--pod-id", default=None, help="reuse an existing pod")
-    r = sub.add_parser("run"); r.add_argument("--max-pods", type=int, default=16); r.add_argument("--only", default=None, help="comma list of slugs"); r.add_argument("--from-candidates", action="store_true"); r.add_argument("--skip-done", action="store_true", help="skip slugs that already have results/<slug>/run.json")
+    r = sub.add_parser("run"); r.add_argument("--max-pods", type=int, default=16); r.add_argument("--only", default=None, help="comma list of slugs"); r.add_argument("--from-candidates", action="store_true"); r.add_argument("--skip-done", action="store_true", help="skip slugs that already have results/<slug>/run.json"); r.add_argument("--max-priority", type=int, default=1)
     sub.add_parser("collect"); sub.add_parser("kill")
     a = ap.parse_args()
     if a.cmd == "seed":
         cmd_seed(a.gpu, a.pod_id); return
-    units_all = units_from_candidates(ROOT / "data" / "candidates.yaml") if getattr(a, "from_candidates", False) else UNITS
+    units_all = units_from_candidates(ROOT / "data" / "candidates.yaml", max_priority=getattr(a, "max_priority", 1)) if getattr(a, "from_candidates", False) else UNITS
     if a.cmd == "plan":
         for i, u in enumerate(units_all):
             print(i, u["slug"], u["datasets"], "timing" if u.get("timing") else "", "+then " + u["then"] if u.get("then") else "")
@@ -321,8 +333,8 @@ def main() -> None:
     units = [u for u in units_all if not a.only or u["slug"] in a.only.split(",")]
     if a.skip_done:
         units = [u for u in units if not (ROOT / "results" / u["slug"] / "run.json").exists()]
-    units = units[: a.max_pods]
-    with ThreadPoolExecutor(max_workers=len(units)) as ex:
+    print(f"{len(units)} units, {a.max_pods} pods at a time")
+    with ThreadPoolExecutor(max_workers=max(1, a.max_pods)) as ex:
         list(ex.map(lambda iu: run_unit(iu[1], iu[0], state), enumerate(units)))
     print(json.dumps({k: v["status"] for k, v in state.items()}, indent=1))
 

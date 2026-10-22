@@ -35,7 +35,7 @@ def build(
     if Path(src).is_dir():
         ds = load_dataset("parquet", data_files=str(Path(src) / "test-*.parquet"), split="train")
     else:
-        ds = load_dataset(src, split="test")
+        ds = load_dataset(src, data_files={"test": "data/test-*.parquet"}, split="test")
     ds = ds.cast_column("audio", Audio(decode=False))
     utts: list[Utterance] = []
     seen_elm: set[str] = set()

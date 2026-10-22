@@ -43,6 +43,8 @@ def main() -> None:
             cmd += ["--hf-id", run["hf_id"]]
         if run.get("display_name"):
             cmd += ["--display-name", run["display_name"]]
+        if run.get("slice") == "api":
+            cmd += ["--slices", "api"]
         if a.no_upload:
             cmd.append("--no-upload")
         rc = subprocess.call(cmd, cwd=ROOT)

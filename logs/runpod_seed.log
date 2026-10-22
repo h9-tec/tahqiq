@@ -1,5 +1,9 @@
 Warning: Permanently added '[38.80.152.249]:34152' (ED25519) to the list of known hosts.
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+httpcore 1.0.7 requires h11<0.15,>=0.13, but you have h11 0.16.0 which is incompatible.
 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
 
 [notice] A new release of pip is available: 25.0.1 -> 26.2.2
 [notice] To update, run: python -m pip install --upgrade pip
+have casablanca
+commonvoice done 127 s

@@ -1279,7 +1279,7 @@ models:
   - https://github.com/facebookresearch/omnilingual-asr
   - https://arxiv.org/abs/2511.09690
   - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
-  priority: 1
+  priority: 2
   notes: 'omnilingual-asr package, lang=''arb_Arab''; ~40 s per utterance. Transformers support landing (model_type ''omniasr'', bezzam/omniasr-llm-300m-v2 conversion,
     docs page model_doc/omniasr; needs transformers from source). ziywang50/omniASR-LLM-3B is a vLLM-compatible fork. Elm avg WER: LLM_300M 33.0, 1B 30.0, 3B 30.0,
     7B 28.3 (top open model before Cohere/Audar).'
@@ -1306,7 +1306,7 @@ models:
   - https://github.com/facebookresearch/omnilingual-asr
   - https://arxiv.org/abs/2511.09690
   - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
-  priority: 1
+  priority: 2
   notes: 'omnilingual-asr package, lang=''arb_Arab''; ~40 s per utterance. Transformers support landing (model_type ''omniasr'', bezzam/omniasr-llm-300m-v2 conversion,
     docs page model_doc/omniasr; needs transformers from source). ziywang50/omniASR-LLM-3B is a vLLM-compatible fork. Elm avg WER: LLM_300M 33.0, 1B 30.0, 3B 30.0,
     7B 28.3 (top open model before Cohere/Audar).'
@@ -1400,7 +1400,7 @@ models:
   - https://huggingface.co/Qwen/Qwen3-ASR-1.7B
   - https://github.com/QwenLM/Qwen3-ASR
   - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
-  priority: 1
+  priority: 3
   notes: Original checkpoint for `qwen-asr` package / vLLM (vLLM-based batch + streaming serving). Timestamps only via separate Qwen3-ForcedAligner-0.6B, which does
     NOT list Arabic. Elm avg WER 33.4.
 - hf_id: Qwen/Qwen3-ASR-0.6B
@@ -1425,7 +1425,7 @@ models:
   - https://huggingface.co/Qwen/Qwen3-ASR-0.6B
   - https://github.com/QwenLM/Qwen3-ASR
   - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
-  priority: 1
+  priority: 3
   notes: qwen-asr / vLLM checkpoint. Elm avg WER 42.2.
 - hf_id: Qwen/Qwen3-ASR-1.7B-hf
   name: Qwen3-ASR 1.7B (transformers)
