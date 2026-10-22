@@ -47,9 +47,9 @@ def bootstrap() -> None:
     (ROOT / "code").mkdir(exist_ok=True)
     with tarfile.open(bundle) as tf:
         tf.extractall(ROOT / "code", filter="data")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "-e", str(CODE), "--no-deps"])
-    sys.path.insert(0, str(CODE))
-    log("code bundle installed")
+    if str(CODE) not in sys.path:
+        sys.path.insert(0, str(CODE))
+    log("code bundle ready")
     from tahqiq.manifest import load_manifest
 
     mdir = CODE / "data" / "manifests"
@@ -90,9 +90,13 @@ def _gpu_run(slug: str, hf_id: str, display_name: str, adapter: str | None, ds: 
 _gpu_run = spaces.GPU(duration=int(os.environ.get("TAHQIQ_GPU_SECONDS", "480")))(_gpu_run)
 
 
+def _env() -> dict:
+    return {**os.environ, "PYTHONPATH": str(CODE), "TAHQIQ_AUDIO": str(CODE / "audio")}
+
+
 def _gpu_timing(slug: str, hf_id: str, adapter: str | None) -> str:
     cmd = [sys.executable, str(CODE / "scripts" / "timing.py"), slug, "--hf-id", hf_id] + (["--adapter", adapter] if adapter else [])
-    rc = subprocess.call(cmd, cwd=CODE)
+    rc = subprocess.call(cmd, cwd=CODE, env=_env())
     return f"timing rc={rc}"
 
 
@@ -133,7 +137,7 @@ def evaluate(slug: str) -> str:
         (CODE / "results" / slug / "run.json").write_text(json.dumps(base, indent=2, ensure_ascii=False), encoding="utf-8")
         log(_gpu_timing(slug, req["hf_id"], adapter))
         rc = subprocess.call([sys.executable, str(CODE / "scripts" / "publish.py"), slug, "--hf-id", req["hf_id"],
-                              "--display-name", req.get("display_name") or req["hf_id"], "--slices", "api"], cwd=CODE)
+                              "--display-name", req.get("display_name") or req["hf_id"], "--slices", "api"], cwd=CODE, env=_env())
         if rc != 0:
             raise RuntimeError(f"publish rc={rc}")
         doc = json.loads((CODE / "results" / slug / "scores.json").read_text(encoding="utf-8"))
