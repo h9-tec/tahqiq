@@ -39,7 +39,7 @@ FLAVOR = os.environ.get("TAHQIQ_JOB_FLAVOR", "h100")
 TIMEOUT_S = int(os.environ.get("TAHQIQ_JOB_TIMEOUT", "7200"))
 
 PIP_MAIN = ("pip install -q -U 'transformers>=5.13' accelerate soundfile scipy numpy rapidfuzz jiwer pyyaml tenacity httpx tqdm "
-            "python-dotenv huggingface_hub sentencepiece protobuf tiktoken")
+            "python-dotenv huggingface_hub sentencepiece protobuf tiktoken paramiko")
 PIP_NEMO = "pip install -q 'nemo_toolkit[asr]' cython packaging"
 
 BOOTSTRAP = """set -e
@@ -48,7 +48,7 @@ apt-get update -qq >/dev/null 2>&1 && apt-get install -y -qq libsndfile1 >/dev/n
 python - <<'PY'
 import os, tarfile
 from huggingface_hub import hf_hub_download
-p = hf_hub_download(os.environ["TAHQIQ_AUDIO_REPO"], "code/tahqiq.tar.gz", repo_type="dataset", token=os.environ["HF_TOKEN"])
+p = hf_hub_download(os.environ["TAHQIQ_RESULTS_REPO"], "code/tahqiq.tar.gz", repo_type="dataset", token=os.environ["HF_TOKEN"])
 tarfile.open(p).extractall("/work", filter="data")
 PY
 cd /work/tahqiq
@@ -62,6 +62,15 @@ def _api() -> HfApi:
     return HfApi(token=os.environ["HF_TOKEN"])
 
 
+def _audio_secrets() -> dict:
+    """Read-only SFTP access to the audio host, passed as job secrets (never stored on the Hub)."""
+    key_path = os.environ.get("TAHQIQ_AUDIO_KEY_PATH")
+    ssh = os.environ.get("TAHQIQ_AUDIO_SSH")
+    if not (key_path and ssh):
+        return {}
+    return {"TAHQIQ_AUDIO_SSH": ssh, "TAHQIQ_AUDIO_KEY": Path(key_path).read_text(encoding="utf-8")}
+
+
 def cmd_bundle() -> None:
     buf = io.BytesIO()
     files = subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).split()
@@ -71,9 +80,9 @@ def cmd_bundle() -> None:
                 continue
             tf.add(ROOT / f, arcname=f"tahqiq/{f}")
     buf.seek(0)
-    _api().upload_file(path_or_fileobj=buf.getvalue(), path_in_repo="code/tahqiq.tar.gz", repo_id=AUDIO_REPO,
+    _api().upload_file(path_or_fileobj=buf.getvalue(), path_in_repo="code/tahqiq.tar.gz", repo_id=hub.RESULTS_REPO,
                        repo_type="dataset", commit_message="code bundle")
-    print(f"bundle uploaded ({len(buf.getvalue())/1e6:.1f} MB) to {AUDIO_REPO}/code/tahqiq.tar.gz")
+    print(f"bundle uploaded ({len(buf.getvalue())/1e6:.1f} MB) to {hub.RESULTS_REPO}/code/tahqiq.tar.gz")
 
 
 def launch(slug: str, hf_id: str | None, display_name: str | None, *, nemo: bool = False, extra_args: str = "",
@@ -89,7 +98,7 @@ def launch(slug: str, hf_id: str | None, display_name: str | None, *, nemo: bool
         image=IMAGE, command=["bash", "-lc", script], flavor=flavor or FLAVOR, timeout=TIMEOUT_S,
         env={"TAHQIQ_AUDIO_REPO": AUDIO_REPO, "TAHQIQ_RESULTS_REPO": hub.RESULTS_REPO, "TAHQIQ_REQUESTS_REPO": hub.REQUESTS_REPO,
              "TOKENIZERS_PARALLELISM": "false"},
-        secrets={"HF_TOKEN": os.environ["HF_TOKEN"]},
+        secrets={"HF_TOKEN": os.environ["HF_TOKEN"], **_audio_secrets()},
         name=f"tahqiq-{slug}"[:60],
     )
     print(f"launched {job.id} for {slug} on {flavor or FLAVOR}: https://huggingface.co/jobs/{job.id}")

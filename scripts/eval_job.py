@@ -36,24 +36,62 @@ def log(msg: str) -> None:
     print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
+def _sftp():
+    """Read-only SFTP session to the audio host (TAHQIQ_AUDIO_SSH=user@host, TAHQIQ_AUDIO_KEY=private key text)."""
+    import io
+
+    import paramiko
+
+    user, host = os.environ["TAHQIQ_AUDIO_SSH"].split("@", 1)
+    key = paramiko.Ed25519Key.from_private_key(io.StringIO(os.environ["TAHQIQ_AUDIO_KEY"].replace("\\n", "\n")))
+    t = paramiko.Transport((host, 22))
+    t.connect(username=user, pkey=key)
+    return t, paramiko.SFTPClient.from_transport(t)
+
+
+def _pull(sftp, remote: str, local: Path) -> None:
+    local.parent.mkdir(parents=True, exist_ok=True)
+    with sftp.open(remote, "rb") as f, open(local, "wb") as out:
+        f.prefetch()
+        while True:
+            b = f.read(8_000_000)
+            if not b:
+                break
+            out.write(b)
+
+
 def fetch_data(datasets: list[str]) -> None:
-    token = os.environ["HF_TOKEN"]
     mdir = ROOT / "data" / "manifests"
     mdir.mkdir(parents=True, exist_ok=True)
-    snap = snapshot_download(AUDIO_REPO, repo_type="dataset", allow_patterns=["manifests/*"], token=token)
-    for p in Path(snap, "manifests").iterdir():
-        (mdir / p.name).write_bytes(p.read_bytes())
-    log(f"manifests: {sorted(p.name for p in mdir.iterdir())}")
     audio = ROOT / "audio"
     audio.mkdir(exist_ok=True)
+    use_ssh = bool(os.environ.get("TAHQIQ_AUDIO_SSH"))
+    if use_ssh:
+        t, sftp = _sftp()
+        for name in sftp.listdir("manifests"):
+            _pull(sftp, f"manifests/{name}", mdir / name)
+    else:
+        token = os.environ["HF_TOKEN"]
+        snap = snapshot_download(AUDIO_REPO, repo_type="dataset", allow_patterns=["manifests/*"], token=token)
+        for p in Path(snap, "manifests").iterdir():
+            (mdir / p.name).write_bytes(p.read_bytes())
+    log(f"manifests: {sorted(p.name for p in mdir.iterdir())}")
     for ds in datasets:
         if (audio / ds).exists() and any((audio / ds).iterdir()):
             continue
         t0 = time.time()
-        tar_path = hf_hub_download(AUDIO_REPO, f"audio_tars/{ds}.tar", repo_type="dataset", token=token)
+        if use_ssh:
+            tar_path = ROOT / "audio_tars" / f"{ds}.tar"
+            _pull(sftp, f"audio_tars/{ds}.tar", tar_path)
+        else:
+            tar_path = Path(hf_hub_download(AUDIO_REPO, f"audio_tars/{ds}.tar", repo_type="dataset", token=os.environ["HF_TOKEN"]))
         with tarfile.open(tar_path) as tf:
             tf.extractall(audio, filter="data")
+        if use_ssh:
+            tar_path.unlink(missing_ok=True)
         log(f"audio/{ds}: {sum(1 for _ in (audio / ds).iterdir())} files in {time.time() - t0:.0f}s")
+    if use_ssh:
+        t.close()
 
 
 def main() -> None:

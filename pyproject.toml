@@ -18,6 +18,7 @@ dependencies = [
     "tqdm>=4.66",
     "python-dotenv>=1.0",
     "huggingface_hub>=0.24",
+    "paramiko>=3.4",
 ]
 
 [project.optional-dependencies]
