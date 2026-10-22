@@ -39,7 +39,8 @@ from tahqiq import hub  # noqa: E402
 API = "https://api.runpod.io/graphql"
 POD_KEY = Path.home() / ".runpod" / "ssh" / "RunPod-Key-Go"
 IMAGE = os.environ.get("TAHQIQ_POD_IMAGE", "runpod/pytorch:2.8.0-py3.11-cuda12.8.1-cudnn-devel-ubuntu22.04")
-GPU_PREFS = [g for g in os.environ.get("TAHQIQ_POD_GPUS", "NVIDIA H200,NVIDIA H100 80GB HBM3,NVIDIA H100 NVL,NVIDIA B200").split(",")]
+GPU_PREFS = [g for g in os.environ.get("TAHQIQ_POD_GPUS", "NVIDIA H200,NVIDIA H100 NVL,NVIDIA H100 80GB HBM3,NVIDIA B200").split(",")]
+MAX_SPEND_HR = float(os.environ.get("TAHQIQ_MAX_SPEND_HR", "45"))
 STATE = ROOT / "logs" / "runpod_burst.json"
 VOLUME_ID = os.environ.get("TAHQIQ_RUNPOD_VOLUME", "")
 DATACENTER = os.environ.get("TAHQIQ_RUNPOD_DC", "")
@@ -63,14 +64,38 @@ def _key() -> str:
     return m.group(1)
 
 
+import threading
+
+_GQL_LOCK = threading.Lock()
+_GQL_LAST = [0.0]
+
+
 def gql(query: str, variables: dict | None = None) -> dict:
-    r = httpx.post(API, headers={"Authorization": f"Bearer {_key()}", "Content-Type": "application/json"},
-                   json={"query": query, "variables": variables or {}}, timeout=60)
-    r.raise_for_status()
-    d = r.json()
-    if d.get("errors"):
-        raise RuntimeError(d["errors"])
-    return d["data"]
+    """One request at a time, >= 0.7 s apart, with backoff on 429 (RunPod rate limits aggressively)."""
+    for attempt in range(8):
+        with _GQL_LOCK:
+            wait = 0.7 - (time.time() - _GQL_LAST[0])
+            if wait > 0:
+                time.sleep(wait)
+            r = httpx.post(API, headers={"Authorization": f"Bearer {_key()}", "Content-Type": "application/json"},
+                           json={"query": query, "variables": variables or {}}, timeout=60)
+            _GQL_LAST[0] = time.time()
+        if r.status_code == 429:
+            time.sleep(min(60, 5 * (attempt + 1)))
+            continue
+        r.raise_for_status()
+        d = r.json()
+        if d.get("errors"):
+            raise RuntimeError(d["errors"])
+        return d["data"]
+    raise RuntimeError("RunPod API: rate limited 8 times in a row")
+
+
+def spend_per_hr() -> float:
+    try:
+        return float(gql("{ myself { currentSpendPerHr } }")["myself"]["currentSpendPerHr"])
+    except Exception:
+        return 0.0
 
 
 def create_pod(name: str, gpu: str, cloud: str) -> str | None:
@@ -194,24 +219,38 @@ echo UNIT_DONE
 """
 
 
-def run_unit(unit: dict, idx: int, state: dict) -> None:
+def run_unit(unit: dict, idx: int, state: dict, *, retry_minutes: int = 120) -> None:
     name = f"tahqiq-{idx}-{unit['slug'][:18]}"
-    pod_id = None
-    for gpu in GPU_PREFS:
-        for cloud in ("COMMUNITY", "SECURE"):
-            pod_id = create_pod(name, gpu, cloud)
-            if pod_id:
-                print(f"{name}: pod {pod_id} on {gpu} ({cloud})", flush=True)
-                break
-        if pod_id:
+    prev = state.get(name) or {}
+    if prev.get("status", "").startswith("FINISHED"):
+        return
+    pod_id = prev.get("pod") if prev.get("status") in ("CREATED", "RUNNING") else None
+    if pod_id and not pod_ssh(pod_id) and not gql("""query($id: String!) { pod(input: {podId: $id}) { desiredStatus } }""", {"id": pod_id}).get("pod"):
+        pod_id = None  # pod is gone
+    deadline = time.time() + retry_minutes * 60
+    while not pod_id:
+        if spend_per_hr() >= MAX_SPEND_HR:
+            print(f"{name}: spend cap {MAX_SPEND_HR}/h reached, waiting", flush=True)
+        else:
+            for gpu in GPU_PREFS:
+                for cloud in ("COMMUNITY", "SECURE"):
+                    pod_id = create_pod(name, gpu, cloud)
+                    if pod_id:
+                        print(f"{name}: pod {pod_id} on {gpu} ({cloud})", flush=True)
+                        break
+                if pod_id:
+                    break
+        if pod_id or time.time() > deadline:
             break
+        state[name] = {"status": "NO_GPU", "unit": unit}; _save(state)
+        time.sleep(120)
     if not pod_id:
-        state[name] = {"status": "NO_GPU", "unit": unit}
+        state[name] = {"status": "NO_GPU", "unit": unit}; _save(state)
         return
     state[name] = {"pod": pod_id, "status": "CREATED", "unit": unit}
     _save(state)
-    for _ in range(90):  # up to 15 min for the pod to come up
-        time.sleep(10)
+    for _ in range(45):  # up to 15 min for the pod to come up
+        time.sleep(20)
         addr = pod_ssh(pod_id)
         if addr and subprocess.call(["ssh", *ssh_opts(*addr), "true"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0:
             break
