@@ -29,10 +29,34 @@ class NemoFastConformer(ASRModel):
     def _marker(self) -> None:
         pass
 
+    def _nemo_file(self) -> str | None:
+        """Community repos ship a .nemo under an arbitrary name (or several); NeMo's from_pretrained only
+        resolves NVIDIA's naming. Pick the single top-level .nemo, else the first in sorted order (logged)."""
+        import os
+
+        from huggingface_hub import HfApi, hf_hub_download
+
+        if self.hf_id.startswith("nvidia/"):
+            return None
+        tok = os.environ.get("HF_TOKEN") or None
+        files = [s.rfilename for s in HfApi(token=tok).model_info(self.hf_id).siblings or []]
+        nemo = sorted(f for f in files if f.endswith(".nemo"))
+        if not nemo:
+            return None
+        top = [f for f in nemo if "/" not in f]
+        pick = top[0] if len(top) == 1 else nemo[0]
+        if len(nemo) > 1:
+            print(f"[nemo] {self.hf_id} has {len(nemo)} .nemo files {nemo}; using {pick}")
+        return hf_hub_download(self.hf_id, pick, token=tok)
+
     def load(self) -> None:
         import nemo.collections.asr as nemo_asr
 
-        self.asr_model = nemo_asr.models.ASRModel.from_pretrained(model_name=self.hf_id, map_location="cuda")
+        path = self._nemo_file()
+        if path:
+            self.asr_model = nemo_asr.models.ASRModel.restore_from(path, map_location="cuda")
+        else:
+            self.asr_model = nemo_asr.models.ASRModel.from_pretrained(model_name=self.hf_id, map_location="cuda")
         self.asr_model.eval()
         try:
             self.asr_model.change_decoding_strategy(decoder_type="rnnt")
