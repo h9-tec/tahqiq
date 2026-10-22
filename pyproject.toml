@@ -3,7 +3,7 @@ name = "tahqiq"
 version = "0.0.1"
 description = "Tahqiq (تحقيق): a reproducible Arabic ASR leaderboard with confidence intervals, dialect columns, and commercial APIs on the same table."
 readme = "README.md"
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.11,<3.13"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Hesham Haroon" }]
 dependencies = [

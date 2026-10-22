@@ -1,7 +1,7 @@
 {
  "tahqiq-8-facebook_omniASR-L": {
   "pod": "908maponkrwedp",
-  "status": "RUNNING",
+  "status": "FAILED rc=1",
   "unit": {
    "slug": "facebook_omniASR-LLM-1B",
    "nemo": false,
@@ -41,7 +41,7 @@
  },
  "tahqiq-15-cohere_transcribe_": {
   "pod": "kgclnhknx3e96x",
-  "status": "RUNNING",
+  "status": "FAILED rc=1 (terminated)",
   "unit": {
    "slug": "cohere_transcribe_arabic_07_2026",
    "nemo": false,
@@ -156,7 +156,8 @@
   "port": 31819
  },
  "tahqiq-2-openai_whisper-lar": {
-  "status": "NO_GPU",
+  "pod": "ve1xia8ui44tck",
+  "status": "CREATED",
   "unit": {
    "slug": "openai_whisper-large-v2",
    "nemo": false,
@@ -248,7 +249,7 @@
  },
  "tahqiq-0-openai_whisper-sma": {
   "pod": "ije0p3pwnecteq",
-  "status": "CREATED",
+  "status": "FAILED rc=1 (terminated)",
   "unit": {
    "slug": "openai_whisper-small",
    "nemo": false,
@@ -265,7 +266,9 @@
     "sada"
    ],
    "timing": true
-  }
+  },
+  "ip": "38.80.152.146",
+  "port": 31885
  },
  "tahqiq-1-openai_whisper-med": {
   "status": "NO_GPU",

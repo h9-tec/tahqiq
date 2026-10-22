@@ -213,7 +213,8 @@ from huggingface_hub import hf_hub_download
 p = hf_hub_download(os.environ["TAHQIQ_RESULTS_REPO"], "code/tahqiq.tar.gz", repo_type="dataset", token=os.environ["HF_TOKEN"])
 tarfile.open(p).extractall("/workspace", filter="data")
 PY
-cd /workspace/tahqiq && pip install -q -e . --no-deps
+cd /workspace/tahqiq && export PYTHONPATH=/workspace/tahqiq && (pip install -q -e . --no-deps || true)
+python -c "import tahqiq, sys; print('tahqiq import ok', sys.version.split()[0])"
 {cmds}
 echo UNIT_DONE
 """

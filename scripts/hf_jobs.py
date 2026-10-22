@@ -51,9 +51,9 @@ from huggingface_hub import hf_hub_download
 p = hf_hub_download(os.environ["TAHQIQ_RESULTS_REPO"], "code/tahqiq.tar.gz", repo_type="dataset", token=os.environ["HF_TOKEN"])
 tarfile.open(p).extractall("/work", filter="data")
 PY
-cd /work/tahqiq
+cd /work/tahqiq && export PYTHONPATH=/work/tahqiq
 {pip}
-pip install -q -e . --no-deps
+(pip install -q -e . --no-deps || true)
 python scripts/eval_job.py {args}
 """
 
