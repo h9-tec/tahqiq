@@ -401,7 +401,7 @@ def cmd_collect_wait(state: dict) -> None:
     idle = {k: 0 for k in live}
     while live:
         for k, v in list(live.items()):
-            r = subprocess.run(["ssh", *ssh_opts(v["ip"], v["port"]), "pgrep -c -f 'tahqiq.runner|scripts/timing.py|eval_job.py' || true"],
+            r = subprocess.run(["ssh", *ssh_opts(v["ip"], v["port"]), "pgrep -c -f '[t]ahqiq.runner|[s]cripts/timing.py|[e]val_job.py' || true"],
                                capture_output=True, text=True, timeout=60)
             n = int((r.stdout.strip() or "0").splitlines()[-1]) if r.returncode == 0 else -1
             if n == -1:
