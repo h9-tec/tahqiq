@@ -1,0 +1,11 @@
+name: keepalive
+# Pings the worker Space so the free CPU container never goes to sleep.
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -s -o /dev/null -w "worker %{http_code}\n" https://heshamharoon-tahqiq-worker.hf.space/ || true

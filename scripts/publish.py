@@ -31,7 +31,7 @@ MANIFESTS = ROOT / "data" / "manifests"
 RESULTS = ROOT / "results"
 
 
-def build_scores(slug: str, *, n_boot: int = 2000, extra: dict | None = None) -> dict:
+def build_scores(slug: str, *, n_boot: int = 2000, extra: dict | None = None, slices: tuple[str, ...] = ("full", "api")) -> dict:
     run = json.loads((RESULTS / slug / "run.json").read_text(encoding="utf-8"))
     current = read_manifest_hash(MANIFESTS)
     if run.get("manifest_sha256") != current:
@@ -39,7 +39,7 @@ def build_scores(slug: str, *, n_boot: int = 2000, extra: dict | None = None) ->
     datasets = [p.stem for p in manifest_paths(MANIFESTS)]
     cards = (yaml.safe_load((ROOT / "data" / "models.yaml").read_text(encoding="utf-8")) or {}).get("models", {})
     scores = {}
-    for slice_name in ("full", "api"):
+    for slice_name in slices:
         s = score_model(slug, datasets, manifests_dir=MANIFESTS, results_dir=RESULTS, slice_name=slice_name,
                         n_boot=n_boot, baseline_id=BASELINE)
         if any(s["datasets"].values()):
@@ -74,10 +74,13 @@ def main() -> None:
     ap.add_argument("--display-name", default=None)
     ap.add_argument("--n-boot", type=int, default=2000)
     ap.add_argument("--no-upload", action="store_true")
+    ap.add_argument("--slices", default="full,api", help="which slices to score, e.g. 'api' for a common-slice-only run")
     args = ap.parse_args()
-    doc = build_scores(args.slug, n_boot=args.n_boot, extra={"hf_id": args.hf_id, "display_name": args.display_name})
+    doc = build_scores(args.slug, n_boot=args.n_boot, extra={"hf_id": args.hf_id, "display_name": args.display_name},
+                       slices=tuple(x for x in args.slices.split(",") if x))
+    first = next(iter(doc["scores"].values()))
     print(f"scored {args.slug}: " + ", ".join(
-        f"{d} {100*v['elm']['wer']['point']:.1f}" for d, v in doc["scores"]["full"]["datasets"].items() if "elm" in v))
+        f"{d} {100*v['elm']['wer']['point']:.1f}" for d, v in first["datasets"].items() if "elm" in v))
     if not args.no_upload:
         hub.upload_results(args.slug, RESULTS / args.slug, doc)
         print("uploaded:", hub.results_url(args.slug))

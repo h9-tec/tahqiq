@@ -1,0 +1,3440 @@
+# Candidate open-weight ASR models with Arabic support, compiled 2026-10-22.
+# Every hf_id under `models:` and every `hf_exists: true` under `excluded:` returned HTTP 200 from
+# https://huggingface.co/api/models/<id> on 2026-10-22; downloads_30d is the Hub's last-30-day counter at that time.
+# weights_gb is the approximate on-disk size of the primary (bf16/fp32 as published) weights, not the whole repo.
+# arabic_support: native | finetuned | multilingual-includes-ar | unverified.
+# streaming: native | chunked | no | unknown.  timestamps: word | segment | char | no | unknown.
+# priority: 1 = must include, 2 = include, 3 = nice to have.
+# Sources: HF Hub API + model cards, Elm Open Universal Arabic ASR Leaderboard (space + GitHub changelog),
+# vendor blogs (Cohere, Mistral, Meta omnilingual-asr paper), benchmarklist.com mirror of the Elm table (2026-05).
+
+models:
+- hf_id: openai/whisper-tiny
+  name: Whisper tiny
+  org: OpenAI
+  family: whisper
+  params: 39M
+  weights_gb: 0.15
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 99 languages incl. Arabic (ar); MSA-centric, dialects weak; 30 s window
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-09
+  downloads_30d: 751004
+  source_urls:
+  - https://huggingface.co/openai/whisper-tiny
+  - https://github.com/openai/whisper
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: WhisperForConditionalGeneration; language='ar', task='transcribe'; long-form via chunked/sequential pipeline; word timestamps via cross-attention DTW (return_timestamps='word').
+    Elm leaderboard baseline numbers exist for small/medium/large/v2/v3/turbo.
+- hf_id: openai/whisper-base
+  name: Whisper base
+  org: OpenAI
+  family: whisper
+  params: 74M
+  weights_gb: 0.29
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 99 languages incl. Arabic (ar); MSA-centric, dialects weak; 30 s window
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-09
+  downloads_30d: 1647890
+  source_urls:
+  - https://huggingface.co/openai/whisper-base
+  - https://github.com/openai/whisper
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: WhisperForConditionalGeneration; language='ar', task='transcribe'; long-form via chunked/sequential pipeline; word timestamps via cross-attention DTW (return_timestamps='word').
+    Elm leaderboard baseline numbers exist for small/medium/large/v2/v3/turbo.
+- hf_id: openai/whisper-small
+  name: Whisper small
+  org: OpenAI
+  family: whisper
+  params: 244M
+  weights_gb: 0.97
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 99 languages incl. Arabic (ar); MSA-centric, dialects weak; 30 s window
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-09
+  downloads_30d: 3613275
+  source_urls:
+  - https://huggingface.co/openai/whisper-small
+  - https://github.com/openai/whisper
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: WhisperForConditionalGeneration; language='ar', task='transcribe'; long-form via chunked/sequential pipeline; word timestamps via cross-attention DTW (return_timestamps='word').
+    Elm leaderboard baseline numbers exist for small/medium/large/v2/v3/turbo.
+- hf_id: openai/whisper-medium
+  name: Whisper medium
+  org: OpenAI
+  family: whisper
+  params: 769M
+  weights_gb: 3.06
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 99 languages incl. Arabic (ar); MSA-centric, dialects weak; 30 s window
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-09
+  downloads_30d: 327622
+  source_urls:
+  - https://huggingface.co/openai/whisper-medium
+  - https://github.com/openai/whisper
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: WhisperForConditionalGeneration; language='ar', task='transcribe'; long-form via chunked/sequential pipeline; word timestamps via cross-attention DTW (return_timestamps='word').
+    Elm leaderboard baseline numbers exist for small/medium/large/v2/v3/turbo.
+- hf_id: openai/whisper-large
+  name: Whisper large (v1)
+  org: OpenAI
+  family: whisper
+  params: 1.55B
+  weights_gb: 6.17
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 99 languages incl. Arabic (ar); MSA-centric, dialects weak; 30 s window
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-09
+  downloads_30d: 22607
+  source_urls:
+  - https://huggingface.co/openai/whisper-large
+  - https://github.com/openai/whisper
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: WhisperForConditionalGeneration; language='ar', task='transcribe'; long-form via chunked/sequential pipeline; word timestamps via cross-attention DTW (return_timestamps='word').
+    Elm leaderboard baseline numbers exist for small/medium/large/v2/v3/turbo.
+- hf_id: openai/whisper-large-v2
+  name: Whisper large-v2
+  org: OpenAI
+  family: whisper
+  params: 1.55B
+  weights_gb: 6.17
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 99 languages incl. Arabic (ar); MSA-centric, dialects weak; 30 s window
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-12
+  downloads_30d: 78316
+  source_urls:
+  - https://huggingface.co/openai/whisper-large-v2
+  - https://github.com/openai/whisper
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: WhisperForConditionalGeneration; language='ar', task='transcribe'; long-form via chunked/sequential pipeline; word timestamps via cross-attention DTW (return_timestamps='word').
+    Elm leaderboard baseline numbers exist for small/medium/large/v2/v3/turbo.
+- hf_id: openai/whisper-large-v3
+  name: Whisper large-v3
+  org: OpenAI
+  family: whisper
+  params: 1.55B
+  weights_gb: 3.09
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 99 languages incl. Arabic (ar); MSA-centric, dialects weak; 30 s window
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2023-11
+  downloads_30d: 3631798
+  source_urls:
+  - https://huggingface.co/openai/whisper-large-v3
+  - https://github.com/openai/whisper
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: WhisperForConditionalGeneration; language='ar', task='transcribe'; long-form via chunked/sequential pipeline; word timestamps via cross-attention DTW (return_timestamps='word').
+    Elm leaderboard baseline numbers exist for small/medium/large/v2/v3/turbo.
+- hf_id: openai/whisper-large-v3-turbo
+  name: Whisper large-v3-turbo
+  org: OpenAI
+  family: whisper
+  params: 809M
+  weights_gb: 1.62
+  license: mit
+  arabic_support: multilingual-includes-ar
+  languages_note: 99 languages incl. Arabic (ar); MSA-centric, dialects weak; 30 s window
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2024-10
+  downloads_30d: 5947743
+  source_urls:
+  - https://huggingface.co/openai/whisper-large-v3-turbo
+  - https://github.com/openai/whisper
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: WhisperForConditionalGeneration; language='ar', task='transcribe'; long-form via chunked/sequential pipeline; word timestamps via cross-attention DTW (return_timestamps='word').
+    Elm leaderboard baseline numbers exist for small/medium/large/v2/v3/turbo.
+- hf_id: arbml/whisper-largev2-ar
+  name: ArBML Whisper large-v2 Arabic (CV11)
+  org: ArBML
+  family: whisper-arabic-finetune
+  params: 1.55B
+  weights_gb: 3.09
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic, Common Voice 11 fine-tune (MSA read speech)
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-12
+  downloads_30d: 20
+  source_urls:
+  - https://huggingface.co/arbml/whisper-largev2-ar
+  - https://huggingface.co/arbml
+  priority: 2
+  notes: HF Whisper fine-tuning event checkpoint; pytorch_model.bin only (no safetensors).
+- hf_id: arbml/whisper-medium-ar
+  name: ArBML Whisper medium Arabic
+  org: ArBML
+  family: whisper-arabic-finetune
+  params: 769M
+  weights_gb: 3.06
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic, Common Voice fine-tune
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-12
+  downloads_30d: 31
+  source_urls:
+  - https://huggingface.co/arbml/whisper-medium-ar
+  priority: 3
+  notes: Sibling of arbml/whisper-largev2-ar; also arbml/whisper-small-ar, whisper-tiny-ar, whisper-small-cv-ar exist.
+- hf_id: arbml/whisper-small-ar
+  name: ArBML Whisper small Arabic
+  org: ArBML
+  family: whisper-arabic-finetune
+  params: 244M
+  weights_gb: 0.97
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic, Common Voice fine-tune
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-12
+  downloads_30d: 33
+  source_urls:
+  - https://huggingface.co/arbml/whisper-small-ar
+  priority: 3
+  notes: ''
+- hf_id: tarteel-ai/whisper-base-ar-quran
+  name: Tarteel Whisper base Quran
+  org: Tarteel AI
+  family: whisper-arabic-finetune
+  params: 74M
+  weights_gb: 0.29
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Quranic Arabic recitation only (tarteel-ai/everyayah); not general speech
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-12
+  downloads_30d: 112825
+  source_urls:
+  - https://huggingface.co/tarteel-ai/whisper-base-ar-quran
+  priority: 2
+  notes: Domain = Quran recitation; expect poor WER on dialectal/general sets but widely used (112k dl/30d). ONNX ports exist (eventhorizon0, YunusZJ).
+- hf_id: tarteel-ai/whisper-tiny-ar-quran
+  name: Tarteel Whisper tiny Quran
+  org: Tarteel AI
+  family: whisper-arabic-finetune
+  params: 39M
+  weights_gb: 0.15
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Quranic Arabic recitation only
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-12
+  downloads_30d: 1621
+  source_urls:
+  - https://huggingface.co/tarteel-ai/whisper-tiny-ar-quran
+  priority: 3
+  notes: Quran domain.
+- hf_id: naazimsnh02/whisper-large-v3-turbo-ar-quran
+  name: Whisper large-v3-turbo Quran (naazimsnh02)
+  org: naazimsnh02 (community)
+  family: whisper-arabic-finetune
+  params: 809M
+  weights_gb: 1.62
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Quranic Arabic recitation
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2025-12
+  downloads_30d: 60473
+  source_urls:
+  - https://huggingface.co/naazimsnh02/whisper-large-v3-turbo-ar-quran
+  priority: 3
+  notes: Quran domain; 60k dl/30d.
+- hf_id: deepdml/whisper-large-v3-turbo-ar-quran-mix-norm
+  name: Whisper large-v3-turbo Quran mix-norm (deepdml)
+  org: deepdml (community)
+  family: whisper-arabic-finetune
+  params: 809M
+  weights_gb: 1.62
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Quranic Arabic, normalized text
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-02
+  downloads_30d: 39
+  source_urls:
+  - https://huggingface.co/deepdml/whisper-large-v3-turbo-ar-quran-mix-norm
+  priority: 3
+  notes: Quran domain; family also has base/small/medium/tiny variants.
+- hf_id: oddadmix/whisper-large-v3-arabic-dialectal-v2
+  name: Whisper large-v3 Arabic dialectal v2 (oddadmix)
+  org: oddadmix (community)
+  family: whisper-arabic-finetune
+  params: 1.55B
+  weights_gb: 3.09
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: 13 Arabic dialects (balanced test), undiacritized output; Gulf/Levantine best, Maghrebi hardest
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-07
+  downloads_30d: 856
+  source_urls:
+  - https://huggingface.co/oddadmix/whisper-large-v3-arabic-dialectal-v2
+  priority: 2
+  notes: Full fine-tune on oddadmix arabic-audio-collection dialect sets; card reports per-dialect WER/CER on ~2,600-clip held-out split.
+- hf_id: oddadmix/whisper-large-v3-turbo-arabic-dialectal-v2
+  name: Whisper large-v3-turbo Arabic dialectal v2 (oddadmix)
+  org: oddadmix (community)
+  family: whisper-arabic-finetune
+  params: 809M
+  weights_gb: 1.62
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: 13 Arabic dialects
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-07
+  downloads_30d: 1297
+  source_urls:
+  - https://huggingface.co/oddadmix/whisper-large-v3-turbo-arabic-dialectal-v2
+  priority: 2
+  notes: Most-downloaded oddadmix whisper variant (1.3k/30d).
+- hf_id: oddadmix/whisper-medium-arabic-dialectal-v2
+  name: Whisper medium Arabic dialectal v2 (oddadmix)
+  org: oddadmix (community)
+  family: whisper-arabic-finetune
+  params: 769M
+  weights_gb: 3.06
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: 13 Arabic dialects
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-07
+  downloads_30d: 38
+  source_urls:
+  - https://huggingface.co/oddadmix/whisper-medium-arabic-dialectal-v2
+  priority: 3
+  notes: ''
+- hf_id: oddadmix/whisper-small-arabic-dialectal-v2
+  name: Whisper small Arabic dialectal v2 (oddadmix)
+  org: oddadmix (community)
+  family: whisper-arabic-finetune
+  params: 244M
+  weights_gb: 0.97
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: 13 Arabic dialects
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-07
+  downloads_30d: 124
+  source_urls:
+  - https://huggingface.co/oddadmix/whisper-small-arabic-dialectal-v2
+  priority: 3
+  notes: ''
+- hf_id: wageehkhad/whisper-medium-finetuned-sada-asr
+  name: Whisper medium SADA fine-tune
+  org: wageehkhad (community)
+  family: whisper-arabic-finetune
+  params: 769M
+  weights_gb: 3.06
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Saudi dialects (SADA22 full train split)
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-02
+  downloads_30d: 555
+  source_urls:
+  - https://huggingface.co/wageehkhad/whisper-medium-finetuned-sada-asr
+  priority: 2
+  notes: Trained on MohamedRashad/SADA22 -> overlaps Elm SADA test domain; treat SADA score as in-domain. Only SADA fine-tune found on HF with a clear card.
+- hf_id: MohamedRashad/Arabic-Whisper-CodeSwitching-Edition
+  name: Arabic Whisper Code-Switching Edition
+  org: MohamedRashad (community)
+  family: whisper-arabic-finetune
+  params: 1.55B
+  weights_gb: 3.09
+  license: gpl-3.0
+  arabic_support: finetuned
+  languages_note: Arabic-English code-switching (MohamedRashad/arabic-english-code-switching)
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2024-07
+  downloads_30d: 730
+  source_urls:
+  - https://huggingface.co/MohamedRashad/Arabic-Whisper-CodeSwitching-Edition
+  priority: 2
+  notes: Based on whisper-large-v2; GPL-3.0 license (check board licence policy).
+- hf_id: AbdelrahmanHassan/whisper-large-v3-egyptian-arabic
+  name: Whisper large-v3 Egyptian LoRA
+  org: AbdelrahmanHassan (community)
+  family: whisper-arabic-finetune
+  params: 1.55B base + LoRA
+  weights_gb: 0.09
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Egyptian Arabic (MGB-3)
+  model_type: PEFT LoRA adapter on openai/whisper-large-v3
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2025-08
+  downloads_30d: 579
+  source_urls:
+  - https://huggingface.co/AbdelrahmanHassan/whisper-large-v3-egyptian-arabic
+  priority: 3
+  notes: PEFT LoRA adapter (90 MB) on openai/whisper-large-v3; load base + adapter via peft. Card WER 0.47 on Egyptian-ASR-MGB-3.
+- hf_id: IbrahimAmin/code-switched-egyptian-arabic-whisper-small
+  name: Whisper small Egyptian code-switched
+  org: IbrahimAmin (community)
+  family: whisper-arabic-finetune
+  params: 244M
+  weights_gb: 0.97
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Egyptian Arabic + English code-switching
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2025-05
+  downloads_30d: 411
+  source_urls:
+  - https://huggingface.co/IbrahimAmin/code-switched-egyptian-arabic-whisper-small
+  priority: 3
+  notes: ''
+- hf_id: MAdel121/whisper-small-egyptian-arabic
+  name: Whisper small Egyptian (MAdel121)
+  org: MAdel121 (community)
+  family: whisper-arabic-finetune
+  params: 244M
+  weights_gb: 0.97
+  license: mit
+  arabic_support: finetuned
+  languages_note: Egyptian Arabic (MAdel121/arabic-egy-cleaned)
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2025-05
+  downloads_30d: 412
+  source_urls:
+  - https://huggingface.co/MAdel121/whisper-small-egyptian-arabic
+  priority: 3
+  notes: Also MAdel121/whisper-medium-egy.
+- hf_id: mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching
+  name: Whisper large-v3-turbo Egyptian code-switching
+  org: mohammedaly22 (community)
+  family: whisper-arabic-finetune
+  params: 809M
+  weights_gb: 1.62
+  license: mit
+  arabic_support: finetuned
+  languages_note: Egyptian Arabic + English code-switching
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-05
+  downloads_30d: 253
+  source_urls:
+  - https://huggingface.co/mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching
+  priority: 3
+  notes: ''
+- hf_id: Byne/whisper-large-v3-arabic
+  name: Whisper large-v3 Arabic (Byne)
+  org: Byne (community)
+  family: whisper-arabic-finetune
+  params: 1.55B
+  weights_gb: 3.09
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic; training set not documented ('None dataset' autogenerated card)
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2025-04
+  downloads_30d: 98
+  source_urls:
+  - https://huggingface.co/Byne/whisper-large-v3-arabic
+  priority: 3
+  notes: Autogenerated Trainer card, eval WER 9.38 on undocumented set; low provenance.
+- hf_id: samil24/whisper-large-arabic-dialects-v5
+  name: Whisper large-v3 Arabic dialects v5 (samil24)
+  org: samil24 (community)
+  family: whisper-arabic-finetune
+  params: 1.55B
+  weights_gb: 3.09
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic dialects; training data undocumented
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2025-08
+  downloads_30d: 49
+  source_urls:
+  - https://huggingface.co/samil24/whisper-large-arabic-dialects-v5
+  priority: 3
+  notes: Autogenerated card, WER 18.56 on undocumented set.
+- hf_id: Seif-Eldeen-Sameh/whisper-medium-arabic-codeswitched
+  name: Whisper medium Arabic code-switched
+  org: Seif-Eldeen-Sameh (community)
+  family: whisper-arabic-finetune
+  params: 769M
+  weights_gb: 3.06
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic-English code-switching
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-04
+  downloads_30d: 292
+  source_urls:
+  - https://huggingface.co/Seif-Eldeen-Sameh/whisper-medium-arabic-codeswitched
+  priority: 3
+  notes: Repo holds many intermediate checkpoints (~113 GB total); download main weights only. CT2 variant available.
+- hf_id: anaszil/whisper-large-v3-turbo-darija
+  name: Whisper large-v3-turbo Darija LoRA (anaszil)
+  org: anaszil (community)
+  family: whisper-arabic-finetune
+  params: 809M base + LoRA
+  weights_gb: 0.06
+  license: mit
+  arabic_support: finetuned
+  languages_note: Moroccan Darija
+  model_type: PEFT LoRA adapter on openai/whisper-large-v3-turbo
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2025-03
+  downloads_30d: 2303
+  source_urls:
+  - https://huggingface.co/anaszil/whisper-large-v3-turbo-darija
+  priority: 2
+  notes: PEFT adapter; card WER 24.9 / CER 8.3 on own Darija test. Useful for Casablanca Moroccan subset.
+- hf_id: ychafiqui/whisper-medium-darija
+  name: Whisper medium Darija (ychafiqui)
+  org: ychafiqui (community)
+  family: whisper-arabic-finetune
+  params: 769M
+  weights_gb: 3.06
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Moroccan Darija
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2024-09
+  downloads_30d: 376
+  source_urls:
+  - https://huggingface.co/ychafiqui/whisper-medium-darija
+  priority: 3
+  notes: Also whisper-small-darija.
+- hf_id: montachouig/whisper-large-v3-tunisian
+  name: Whisper large-v3 Tunisian LoRA
+  org: montachouig (community)
+  family: whisper-arabic-finetune
+  params: 1.55B base + LoRA
+  weights_gb: 0.69
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Tunisian Arabic
+  model_type: PEFT LoRA adapter on openai/whisper-large-v3
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-06
+  downloads_30d: 128
+  source_urls:
+  - https://huggingface.co/montachouig/whisper-large-v3-tunisian
+  priority: 3
+  notes: PEFT adapter; val WER 21.7 on own set.
+- hf_id: oddadmix/Whisperv3-tunisian-codeswitch
+  name: Whisper large-v3 Tunisian code-switch (oddadmix)
+  org: oddadmix (community)
+  family: whisper-arabic-finetune
+  params: 1.55B
+  weights_gb: 3.09
+  license: unknown
+  arabic_support: finetuned
+  languages_note: Tunisian Arabic + French/English code-switching
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-07
+  downloads_30d: 273
+  source_urls:
+  - https://huggingface.co/oddadmix/Whisperv3-tunisian-codeswitch
+  priority: 3
+  notes: No license in card metadata.
+- hf_id: algerian-nlp/Hadra-ASR-whisper-medium
+  name: Hadra-ASR Whisper medium (Algerian)
+  org: algerian-nlp (community)
+  family: whisper-arabic-finetune
+  params: 769M base + LoRA
+  weights_gb: 0.28
+  license: mit
+  arabic_support: finetuned
+  languages_note: Algerian Darja
+  model_type: PEFT LoRA adapter on openai/whisper-medium
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-09
+  downloads_30d: 495
+  source_urls:
+  - https://huggingface.co/algerian-nlp/Hadra-ASR-whisper-medium
+  priority: 3
+  notes: PEFT adapter trained on oddadmix Algerian audio collections; also whisper-small variant.
+- hf_id: Laith05/roma-whisper-small-levantine
+  name: Whisper small Levantine (Laith05)
+  org: Laith05 (community)
+  family: whisper-arabic-finetune
+  params: 244M
+  weights_gb: 0.97
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Levantine Arabic
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-04
+  downloads_30d: 72
+  source_urls:
+  - https://huggingface.co/Laith05/roma-whisper-small-levantine
+  priority: 3
+  notes: ''
+- hf_id: smerchi/Arabic-Morocco-Speech_To_Text
+  name: Whisper large-v3 Moroccan (smerchi)
+  org: smerchi (community)
+  family: whisper-arabic-finetune
+  params: 1.55B
+  weights_gb: 3.09
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Moroccan Arabic
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2024-01
+  downloads_30d: 312
+  source_urls:
+  - https://huggingface.co/smerchi/Arabic-Morocco-Speech_To_Text
+  priority: 3
+  notes: Sparse card.
+- hf_id: dev-ahmedhany/whisper-large-v3-arabic-ft-v3
+  name: Whisper large-v3 Arabic ft v3 (dev-ahmedhany)
+  org: dev-ahmedhany (community)
+  family: whisper-arabic-finetune
+  params: 1.55B
+  weights_gb: 3.09
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic; data undocumented
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-05
+  downloads_30d: 22
+  source_urls:
+  - https://huggingface.co/dev-ahmedhany/whisper-large-v3-arabic-ft-v3
+  priority: 3
+  notes: CT2 int8 variants published alongside.
+- hf_id: Zaid/whisper-large-mgb2-ar-16k
+  name: Whisper large MGB-2 Arabic (Zaid)
+  org: Zaid (community)
+  family: whisper-arabic-finetune
+  params: 1.55B
+  weights_gb: 3.09
+  license: unknown
+  arabic_support: finetuned
+  languages_note: MSA broadcast (MGB-2) fine-tune
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-12
+  downloads_30d: 15
+  source_urls:
+  - https://huggingface.co/Zaid/whisper-large-mgb2-ar-16k
+  priority: 3
+  notes: Trained on MGB-2 -> in-domain for Elm MGB-2 test; no license.
+- hf_id: AymanMansour/Whisper-Sudanese-Dialect-large-v2
+  name: Whisper large-v2 Sudanese
+  org: AymanMansour (community)
+  family: whisper-arabic-finetune
+  params: 1.55B
+  weights_gb: 6.17
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Sudanese Arabic
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2022-12
+  downloads_30d: 11
+  source_urls:
+  - https://huggingface.co/AymanMansour/Whisper-Sudanese-Dialect-large-v2
+  priority: 3
+  notes: ''
+- hf_id: tahaalselwii/whisper-small-yemeni
+  name: Whisper small Yemeni
+  org: tahaalselwii (community)
+  family: whisper-arabic-finetune
+  params: 244M
+  weights_gb: 0.97
+  license: other
+  arabic_support: finetuned
+  languages_note: Yemeni Arabic
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-07
+  downloads_30d: 28
+  source_urls:
+  - https://huggingface.co/tahaalselwii/whisper-small-yemeni
+  priority: 3
+  notes: ''
+- hf_id: NightPrince/stt-arabic-whisper-finetuned-diactires
+  name: Whisper small Arabic diacritized (NightPrince)
+  org: NightPrince (community)
+  family: whisper-arabic-finetune
+  params: 244M
+  weights_gb: 0.97
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic with tashkeel output
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-03
+  downloads_30d: 104
+  source_urls:
+  - https://huggingface.co/NightPrince/stt-arabic-whisper-finetuned-diactires
+  priority: 3
+  notes: Emits diacritics; strip tashkeel before scoring against undiacritized references.
+- hf_id: moatazlumin/Arabic_ASR_whisper_small_with_diacritics
+  name: Whisper small Arabic with diacritics (moatazlumin)
+  org: moatazlumin (community)
+  family: whisper-arabic-finetune
+  params: 244M
+  weights_gb: 0.97
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic with tashkeel output
+  model_type: whisper
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2024-11
+  downloads_30d: 40
+  source_urls:
+  - https://huggingface.co/moatazlumin/Arabic_ASR_whisper_small_with_diacritics
+  priority: 3
+  notes: Emits diacritics.
+- hf_id: facebook/mms-1b-all
+  name: MMS-1b-all
+  org: Meta
+  family: meta-mms
+  params: 965M
+  weights_gb: 3.86
+  license: cc-by-nc-4.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 1,162 languages via per-language adapters; Arabic adapter 'ara' (MSA, FLEURS/CV data); also arz/ary/apc... absent
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2023-05
+  downloads_30d: 292658
+  source_urls:
+  - https://huggingface.co/facebook/mms-1b-all
+  - https://ai.meta.com/blog/multilingual-model-speech-recognition/
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: Wav2Vec2ForCTC + load_adapter('ara'); processor.tokenizer.set_target_lang('ara'). CC-BY-NC. Elm avg WER 54.5.
+- hf_id: facebook/mms-1b-fl102
+  name: MMS-1b-fl102
+  org: Meta
+  family: meta-mms
+  params: 965M
+  weights_gb: 3.86
+  license: cc-by-nc-4.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 102 FLEURS languages incl. ara
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2023-05
+  downloads_30d: 4300
+  source_urls:
+  - https://huggingface.co/facebook/mms-1b-fl102
+  priority: 3
+  notes: Same arch as mms-1b-all; FLEURS-only adapters.
+- hf_id: facebook/mms-1b-l1107
+  name: MMS-1b-l1107
+  org: Meta
+  family: meta-mms
+  params: 965M
+  weights_gb: 3.86
+  license: cc-by-nc-4.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 1,107 languages incl. ara
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2023-05
+  downloads_30d: 951
+  source_urls:
+  - https://huggingface.co/facebook/mms-1b-l1107
+  priority: 3
+  notes: ''
+- hf_id: facebook/seamless-m4t-v2-large
+  name: SeamlessM4T v2 large
+  org: Meta
+  family: meta-seamless
+  params: 2.3B
+  weights_gb: 9.3
+  license: cc-by-nc-4.0
+  arabic_support: multilingual-includes-ar
+  languages_note: ~96 speech-input languages; Arabic codes arb (MSA), arz (Egyptian), ary (Moroccan)
+  model_type: seamless_m4t_v2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2023-11
+  downloads_30d: 305247
+  source_urls:
+  - https://huggingface.co/facebook/seamless-m4t-v2-large
+  - https://github.com/facebookresearch/seamless_communication
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: SeamlessM4Tv2ForSpeechToText, tgt_lang='arb'; no built-in long-form -> segment first. Elm avg WER 38.2. Elyadata NADI-2025 ASR winner fine-tuned this per
+    dialect (weights not on HF).
+- hf_id: facebook/hf-seamless-m4t-large
+  name: SeamlessM4T v1 large (HF port)
+  org: Meta
+  family: meta-seamless
+  params: 2.3B
+  weights_gb: 9.4
+  license: cc-by-nc-4.0
+  arabic_support: multilingual-includes-ar
+  languages_note: ~100 speech-input languages incl. arb/arz/ary
+  model_type: seamless_m4t
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2023-08
+  downloads_30d: 1217
+  source_urls:
+  - https://huggingface.co/facebook/hf-seamless-m4t-large
+  - https://github.com/facebookresearch/seamless_communication
+  priority: 3
+  notes: transformers port of facebook/seamless-m4t-large (fairseq2 original, model_type absent). v1 superseded by v2.
+- hf_id: facebook/hf-seamless-m4t-medium
+  name: SeamlessM4T v1 medium (HF port)
+  org: Meta
+  family: meta-seamless
+  params: 1.2B
+  weights_gb: 4.8
+  license: cc-by-nc-4.0
+  arabic_support: multilingual-includes-ar
+  languages_note: ~100 languages incl. arb
+  model_type: seamless_m4t
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2023-08
+  downloads_30d: 16641
+  source_urls:
+  - https://huggingface.co/facebook/hf-seamless-m4t-medium
+  - https://github.com/facebookresearch/seamless_communication
+  priority: 3
+  notes: Port of facebook/seamless-m4t-medium.
+- hf_id: facebook/seamless-streaming
+  name: SeamlessStreaming
+  org: Meta
+  family: meta-seamless
+  params: 2.5B
+  weights_gb: 8.0
+  license: cc-by-nc-4.0
+  arabic_support: multilingual-includes-ar
+  languages_note: ~100 speech-input languages incl. arb (streaming ASR/S2TT)
+  model_type: seamless_streaming (fairseq2/seamless_communication agents)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2023-11
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/seamless-streaming
+  - https://github.com/facebookresearch/seamless_communication
+  priority: 3
+  notes: Runs only through seamless_communication + SimulEval agents; not transformers. Include only if a streaming track exists.
+- hf_id: facebook/omniASR-CTC-300M
+  name: Omnilingual ASR CTC 300M
+  org: Meta FAIR
+  family: meta-omnilingual-asr
+  params: 325M
+  weights_gb: 1.3
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 1,600+ languages; Arabic varieties arb, arz, ary, acm, apc, aeb, afb, ars, arq, ayl, apd, acw, aec, ayp (ISO-639-3_Arab codes)
+  model_type: wav2vec2-style CTC (fairseq2; no config.json model_type)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2025-11
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/omniASR-CTC-300M
+  - https://github.com/facebookresearch/omnilingual-asr
+  - https://arxiv.org/abs/2511.09690
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 3
+  notes: 'Run via `pip install omnilingual-asr` (fairseq2) with lang=''arb_Arab''; ~40 s max per utterance, chunk longer audio. Community transformers ports: aadel4/omniASR-CTC-300M-v2
+    and -1B-v2 (Wav2Vec2ForCTC). Elm avg WER: CTC_300M 46.7, 1B 39.3, 3B 37.8, 7B 38.1.'
+- hf_id: facebook/omniASR-CTC-1B
+  name: Omnilingual ASR CTC 1B
+  org: Meta FAIR
+  family: meta-omnilingual-asr
+  params: 975M
+  weights_gb: 3.9
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 1,600+ languages; Arabic varieties arb, arz, ary, acm, apc, aeb, afb, ars, arq, ayl, apd, acw, aec, ayp (ISO-639-3_Arab codes)
+  model_type: wav2vec2-style CTC (fairseq2; no config.json model_type)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2025-11
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/omniASR-CTC-1B
+  - https://github.com/facebookresearch/omnilingual-asr
+  - https://arxiv.org/abs/2511.09690
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: 'Run via `pip install omnilingual-asr` (fairseq2) with lang=''arb_Arab''; ~40 s max per utterance, chunk longer audio. Community transformers ports: aadel4/omniASR-CTC-300M-v2
+    and -1B-v2 (Wav2Vec2ForCTC). Elm avg WER: CTC_300M 46.7, 1B 39.3, 3B 37.8, 7B 38.1.'
+- hf_id: facebook/omniASR-CTC-3B
+  name: Omnilingual ASR CTC 3B
+  org: Meta FAIR
+  family: meta-omnilingual-asr
+  params: 3.08B
+  weights_gb: 12.3
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 1,600+ languages; Arabic varieties arb, arz, ary, acm, apc, aeb, afb, ars, arq, ayl, apd, acw, aec, ayp (ISO-639-3_Arab codes)
+  model_type: wav2vec2-style CTC (fairseq2; no config.json model_type)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2025-11
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/omniASR-CTC-3B
+  - https://github.com/facebookresearch/omnilingual-asr
+  - https://arxiv.org/abs/2511.09690
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: 'Run via `pip install omnilingual-asr` (fairseq2) with lang=''arb_Arab''; ~40 s max per utterance, chunk longer audio. Community transformers ports: aadel4/omniASR-CTC-300M-v2
+    and -1B-v2 (Wav2Vec2ForCTC). Elm avg WER: CTC_300M 46.7, 1B 39.3, 3B 37.8, 7B 38.1.'
+- hf_id: facebook/omniASR-CTC-7B
+  name: Omnilingual ASR CTC 7B
+  org: Meta FAIR
+  family: meta-omnilingual-asr
+  params: 6.5B
+  weights_gb: 26.0
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 1,600+ languages; Arabic varieties arb, arz, ary, acm, apc, aeb, afb, ars, arq, ayl, apd, acw, aec, ayp (ISO-639-3_Arab codes)
+  model_type: wav2vec2-style CTC (fairseq2; no config.json model_type)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2025-11
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/omniASR-CTC-7B
+  - https://github.com/facebookresearch/omnilingual-asr
+  - https://arxiv.org/abs/2511.09690
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: 'Run via `pip install omnilingual-asr` (fairseq2) with lang=''arb_Arab''; ~40 s max per utterance, chunk longer audio. Community transformers ports: aadel4/omniASR-CTC-300M-v2
+    and -1B-v2 (Wav2Vec2ForCTC). Elm avg WER: CTC_300M 46.7, 1B 39.3, 3B 37.8, 7B 38.1.'
+- hf_id: facebook/omniASR-LLM-300M
+  name: Omnilingual ASR LLM 300M
+  org: Meta FAIR
+  family: meta-omnilingual-asr
+  params: 1.63B
+  weights_gb: 6.5
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 1,600+ languages with optional language conditioning; same Arabic codes as CTC
+  model_type: wav2vec2 encoder + LLaMA-style decoder (fairseq2)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-11
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/omniASR-LLM-300M
+  - https://github.com/facebookresearch/omnilingual-asr
+  - https://arxiv.org/abs/2511.09690
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: 'omnilingual-asr package, lang=''arb_Arab''; ~40 s per utterance. Transformers support landing (model_type ''omniasr'', bezzam/omniasr-llm-300m-v2 conversion,
+    docs page model_doc/omniasr; needs transformers from source). ziywang50/omniASR-LLM-3B is a vLLM-compatible fork. Elm avg WER: LLM_300M 33.0, 1B 30.0, 3B 30.0,
+    7B 28.3 (top open model before Cohere/Audar).'
+- hf_id: facebook/omniASR-LLM-1B
+  name: Omnilingual ASR LLM 1B
+  org: Meta FAIR
+  family: meta-omnilingual-asr
+  params: 2.28B
+  weights_gb: 9.1
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 1,600+ languages with optional language conditioning; same Arabic codes as CTC
+  model_type: wav2vec2 encoder + LLaMA-style decoder (fairseq2)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-11
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/omniASR-LLM-1B
+  - https://github.com/facebookresearch/omnilingual-asr
+  - https://arxiv.org/abs/2511.09690
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: 'omnilingual-asr package, lang=''arb_Arab''; ~40 s per utterance. Transformers support landing (model_type ''omniasr'', bezzam/omniasr-llm-300m-v2 conversion,
+    docs page model_doc/omniasr; needs transformers from source). ziywang50/omniASR-LLM-3B is a vLLM-compatible fork. Elm avg WER: LLM_300M 33.0, 1B 30.0, 3B 30.0,
+    7B 28.3 (top open model before Cohere/Audar).'
+- hf_id: facebook/omniASR-LLM-3B
+  name: Omnilingual ASR LLM 3B
+  org: Meta FAIR
+  family: meta-omnilingual-asr
+  params: 4.38B
+  weights_gb: 17.5
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 1,600+ languages with optional language conditioning; same Arabic codes as CTC
+  model_type: wav2vec2 encoder + LLaMA-style decoder (fairseq2)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-11
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/omniASR-LLM-3B
+  - https://github.com/facebookresearch/omnilingual-asr
+  - https://arxiv.org/abs/2511.09690
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: 'omnilingual-asr package, lang=''arb_Arab''; ~40 s per utterance. Transformers support landing (model_type ''omniasr'', bezzam/omniasr-llm-300m-v2 conversion,
+    docs page model_doc/omniasr; needs transformers from source). ziywang50/omniASR-LLM-3B is a vLLM-compatible fork. Elm avg WER: LLM_300M 33.0, 1B 30.0, 3B 30.0,
+    7B 28.3 (top open model before Cohere/Audar).'
+- hf_id: facebook/omniASR-LLM-7B
+  name: Omnilingual ASR LLM 7B
+  org: Meta FAIR
+  family: meta-omnilingual-asr
+  params: 7.8B
+  weights_gb: 31.2
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 1,600+ languages with optional language conditioning; same Arabic codes as CTC
+  model_type: wav2vec2 encoder + LLaMA-style decoder (fairseq2)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-11
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/omniASR-LLM-7B
+  - https://github.com/facebookresearch/omnilingual-asr
+  - https://arxiv.org/abs/2511.09690
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: 'omnilingual-asr package, lang=''arb_Arab''; ~40 s per utterance. Transformers support landing (model_type ''omniasr'', bezzam/omniasr-llm-300m-v2 conversion,
+    docs page model_doc/omniasr; needs transformers from source). ziywang50/omniASR-LLM-3B is a vLLM-compatible fork. Elm avg WER: LLM_300M 33.0, 1B 30.0, 3B 30.0,
+    7B 28.3 (top open model before Cohere/Audar).'
+- hf_id: facebook/omniASR-LLM-7B-ZS
+  name: Omnilingual ASR LLM 7B zero-shot
+  org: Meta FAIR
+  family: meta-omnilingual-asr
+  params: 7.8B
+  weights_gb: 31.2
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: Zero-shot/in-context variant for unseen languages; Arabic covered by supervised variant anyway
+  model_type: wav2vec2 encoder + LLaMA-style decoder (fairseq2)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-11
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/omniASR-LLM-7B-ZS
+  - https://github.com/facebookresearch/omnilingual-asr
+  priority: 3
+  notes: Needs few-shot context examples; not the primary Arabic candidate.
+- hf_id: bezzam/omniasr-llm-300m-v2
+  name: Omnilingual ASR LLM 300M v2 (transformers conversion)
+  org: HF staff conversion (bezzam)
+  family: meta-omnilingual-asr
+  params: 1.64B
+  weights_gb: 6.55
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: Same as omniASR_LLM_300M_v2
+  model_type: omniasr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2026-01
+  downloads_30d: 2518
+  source_urls:
+  - https://huggingface.co/bezzam/omniasr-llm-300m-v2
+  priority: 3
+  notes: Official-style conversion; requires transformers installed from git main (OmniASR not in a release at time of card). Useful as the transformers-native path
+    for the family.
+- hf_id: aadel4/omniASR-CTC-1B-v2
+  name: Omnilingual ASR CTC 1B v2 (Wav2Vec2ForCTC conversion)
+  org: aadel4 (community)
+  family: meta-omnilingual-asr
+  params: 976M
+  weights_gb: 3.9
+  license: apache-2.0 (upstream)
+  arabic_support: multilingual-includes-ar
+  languages_note: Same as omniASR_CTC_1B_v2
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2026-03
+  downloads_30d: 2109
+  source_urls:
+  - https://huggingface.co/aadel4/omniASR-CTC-1B-v2
+  priority: 3
+  notes: Community conversion (github ahmedadelattia/omnilingual_to_hf); 300M sibling exists.
+- hf_id: Qwen/Qwen3-ASR-1.7B
+  name: Qwen3-ASR 1.7B
+  org: Alibaba Qwen
+  family: qwen-asr
+  params: 2.35B (incl. audio encoder)
+  weights_gb: 4.7
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 30 languages + 22 Chinese dialects; Arabic (ar) listed; built-in LID
+  model_type: qwen3_asr
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-01
+  downloads_30d: 1272542
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen3-ASR-1.7B
+  - https://github.com/QwenLM/Qwen3-ASR
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: Original checkpoint for `qwen-asr` package / vLLM (vLLM-based batch + streaming serving). Timestamps only via separate Qwen3-ForcedAligner-0.6B, which does
+    NOT list Arabic. Elm avg WER 33.4.
+- hf_id: Qwen/Qwen3-ASR-0.6B
+  name: Qwen3-ASR 0.6B
+  org: Alibaba Qwen
+  family: qwen-asr
+  params: 938M (incl. audio encoder)
+  weights_gb: 1.9
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 30 languages + 22 Chinese dialects incl. Arabic
+  model_type: qwen3_asr
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-01
+  downloads_30d: 857652
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen3-ASR-0.6B
+  - https://github.com/QwenLM/Qwen3-ASR
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: qwen-asr / vLLM checkpoint. Elm avg WER 42.2.
+- hf_id: Qwen/Qwen3-ASR-1.7B-hf
+  name: Qwen3-ASR 1.7B (transformers)
+  org: Alibaba Qwen
+  family: qwen-asr
+  params: 2.04B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: Same as Qwen3-ASR-1.7B
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-06
+  downloads_30d: 366618
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf
+  - https://github.com/QwenLM/Qwen3-ASR
+  priority: 1
+  notes: Native transformers (Qwen3ASRForConditionalGeneration, transformers>=5.x). Base for most Arabic Qwen3-ASR fine-tunes. Already in data/models.yaml.
+- hf_id: Qwen/Qwen3-ASR-0.6B-hf
+  name: Qwen3-ASR 0.6B (transformers)
+  org: Alibaba Qwen
+  family: qwen-asr
+  params: 782M
+  weights_gb: 1.6
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: Same as Qwen3-ASR-0.6B
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-06
+  downloads_30d: 296719
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen3-ASR-0.6B-hf
+  - https://github.com/QwenLM/Qwen3-ASR
+  priority: 1
+  notes: Native transformers. Already in data/models.yaml.
+- hf_id: Qwen/Qwen3-Omni-30B-A3B-Instruct
+  name: Qwen3-Omni 30B-A3B Instruct
+  org: Alibaba Qwen
+  family: qwen-omni
+  params: 30B MoE (3B active)
+  weights_gb: 70.5
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 19 speech-input languages incl. Arabic (explicit in card)
+  model_type: qwen3_omni_moe
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-09
+  downloads_30d: 703699
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct
+  - https://github.com/QwenLM/Qwen3-Omni
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: Audio-LLM, prompt 'Transcribe the Arabic audio into text.'; ~70 GB bf16, multi-GPU or vLLM; Elm avg WER 30.7 (ranked above Qwen3-ASR). Thinking variant not
+    needed for ASR.
+- hf_id: Qwen/Qwen2.5-Omni-7B
+  name: Qwen2.5-Omni 7B
+  org: Alibaba Qwen
+  family: qwen-omni
+  params: 10.7B (incl. talker)
+  weights_gb: 22.4
+  license: apache-2.0
+  arabic_support: unverified
+  languages_note: Card lists only 'en'; tech report evaluates multilingual ASR on Fleurs/CV but Arabic not stated
+  model_type: qwen2_5_omni
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-03
+  downloads_30d: 283185
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen2.5-Omni-7B
+  priority: 3
+  notes: Include only as a probe; disable talker (model.disable_talker()) for ASR. 3B sibling Qwen/Qwen2.5-Omni-3B verified.
+- hf_id: Qwen/Qwen2.5-Omni-3B
+  name: Qwen2.5-Omni 3B
+  org: Alibaba Qwen
+  family: qwen-omni
+  params: 5.5B
+  weights_gb: 12.0
+  license: other (Qwen research licence)
+  arabic_support: unverified
+  languages_note: As 7B
+  model_type: qwen2_5_omni
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-04
+  downloads_30d: 164199
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen2.5-Omni-3B
+  priority: 3
+  notes: Non-commercial research licence on 3B.
+- hf_id: vadimbelsky/qwen3-asr-arabic-uae
+  name: Qwen3-ASR 1.7B UAE Arabic
+  org: vadimbelsky (community)
+  family: qwen-asr-arabic-finetune
+  params: 2.04B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Emirati/Gulf Arabic + English bilingual (40k-sample dataset)
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-04
+  downloads_30d: 47789
+  source_urls:
+  - https://huggingface.co/vadimbelsky/qwen3-asr-arabic-uae
+  priority: 2
+  notes: 47.8k dl/30d; KSA sibling vadimbelsky/qwen3-asr-arabic-ksa.
+- hf_id: vadimbelsky/qwen3-asr-arabic-ksa
+  name: Qwen3-ASR 1.7B KSA Arabic
+  org: vadimbelsky (community)
+  family: qwen-asr-arabic-finetune
+  params: 2.04B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Saudi Arabic
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-04
+  downloads_30d: 214
+  source_urls:
+  - https://huggingface.co/vadimbelsky/qwen3-asr-arabic-ksa
+  priority: 3
+  notes: ''
+- hf_id: lemuralabs/lemura-arabic-asr-qwen3
+  name: Lemura Arabic ASR (Qwen3-ASR 1.7B)
+  org: Lemura Labs
+  family: qwen-asr-arabic-finetune
+  params: 2.04B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: MSA + Gulf/Egyptian/Levantine/Maghrebi (~2,900 h)
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-08
+  downloads_30d: 300
+  source_urls:
+  - https://huggingface.co/lemuralabs/lemura-arabic-asr-qwen3
+  priority: 2
+  notes: Card reports Elm-set WERs (in-domain caveat). GGUF by mradermacher.
+- hf_id: oddadmix/qwen3-asr-1.7b-arabic-dialectal-v2
+  name: Qwen3-ASR 1.7B Arabic dialectal v2 (oddadmix)
+  org: oddadmix (community)
+  family: qwen-asr-arabic-finetune
+  params: 2.04B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: 13 Arabic dialects
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-07
+  downloads_30d: 65
+  source_urls:
+  - https://huggingface.co/oddadmix/qwen3-asr-1.7b-arabic-dialectal-v2
+  priority: 2
+  notes: ''
+- hf_id: oddadmix/qwen3-asr-0.6b-arabic-dialectal-v2
+  name: Qwen3-ASR 0.6B Arabic dialectal v2 (oddadmix)
+  org: oddadmix (community)
+  family: qwen-asr-arabic-finetune
+  params: 782M
+  weights_gb: 1.6
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: 13 Arabic dialects
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-07
+  downloads_30d: 25
+  source_urls:
+  - https://huggingface.co/oddadmix/qwen3-asr-0.6b-arabic-dialectal-v2
+  priority: 3
+  notes: ONNX port by OpenVoiceOS.
+- hf_id: atlasia/moulsot.v0.3
+  name: MoulSot v0.3 (Darija)
+  org: AtlasIA
+  family: qwen-asr-arabic-finetune
+  params: 2.04B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Moroccan Darija with Darija/French/Arabic code-switching; 1,500 h curated + 80 h gold
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-04
+  downloads_30d: 1446
+  source_urls:
+  - https://huggingface.co/atlasia/moulsot.v0.3
+  priority: 2
+  notes: 'Qwen3-ASR-1.7B base; strongest open Darija candidate for Casablanca-Morocco subset. MLX Q4 repack: kamalaitbrahim/nassem-asr-darija.'
+- hf_id: Arabic-STT/qwen3-asr-1.7b-ar-run3
+  name: Arabic-STT Qwen3-ASR 1.7B run3
+  org: Arabic-STT (community)
+  family: qwen-asr-arabic-finetune
+  params: 2.04B
+  weights_gb: 4.1
+  license: unknown
+  arabic_support: finetuned
+  languages_note: Arabic; card empty (gated)
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: true
+  streaming: native
+  timestamps: 'no'
+  released: 2026-10
+  downloads_30d: 1119
+  source_urls:
+  - https://huggingface.co/Arabic-STT/qwen3-asr-1.7b-ar-run3
+  priority: 3
+  notes: Gated (manual approval), no card; repo ~28 GB (multiple checkpoints). Active org with run2..run9 + DPO/GRPO variants.
+- hf_id: audarai/Audar-ASR-V1-Turbo
+  name: Audar-ASR V1 Turbo
+  org: AudarAI
+  family: audar
+  params: 2.35B
+  weights_gb: 4.7
+  license: other (AudarAI Community License v1.0)
+  arabic_support: native
+  languages_note: MSA + major Arabic dialects + Arabic-English code-switching; 30 languages total; 300k h Arabic pretraining + GRPO
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: true
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: unknown
+  released: 2026-04
+  downloads_30d: 4690
+  source_urls:
+  - https://huggingface.co/audarai/Audar-ASR-V1-Turbo
+  - https://www.audarai.com/license/audarai-community-license-v1.0/
+  priority: 1
+  notes: Built on Qwen3-ASR-1.7B architecture (model_type qwen3_asr, custom_code). Claims lowest avg WER on Elm board (23.17 self-reported). GGUF (Q4_K_M) for Ollama/llama.cpp
+    included; vLLM support unanswered in discussions. Check licence terms for leaderboard use.
+- hf_id: audarai/Audar-ASR-V1-Flash
+  name: Audar-ASR V1 Flash
+  org: AudarAI
+  family: audar
+  params: 782M
+  weights_gb: 1.6
+  license: other (AudarAI Open License v1.0)
+  arabic_support: native
+  languages_note: As Turbo; real-time/edge tier
+  model_type: qwen3_asr
+  transformers_native: true
+  needs_remote_code: true
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: unknown
+  released: 2026-07
+  downloads_30d: 1357
+  source_urls:
+  - https://huggingface.co/audarai/Audar-ASR-V1-Flash
+  - https://www.audarai.com/license/audarai-open-license-v1.0/
+  priority: 1
+  notes: Qwen3-ASR-0.6B-sized; GGUF included.
+- hf_id: CohereLabs/cohere-transcribe-03-2026
+  name: Cohere Transcribe 03-2026
+  org: Cohere Labs
+  family: cohere-transcribe
+  params: 2.07B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: '14 languages: en fr de it es pt el nl pl zh ja ko vi ar'
+  model_type: cohere_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: true
+  streaming: chunked
+  timestamps: unknown
+  released: 2026-03
+  downloads_30d: 114511
+  source_urls:
+  - https://huggingface.co/CohereLabs/cohere-transcribe-03-2026
+  - https://huggingface.co/blog/CohereLabs/cohere-transcribe-arabic-07-2026-release
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: Gated (auto-approve, accept terms). Conformer encoder + light Transformer decoder; transformers>=5.4 (CohereASR); vLLM supported. custom_code tag on 03 repo.
+    Elm avg WER 30.7.
+- hf_id: CohereLabs/cohere-transcribe-arabic-07-2026
+  name: Cohere Transcribe Arabic 07-2026
+  org: Cohere Labs
+  family: cohere-transcribe
+  params: 2.07B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: native
+  languages_note: Arabic (MSA + dialects), English, Arabic-English code-switching
+  model_type: cohere_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: true
+  streaming: chunked
+  timestamps: unknown
+  released: 2026-07
+  downloads_30d: 145254
+  source_urls:
+  - https://huggingface.co/CohereLabs/cohere-transcribe-arabic-07-2026
+  - https://huggingface.co/blog/CohereLabs/cohere-transcribe-arabic-07-2026-release
+  - https://cohere.com/blog/transcribe-arabic
+  priority: 1
+  notes: 'Gated auto. Vendor-reported 25.87 avg WER on Elm board. int8/int4 repacks: NAMAA-Space/cohere-transcribe-arabic-07-2026-int8/-int4; GGUF via handy-computer/cstr.
+    Already in data/models.yaml.'
+- hf_id: oddadmix/cohere-transcribe-arabic-07-2026-dialectal-v2
+  name: Cohere Transcribe Arabic dialectal v2 (oddadmix)
+  org: oddadmix (community)
+  family: cohere-transcribe-arabic-finetune
+  params: 2.07B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: 13 Arabic dialects, undiacritized
+  model_type: cohere_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: unknown
+  released: 2026-07
+  downloads_30d: 550
+  source_urls:
+  - https://huggingface.co/oddadmix/cohere-transcribe-arabic-07-2026-dialectal-v2
+  priority: 2
+  notes: Full fine-tune; card notes a Libyan/Yemeni/Syrian regression vs base.
+- hf_id: NAMAA-Space/Cohere-Speech-Tashkeel-2B
+  name: NAMAA Cohere-Speech-Tashkeel 2B
+  org: NAMAA
+  family: cohere-transcribe-arabic-finetune
+  params: 2.07B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic with diacritized (tashkeel) output
+  model_type: cohere_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: unknown
+  released: 2026-07
+  downloads_30d: 3147
+  source_urls:
+  - https://huggingface.co/NAMAA-Space/Cohere-Speech-Tashkeel-2B
+  priority: 3
+  notes: Emits tashkeel; strip before scoring. 3.1k dl/30d.
+- hf_id: NAMAA-Space/NAMAA-Saudi-ASR-V1
+  name: NAMAA Saudi-Dialect ASR V1 (LoRA)
+  org: NAMAA
+  family: cohere-transcribe-arabic-finetune
+  params: 2.07B base + 22.5M LoRA
+  weights_gb: 0.09
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Saudi dialect; ~30 h Saudi podcast speech
+  model_type: PEFT LoRA adapter on CohereLabs/cohere-transcribe-arabic-07-2026
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: unknown
+  released: 2026-09
+  downloads_30d: 443
+  source_urls:
+  - https://huggingface.co/NAMAA-Space/NAMAA-Saudi-ASR-V1
+  priority: 2
+  notes: PEFT adapter on cohere-transcribe-arabic-07-2026; card WER 26.5 on own Saudi eval. Relevant for SADA.
+- hf_id: Rlamas/Cohere-Jordanian-Dialect
+  name: Cohere Jordanian Dialect
+  org: Rlamas (community)
+  family: cohere-transcribe-arabic-finetune
+  params: 2.07B
+  weights_gb: 4.1
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Jordanian Arabic
+  model_type: cohere_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: unknown
+  released: 2026-08
+  downloads_30d: 139
+  source_urls:
+  - https://huggingface.co/Rlamas/Cohere-Jordanian-Dialect
+  priority: 3
+  notes: Full fine-tune, self-contained repo.
+- hf_id: nvidia/stt_ar_fastconformer_hybrid_large_pc_v1.0
+  name: NVIDIA FastConformer Hybrid Large Arabic (pc)
+  org: NVIDIA
+  family: nvidia-nemo-arabic
+  params: 115M
+  weights_gb: 0.42
+  license: cc-by-4.0
+  arabic_support: native
+  languages_note: 'Arabic (MSA + dialect data: MCV, MASC, FLEURS, Tarteel, Casablanca, SADA...), punctuation+capitalization'
+  model_type: FastConformer hybrid Transducer-CTC (NeMo .nemo)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2024-11
+  downloads_30d: 1046
+  source_urls:
+  - https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pc_v1.0
+  - https://arxiv.org/abs/2507.13977
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: NeMo only; CTC or RNNT decoding; nvidia-conformer-ctc-large-arabic rows on Elm (avg WER 32.9 w/ LM, 34.7 greedy) are the NGC Conformer sibling. Already in
+    data/models.yaml.
+- hf_id: nvidia/stt_ar_fastconformer_hybrid_large_pcd_v1.0
+  name: NVIDIA FastConformer Hybrid Large Arabic (pc + diacritics)
+  org: NVIDIA
+  family: nvidia-nemo-arabic
+  params: 115M
+  weights_gb: 0.46
+  license: cc-by-4.0
+  arabic_support: native
+  languages_note: Arabic, emits diacritics
+  model_type: FastConformer hybrid Transducer-CTC (NeMo)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2024-12
+  downloads_30d: 3043
+  source_urls:
+  - https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pcd_v1.0
+  - https://arxiv.org/abs/2507.13977
+  priority: 1
+  notes: Strip tashkeel before scoring. Base of most Arabic NeMo fine-tunes (EgypTalk, lemura-lite, Casablanca-NADI, Quran).
+- hf_id: nvidia/nemotron-3.5-asr-streaming-0.6b
+  name: Nemotron 3.5 ASR streaming 0.6B
+  org: NVIDIA
+  family: nvidia-nemotron-asr
+  params: 638M
+  weights_gb: 2.5
+  license: other (OpenMDW-1.1)
+  arabic_support: multilingual-includes-ar
+  languages_note: 40 language-locales; Arabic (ar-AR) in the 19 transcription-ready locales
+  model_type: nemotron3_5_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: native
+  timestamps: word
+  released: 2026-06
+  downloads_30d: 1161204
+  source_urls:
+  - https://huggingface.co/nvidia/nemotron-3.5-asr-streaming-0.6b
+  priority: 1
+  notes: Cache-aware FastConformer-RNNT with LID prompting; chunk sizes 80-1120 ms; .nemo + transformers (nemotron3_5_asr) + GGUF/ONNX/CoreML ports. Transcription-ready
+    Arabic locale -> should run on Elm sets as a streaming entry.
+- hf_id: NAMAA-Space/EgypTalk-ASR-v2
+  name: NAMAA EgypTalk-ASR v2
+  org: NAMAA
+  family: nvidia-nemo-arabic-finetune
+  params: 115M
+  weights_gb: 0.46
+  license: cc-by-4.0
+  arabic_support: finetuned
+  languages_note: Egyptian Arabic; 200+ h curated proprietary audio
+  model_type: FastConformer hybrid (NeMo)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2025-06
+  downloads_30d: 273
+  source_urls:
+  - https://huggingface.co/NAMAA-Space/EgypTalk-ASR-v2
+  priority: 2
+  notes: Fine-tune of stt_ar_fastconformer_hybrid_large_pcd_v1.0. v1 repo not found on HF.
+- hf_id: lemuralabs/lemura-arabic-asr-lite
+  name: Lemura Arabic ASR Lite (FastConformer-CTC)
+  org: Lemura Labs
+  family: nvidia-nemo-arabic-finetune
+  params: 115M
+  weights_gb: 0.44
+  license: cc-by-4.0
+  arabic_support: finetuned
+  languages_note: MSA + 4 dialect groups, ~2,900 h
+  model_type: FastConformer CTC (NeMo)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-08
+  downloads_30d: 226
+  source_urls:
+  - https://huggingface.co/lemuralabs/lemura-arabic-asr-lite
+  priority: 2
+  notes: CPU-friendly single .nemo; card cites Elm-set averages. Also lemuralabs/lemura-arabic-asr (same weights).
+- hf_id: mohammed/fastconformer-quran-ar
+  name: FastConformer Quran Arabic (mohammed)
+  org: mohammed (community)
+  family: nvidia-nemo-arabic-finetune
+  params: 115M
+  weights_gb: 0.46
+  license: cc-by-4.0
+  arabic_support: finetuned
+  languages_note: Quranic recitation, val WER 0.14%
+  model_type: FastConformer hybrid (NeMo)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-06
+  downloads_30d: 871
+  source_urls:
+  - https://huggingface.co/mohammed/fastconformer-quran-ar
+  priority: 3
+  notes: Quran domain; repo also holds extra checkpoints (~4 GB).
+- hf_id: abdullahtb/FastConformer-Arabic-SADA-Finetune-SAREI
+  name: FastConformer Arabic SADA fine-tune (SAREI)
+  org: abdullahtb (community)
+  family: nvidia-nemo-arabic-finetune
+  params: 115M
+  weights_gb: 0.46
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Saudi dialects (SADA22)
+  model_type: FastConformer (NeMo)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-05
+  downloads_30d: 20
+  source_urls:
+  - https://huggingface.co/abdullahtb/FastConformer-Arabic-SADA-Finetune-SAREI
+  priority: 3
+  notes: SADA-trained -> in-domain for Elm SADA test; EMS triage project.
+- hf_id: MohamedGomaa30/stt_ar_fastconformer_casablanca_nadi
+  name: FastConformer Arabic Casablanca-NADI fine-tune
+  org: MohamedGomaa30 (community)
+  family: nvidia-nemo-arabic-finetune
+  params: 115M
+  weights_gb: 0.46
+  license: cc-by-4.0
+  arabic_support: finetuned
+  languages_note: 8 Arabic dialects from Casablanca/NADI-2025
+  model_type: FastConformer hybrid (NeMo)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-06
+  downloads_30d: 30
+  source_urls:
+  - https://huggingface.co/MohamedGomaa30/stt_ar_fastconformer_casablanca_nadi
+  priority: 3
+  notes: Trained on Casablanca -> in-domain for Elm Casablanca test; flag as contaminated for that set.
+- hf_id: oddadmix/nemotron-3.5-asr-arabic-dialectal-v2
+  name: Nemotron 3.5 ASR Arabic dialectal v2 (oddadmix)
+  org: oddadmix (community)
+  family: nvidia-nemo-arabic-finetune
+  params: 638M
+  weights_gb: 2.5
+  license: other (OpenMDW-1.1 inherited)
+  arabic_support: finetuned
+  languages_note: 13 Arabic dialects
+  model_type: FastConformer cache-aware RNNT (NeMo)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: native
+  timestamps: word
+  released: 2026-07
+  downloads_30d: 332
+  source_urls:
+  - https://huggingface.co/oddadmix/nemotron-3.5-asr-arabic-dialectal-v2
+  priority: 2
+  notes: ONNX port by OpenVoiceOS.
+- hf_id: RamaBashar22/nemotron-3.5-asr-streaming-0.6b-jordanian
+  name: Nemotron 3.5 ASR Jordanian
+  org: RamaBashar22 (community)
+  family: nvidia-nemo-arabic-finetune
+  params: 638M
+  weights_gb: 2.5
+  license: openmdw-1.1
+  arabic_support: finetuned
+  languages_note: Jordanian Arabic (~10 h)
+  model_type: nemotron3_5_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: native
+  timestamps: word
+  released: 2026-08
+  downloads_30d: 278
+  source_urls:
+  - https://huggingface.co/RamaBashar22/nemotron-3.5-asr-streaming-0.6b-jordanian
+  priority: 3
+  notes: WER 39.5 -> 28.8 on own 3.3 h test.
+- hf_id: Abdelkareem/Ara-nemotron-3.5-asr-streaming-0.6b
+  name: Ara-Nemotron 3.5 ASR (Egyptian adapter)
+  org: Abdelkareem (community)
+  family: nvidia-nemo-arabic-finetune
+  params: 638M
+  weights_gb: 2.5
+  license: cc-by-4.0
+  arabic_support: finetuned
+  languages_note: Egyptian Arabic (arz) via encoder LinearAdapter
+  model_type: FastConformer cache-aware RNNT (NeMo)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: native
+  timestamps: word
+  released: 2026-06
+  downloads_30d: 51
+  source_urls:
+  - https://huggingface.co/Abdelkareem/Ara-nemotron-3.5-asr-streaming-0.6b
+  priority: 3
+  notes: Adapter-based; base frozen.
+- hf_id: vadimbelsky/arabic-parakeet-tdt-uae
+  name: Parakeet-TDT 1.1B UAE Arabic
+  org: vadimbelsky (community)
+  family: nvidia-nemo-arabic-finetune
+  params: 1.1B
+  weights_gb: 4.3
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Emirati Arabic (~39 h)
+  model_type: FastConformer TDT (NeMo)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-04
+  downloads_30d: 8
+  source_urls:
+  - https://huggingface.co/vadimbelsky/arabic-parakeet-tdt-uae
+  priority: 3
+  notes: Fine-tuned from English nvidia/parakeet-tdt-1.1b; best val WER 0.64 (weak).
+- hf_id: Muno459/fastconformer-quran
+  name: FastConformer Quran (Muno459)
+  org: Muno459 (community)
+  family: nvidia-nemo-arabic-finetune
+  params: 115M
+  weights_gb: 0.46
+  license: other
+  arabic_support: finetuned
+  languages_note: Quranic recitation
+  model_type: FastConformer (NeMo) + ONNX
+  transformers_native: false
+  needs_remote_code: false
+  nemo: true
+  gated: true
+  streaming: chunked
+  timestamps: word
+  released: 2026-05
+  downloads_30d: 1854
+  source_urls:
+  - https://huggingface.co/Muno459/fastconformer-quran
+  priority: 3
+  notes: Gated (manual), empty card; streaming sibling Muno459/fastconformer-quran-streaming.
+- hf_id: oddadmix/Nawah-ASR-60M-Max-Arabic
+  name: Nawah-ASR 60M Max Arabic
+  org: oddadmix (community)
+  family: nawah-from-scratch
+  params: 62.7M
+  weights_gb: 0.25
+  license: unknown
+  arabic_support: native
+  languages_note: Arabic, 8,723 h, trained from scratch (no pretrained encoder, no LM)
+  model_type: parakeet_tdt (FastConformer-TDT, custom parakeet_model.py in repo)
+  transformers_native: false
+  needs_remote_code: true
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-10
+  downloads_30d: 49
+  source_urls:
+  - https://huggingface.co/oddadmix/Nawah-ASR-60M-Max-Arabic
+  priority: 2
+  notes: Pure-torch custom code (no NeMo); card claims 29.86 avg WER / 13.13 CER with Elm eval.py (4th of 38). No license field. ONNX sibling -ONNX.
+- hf_id: oddadmix/Nawah-Parakeet-60M
+  name: Nawah-Parakeet 60M
+  org: oddadmix (community)
+  family: nawah-from-scratch
+  params: 62.7M
+  weights_gb: 0.25
+  license: unknown
+  arabic_support: native
+  languages_note: Arabic, from scratch
+  model_type: parakeet_tdt (custom torch)
+  transformers_native: false
+  needs_remote_code: true
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: word
+  released: 2026-09
+  downloads_30d: 70
+  source_urls:
+  - https://huggingface.co/oddadmix/Nawah-Parakeet-60M
+  priority: 3
+  notes: Earlier Nawah TDT; card claims 31.34 avg WER (8th of 38).
+- hf_id: oddadmix/Nawah-ASR-118M-v5
+  name: Nawah-ASR 118M v5 (speech-LLM)
+  org: oddadmix (community)
+  family: nawah-from-scratch
+  params: 118M
+  weights_gb: 0.24
+  license: apache-2.0
+  arabic_support: native
+  languages_note: Arabic/Egyptian; 866 h own data; 50M from-scratch Whisper-arch encoder + 50M Arabic LLM (Qwen2Audio wiring)
+  model_type: qwen2_audio
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2026-09
+  downloads_30d: 57
+  source_urls:
+  - https://huggingface.co/oddadmix/Nawah-ASR-118M-v5
+  priority: 3
+  notes: model_type qwen2_audio; GRPO/mWER trained; claims beating whisper-large-v3 on own test.
+- hf_id: mistralai/Voxtral-Mini-3B-2507
+  name: Voxtral Mini 3B (2507)
+  org: Mistral AI
+  family: mistral-voxtral
+  params: 4.7B
+  weights_gb: 9.4
+  license: apache-2.0
+  arabic_support: unverified
+  languages_note: Card lists 8 languages (en fr de es it pt nl hi); Arabic not listed but Elm evaluated it (avg WER 42.6)
+  model_type: voxtral
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-07
+  downloads_30d: 142198
+  source_urls:
+  - https://huggingface.co/mistralai/Voxtral-Mini-3B-2507
+  - https://mistral.ai/news/voxtral
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: VoxtralForConditionalGeneration (transformers>=4.54) or vLLM; transcription mode via apply_transcription_request(language='ar'); up to 30 min audio. Already
+    in data/models.yaml.
+- hf_id: mistralai/Voxtral-Small-24B-2507
+  name: Voxtral Small 24B (2507)
+  org: Mistral AI
+  family: mistral-voxtral
+  params: 24.3B
+  weights_gb: 48.5
+  license: apache-2.0
+  arabic_support: unverified
+  languages_note: 8 listed languages; Arabic not listed; Elm avg WER 34.5
+  model_type: voxtral
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-07
+  downloads_30d: 18479
+  source_urls:
+  - https://huggingface.co/mistralai/Voxtral-Small-24B-2507
+  - https://mistral.ai/news/voxtral
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: ~49 GB bf16; vLLM recommended.
+- hf_id: mistralai/Voxtral-Mini-4B-Realtime-2602
+  name: Voxtral Mini 4B Realtime (2602)
+  org: Mistral AI
+  family: mistral-voxtral
+  params: 4.4B
+  weights_gb: 8.9
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 13 languages incl. Arabic (per-language table on card)
+  model_type: voxtral_realtime
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-02
+  downloads_30d: 2154081
+  source_urls:
+  - https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602
+  - https://mistral.ai/news/voxtral-transcribe-2
+  priority: 1
+  notes: Causal encoder + 3.4B LM, <500 ms delay; vLLM /v1/realtime or transformers>=5.2 (voxtral_realtime). 2.15M dl/30d.
+- hf_id: mistralai/Voxtral-Mini-4B-Realtime-Arabic
+  name: Voxtral Mini 4B Realtime Arabic
+  org: Mistral AI (with Morocco MTNRA)
+  family: mistral-voxtral
+  params: 4.4B
+  weights_gb: 8.9
+  license: apache-2.0 (inherited; card has no license field)
+  arabic_support: native
+  languages_note: MSA + 15 dialect codes (ary ayl aeb arq mey afb ars acx ayn arz apd acm ajp apc shu) + code-switching
+  model_type: voxtral_realtime
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: native
+  timestamps: 'no'
+  released: 2026-10
+  downloads_30d: 1518
+  source_urls:
+  - https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-Arabic
+  - https://huggingface.co/onnx-community/Voxtral-Mini-4B-Realtime-Arabic-ONNX
+  priority: 1
+  notes: Released ~2026-10-08 without announcement; fine-tune of Realtime-2602; card claims 8.82% avg CER at 480 ms delay across 7 Arabic benchmarks. ONNX/WebGPU
+    demo exists. Verify license before publishing (metadata missing).
+- hf_id: google/gemma-4-E4B-it
+  name: Gemma 4 E4B it
+  org: Google DeepMind
+  family: google-gemma
+  params: 8.0B (4B effective)
+  weights_gb: 16.0
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: Audio ASR/AST 'multiple languages'; Arabic not named on card but Elm evaluated (avg WER 33.0)
+  model_type: gemma4
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2026-03
+  downloads_30d: 3994620
+  source_urls:
+  - https://huggingface.co/google/gemma-4-E4B-it
+  - https://github.com/Natural-Language-Processing-Elm/open_universal_arabic_asr_leaderboard
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: AutoModelForMultimodalLM; ~300M audio encoder; prompt-based transcription; Elm added 2026-04-21.
+- hf_id: google/gemma-4-E2B-it
+  name: Gemma 4 E2B it
+  org: Google DeepMind
+  family: google-gemma
+  params: 5.1B (2B effective)
+  weights_gb: 10.3
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: As E4B; Elm avg WER 35.9
+  model_type: gemma4
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2026-03
+  downloads_30d: 2848427
+  source_urls:
+  - https://huggingface.co/google/gemma-4-E2B-it
+  - https://github.com/Natural-Language-Processing-Elm/open_universal_arabic_asr_leaderboard
+  priority: 1
+  notes: ''
+- hf_id: google/gemma-3n-E4B-it
+  name: Gemma 3n E4B it
+  org: Google DeepMind
+  family: google-gemma
+  params: 7.8B (4B effective)
+  weights_gb: 15.7
+  license: gemma
+  arabic_support: unverified
+  languages_note: USM-based audio encoder; '140 spoken languages' training claim, 35 multimodal languages; Arabic not named
+  model_type: gemma3n
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: true
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-06
+  downloads_30d: 12465
+  source_urls:
+  - https://huggingface.co/google/gemma-3n-E4B-it
+  priority: 3
+  notes: Gated (Gemma terms). 30 s audio clips, 6.25 tok/s. Fine-tune oddadmix/MasriSwitch-Gemma3n-Transcriber-v1 shows Egyptian transcription is feasible.
+- hf_id: google/gemma-3n-E2B-it
+  name: Gemma 3n E2B it
+  org: Google DeepMind
+  family: google-gemma
+  params: 5.4B (2B effective)
+  weights_gb: 10.9
+  license: gemma
+  arabic_support: unverified
+  languages_note: As E4B
+  model_type: gemma3n
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: true
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-06
+  downloads_30d: 102617
+  source_urls:
+  - https://huggingface.co/google/gemma-3n-E2B-it
+  priority: 3
+  notes: Gated.
+- hf_id: oddadmix/MasriSwitch-Gemma3n-Transcriber-v1
+  name: MasriSwitch Gemma-3n Transcriber v1
+  org: oddadmix (community)
+  family: google-gemma
+  params: 7.8B
+  weights_gb: 15.7
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Egyptian Arabic + English code-switching
+  model_type: gemma3n
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-10
+  downloads_30d: 50
+  source_urls:
+  - https://huggingface.co/oddadmix/MasriSwitch-Gemma3n-Transcriber-v1
+  priority: 3
+  notes: Fine-tune of unsloth/gemma-3n-E4B-it (ungated mirror).
+- hf_id: microsoft/VibeVoice-ASR
+  name: VibeVoice-ASR 7B
+  org: Microsoft
+  family: microsoft-vibevoice
+  params: 8.7B
+  weights_gb: 17.4
+  license: mit
+  arabic_support: multilingual-includes-ar
+  languages_note: 50+ languages, card front-matter lists ar; no language setting needed; Elm avg WER 53.0
+  model_type: vibevoice
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: segment
+  released: 2026-01
+  downloads_30d: 669037
+  source_urls:
+  - https://huggingface.co/microsoft/VibeVoice-ASR
+  - https://github.com/microsoft/VibeVoice
+  - https://arxiv.org/abs/2601.18184
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: Single-pass up to 60 min; outputs who/when/what (diarization + timestamps); run via VibeVoice repo, vLLM guide, or transformers (VibeVoice-ASR-HF). Strip
+    speaker/timestamp structure before WER.
+- hf_id: fixie-ai/ultravox-v0_5-llama-3_1-8b
+  name: Ultravox v0.5 (Llama-3.1-8B)
+  org: Fixie.ai
+  family: ultravox
+  params: 8B LLM + 687M projector/encoder
+  weights_gb: 1.4
+  license: mit
+  arabic_support: multilingual-includes-ar
+  languages_note: 42 languages incl. ar (card front-matter)
+  model_type: ultravox
+  transformers_native: true
+  needs_remote_code: true
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-02
+  downloads_30d: 31631
+  source_urls:
+  - https://huggingface.co/fixie-ai/ultravox-v0_5-llama-3_1-8b
+  priority: 3
+  notes: Repo holds only adapter/projector (1.4 GB); pulls meta-llama/Llama-3.1-8B-Instruct (gated) + whisper encoder at load; trust_remote_code. Speech-LLM, not
+    ASR-optimized.
+- hf_id: fixie-ai/ultravox-v0_6-llama-3_1-8b
+  name: Ultravox v0.6 (Llama-3.1-8B)
+  org: Fixie.ai
+  family: ultravox
+  params: 8B + 687M
+  weights_gb: 1.4
+  license: mit
+  arabic_support: multilingual-includes-ar
+  languages_note: 42 languages incl. ar; v0.6 adds Hindi data, 'modest degradation on other languages'
+  model_type: ultravox
+  transformers_native: true
+  needs_remote_code: true
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-06
+  downloads_30d: 6002
+  source_urls:
+  - https://huggingface.co/fixie-ai/ultravox-v0_6-llama-3_1-8b
+  priority: 3
+  notes: Same loading caveats as v0.5; gemma-3-27b and llama-3.3-70b siblings exist.
+- hf_id: MBZUAI/artst_asr
+  name: ArTST v1 ASR (MGB-2)
+  org: MBZUAI
+  family: mbzuai-artst
+  params: 155M
+  weights_gb: 0.62
+  license: cc-by-nc-4.0
+  arabic_support: native
+  languages_note: MSA (MGB-2 fine-tune)
+  model_type: speecht5
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2024-10
+  downloads_30d: 28
+  source_urls:
+  - https://huggingface.co/MBZUAI/artst_asr
+  - https://github.com/mbzuai-nlp/ArTST
+  priority: 2
+  notes: SpeechT5ForSpeechToText + custom tokenizer; CC-BY-NC. MGB-2 trained -> in-domain for Elm MGB-2.
+- hf_id: MBZUAI/artst_asr_v2
+  name: ArTST v2 ASR (MGB-2)
+  org: MBZUAI
+  family: mbzuai-artst
+  params: 155M
+  weights_gb: 0.62
+  license: cc-by-nc-4.0
+  arabic_support: native
+  languages_note: MSA (MGB-2), v2 multilingual pretraining
+  model_type: speecht5
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-02
+  downloads_30d: 56
+  source_urls:
+  - https://huggingface.co/MBZUAI/artst_asr_v2
+  - https://github.com/mbzuai-nlp/ArTST
+  priority: 2
+  notes: ''
+- hf_id: MBZUAI/artst_asr_v2_qasr
+  name: ArTST v2 ASR (QASR)
+  org: MBZUAI
+  family: mbzuai-artst
+  params: 155M
+  weights_gb: 0.62
+  license: cc-by-nc-4.0
+  arabic_support: native
+  languages_note: Dialectal (QASR fine-tune)
+  model_type: speecht5
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-03
+  downloads_30d: 10
+  source_urls:
+  - https://huggingface.co/MBZUAI/artst_asr_v2_qasr
+  - https://github.com/mbzuai-nlp/ArTST
+  priority: 3
+  notes: ''
+- hf_id: MBZUAI/artst_asr_v3
+  name: ArTST v3 ASR (MGB-2)
+  org: MBZUAI
+  family: mbzuai-artst
+  params: 155M
+  weights_gb: 0.62
+  license: cc-by-nc-4.0
+  arabic_support: native
+  languages_note: MSA; v3 dialect-aware pretraining
+  model_type: speecht5
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-02
+  downloads_30d: 27
+  source_urls:
+  - https://huggingface.co/MBZUAI/artst_asr_v3
+  - https://github.com/mbzuai-nlp/ArTST
+  priority: 2
+  notes: Also loadable with AutoModelForSpeechSeq2Seq per card.
+- hf_id: MBZUAI/artst_asr_v3_qasr
+  name: ArTST v3 ASR (QASR, dialects)
+  org: MBZUAI
+  family: mbzuai-artst
+  params: 155M
+  weights_gb: 0.62
+  license: cc-by-nc-4.0
+  arabic_support: native
+  languages_note: Dialectal Arabic (QASR)
+  model_type: speecht5
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-03
+  downloads_30d: 40
+  source_urls:
+  - https://huggingface.co/MBZUAI/artst_asr_v3_qasr
+  - https://github.com/mbzuai-nlp/ArTST
+  priority: 2
+  notes: 'Paper: Dialectal Coverage and Generalization in Arabic Speech Recognition (2024).'
+- hf_id: jonatasgrosman/wav2vec2-large-xlsr-53-arabic
+  name: wav2vec2 XLSR-53 Arabic (jonatasgrosman)
+  org: jonatasgrosman (community)
+  family: wav2vec2-xlsr-hubert
+  params: 316M
+  weights_gb: 1.26
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic, Common Voice 6.1 + Arabic Speech Corpus
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2022-03
+  downloads_30d: 2580667
+  source_urls:
+  - https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-arabic
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: 2.58M dl/30d; Elm avg WER 61.0. pytorch_model.bin only.
+- hf_id: elgeish/wav2vec2-large-xlsr-53-arabic
+  name: wav2vec2 XLSR-53 Arabic (elgeish)
+  org: elgeish (community)
+  family: wav2vec2-xlsr-hubert
+  params: 316M
+  weights_gb: 1.26
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic, Common Voice + Arabic Speech Corpus (buckwalter-free)
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2022-03
+  downloads_30d: 102098
+  source_urls:
+  - https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-arabic
+  priority: 2
+  notes: 102k dl/30d.
+- hf_id: elgeish/wav2vec2-large-xlsr-53-levantine-arabic
+  name: wav2vec2 XLSR-53 Levantine (elgeish)
+  org: elgeish (community)
+  family: wav2vec2-xlsr-hubert
+  params: 316M
+  weights_gb: 1.26
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Levantine Arabic
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2022-03
+  downloads_30d: 168
+  source_urls:
+  - https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-levantine-arabic
+  priority: 3
+  notes: ''
+- hf_id: asafaya/hubert-large-arabic-transcribe
+  name: HuBERT large Arabic transcribe (asafaya)
+  org: asafaya
+  family: wav2vec2-xlsr-hubert
+  params: 316M
+  weights_gb: 1.28
+  license: mit
+  arabic_support: finetuned
+  languages_note: Arabic (HuBERT pretrained on Arabic audio, CTC fine-tuned)
+  model_type: hubert
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2022-11
+  downloads_30d: 60
+  source_urls:
+  - https://huggingface.co/asafaya/hubert-large-arabic-transcribe
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: Elm avg WER 45.5 (best of the SSL-CTC group). Empty card; asafaya/hubert-large-arabic-ft does not exist.
+- hf_id: speechbrain/asr-wav2vec2-commonvoice-14-ar
+  name: SpeechBrain wav2vec2 CommonVoice-14 Arabic
+  org: SpeechBrain
+  family: wav2vec2-xlsr-hubert
+  params: 316M
+  weights_gb: 1.28
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic, Common Voice 14
+  model_type: wav2vec2 + CTC (SpeechBrain EncoderASR)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: 'no'
+  released: 2023-08
+  downloads_30d: 31
+  source_urls:
+  - https://huggingface.co/speechbrain/asr-wav2vec2-commonvoice-14-ar
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: Needs speechbrain toolkit (EncoderASR.from_hparams). Elm avg WER 65.7.
+- hf_id: speechbrain/asr-wav2vec2-dvoice-darija
+  name: SpeechBrain wav2vec2 DVoice Darija
+  org: SpeechBrain / AIOX Labs
+  family: wav2vec2-xlsr-hubert
+  params: 316M
+  weights_gb: 1.27
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Moroccan Darija (DVoice)
+  model_type: wav2vec2 + CTC (SpeechBrain)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: 'no'
+  released: 2022-06
+  downloads_30d: 50
+  source_urls:
+  - https://huggingface.co/speechbrain/asr-wav2vec2-dvoice-darija
+  priority: 3
+  notes: speechbrain toolkit; also aioxlabs/dvoice-darija.
+- hf_id: arbml/wav2vec2-large-xlsr-53-arabic-egyptian
+  name: wav2vec2 XLSR-53 Egyptian (ArBML)
+  org: ArBML
+  family: wav2vec2-xlsr-hubert
+  params: 316M
+  weights_gb: 1.26
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Egyptian Arabic
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2022-03
+  downloads_30d: 66
+  source_urls:
+  - https://huggingface.co/arbml/wav2vec2-large-xlsr-53-arabic-egyptian
+  priority: 3
+  notes: Repo also holds .bin + flax etc. (~5 GB).
+- hf_id: whitefox123/w2v-bert-2.0-arabic-4
+  name: w2v-BERT 2.0 Arabic (whitefox123)
+  org: whitefox123 (community)
+  family: wav2vec2-xlsr-hubert
+  params: 606M
+  weights_gb: 2.4
+  license: mit
+  arabic_support: finetuned
+  languages_note: Arabic, Common Voice 16
+  model_type: wav2vec2-bert
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2024-02
+  downloads_30d: 20
+  source_urls:
+  - https://huggingface.co/whitefox123/w2v-bert-2.0-arabic-4
+  - https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard
+  priority: 2
+  notes: Wav2Vec2BertForCTC on facebook/w2v-bert-2.0; Elm avg WER 58.1. Only w2v-BERT Arabic fine-tune on the board.
+- hf_id: IbrahimAmin/egyptian-arabic-wav2vec2-xlsr-53
+  name: wav2vec2 XLSR-53 Egyptian (IbrahimAmin)
+  org: IbrahimAmin (community)
+  family: wav2vec2-xlsr-hubert
+  params: 315M
+  weights_gb: 1.26
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Egyptian Arabic
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2025-05
+  downloads_30d: 5385
+  source_urls:
+  - https://huggingface.co/IbrahimAmin/egyptian-arabic-wav2vec2-xlsr-53
+  priority: 3
+  notes: 5.4k dl/30d.
+- hf_id: omarxadel/hubert-large-arabic-egyptian
+  name: HuBERT large Egyptian (omarxadel)
+  org: omarxadel (community)
+  family: wav2vec2-xlsr-hubert
+  params: 315M
+  weights_gb: 1.26
+  license: cc-by-nc-4.0
+  arabic_support: finetuned
+  languages_note: Egyptian Arabic
+  model_type: hubert
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2022-07
+  downloads_30d: 46
+  source_urls:
+  - https://huggingface.co/omarxadel/hubert-large-arabic-egyptian
+  priority: 3
+  notes: Sibling omarxadel/wav2vec2-large-xlsr-53-arabic-egyptian.
+- hf_id: AndrewMcDowell/wav2vec2-xls-r-1b-arabic
+  name: wav2vec2 XLS-R 1B Arabic
+  org: AndrewMcDowell (community)
+  family: wav2vec2-xlsr-hubert
+  params: 963M
+  weights_gb: 3.85
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic, Common Voice 8
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2022-03
+  downloads_30d: 30
+  source_urls:
+  - https://huggingface.co/AndrewMcDowell/wav2vec2-xls-r-1b-arabic
+  priority: 3
+  notes: Robust-speech-event checkpoint; 300m sibling AndrewMcDowell/wav2vec2-xls-r-300m-arabic.
+- hf_id: boumehdi/wav2vec2-large-xlsr-moroccan-darija
+  name: wav2vec2 XLSR Moroccan Darija (boumehdi)
+  org: boumehdi (community)
+  family: wav2vec2-xlsr-hubert
+  params: 316M
+  weights_gb: 1.26
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Moroccan Darija
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2023-04
+  downloads_30d: 3073
+  source_urls:
+  - https://huggingface.co/boumehdi/wav2vec2-large-xlsr-moroccan-darija
+  priority: 3
+  notes: 3k dl/30d.
+- hf_id: othrif/wav2vec2-large-xlsr-arabic
+  name: wav2vec2 XLSR Arabic (othrif)
+  org: othrif (community)
+  family: wav2vec2-xlsr-hubert
+  params: 316M
+  weights_gb: 1.26
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Arabic, Common Voice
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2022-03
+  downloads_30d: 72
+  source_urls:
+  - https://huggingface.co/othrif/wav2vec2-large-xlsr-arabic
+  priority: 3
+  notes: Also othrif/wav2vec2-large-xlsr-moroccan.
+- hf_id: Nuwaisir/Quran_speech_recognizer
+  name: Quran speech recognizer (wav2vec2)
+  org: Nuwaisir (community)
+  family: wav2vec2-xlsr-hubert
+  params: 316M
+  weights_gb: 1.26
+  license: unknown
+  arabic_support: finetuned
+  languages_note: Quranic recitation
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2022-03
+  downloads_30d: 56
+  source_urls:
+  - https://huggingface.co/Nuwaisir/Quran_speech_recognizer
+  priority: 3
+  notes: No license.
+- hf_id: TBOGamer22/wav2vec2-quran-phonetics
+  name: wav2vec2 Quran phonetics
+  org: TBOGamer22 (community)
+  family: wav2vec2-xlsr-hubert
+  params: 94M
+  weights_gb: 0.38
+  license: apache-2.0
+  arabic_support: finetuned
+  languages_note: Quranic recitation, phonetic output
+  model_type: wav2vec2
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: char
+  released: 2026-01
+  downloads_30d: 86090
+  source_urls:
+  - https://huggingface.co/TBOGamer22/wav2vec2-quran-phonetics
+  priority: 3
+  notes: Outputs phonetic transcription, not orthographic -> unlikely scorable with standard WER; 86k dl/30d.
+- hf_id: Quran-Lab/zipformer_p-arabic-v3
+  name: Zipformer-P Arabic v3 (icefall)
+  org: Quran-Lab
+  family: zipformer-icefall
+  params: unknown
+  weights_gb: 2.2
+  license: other
+  arabic_support: native
+  languages_note: Arabic (Quran-oriented)
+  model_type: zipformer_ctc (k2/icefall; ONNX files)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: true
+  streaming: chunked
+  timestamps: unknown
+  released: 2026-08
+  downloads_30d: 420
+  source_urls:
+  - https://huggingface.co/Quran-Lab/zipformer_p-arabic-v3
+  priority: 3
+  notes: Gated (manual), empty card; needs sherpa-onnx/icefall. Predecessors Muno459/zipformer_p-arabic(-v2).
+- hf_id: FunAudioLLM/Fun-ASR-MLT-Nano-2512
+  name: Fun-ASR MLT Nano 2512
+  org: Alibaba FunAudioLLM
+  family: funaudiollm
+  params: 800M
+  weights_gb: 2.0
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 31 languages incl. Arabic (ar) listed in card; emphasis on East/SE Asian
+  model_type: SenseVoice-style encoder + Qwen3-0.6B LLM (FunASR)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: unknown
+  released: 2025-12
+  downloads_30d: 10139
+  source_urls:
+  - https://huggingface.co/FunAudioLLM/Fun-ASR-MLT-Nano-2512
+  - https://github.com/FunAudioLLM/Fun-ASR
+  priority: 2
+  notes: Run with `funasr` package or vLLM; GGUF ports exist. The non-MLT Fun-ASR-Nano-2512(-hf) lists only zh/en/ja/yue.
+- hf_id: DataoceanAI/dolphin-small
+  name: Dolphin small
+  org: Dataocean AI + Tsinghua
+  family: dolphin
+  params: 372M
+  weights_gb: 1.5
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: 40 Eastern languages incl. Arabic with region tokens ar-MA/SA/EG/KW/LY/JO/AE/LVT/GLA
+  model_type: Whisper-like CTC-attention hybrid (dataoceanai-dolphin package)
+  transformers_native: false
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: segment
+  released: 2026-05
+  downloads_30d: 94
+  source_urls:
+  - https://huggingface.co/DataoceanAI/dolphin-small
+  - https://github.com/DataoceanAI/Dolphin
+  - https://github.com/DataoceanAI/Dolphin/blob/main/languages.md
+  priority: 2
+  notes: '`pip install dataoceanai-dolphin`; two-level language/region tokens; base (140M) sibling DataoceanAI/dolphin-base.'
+- hf_id: UsefulSensors/moonshine-base-ar
+  name: Moonshine base Arabic
+  org: Moonshine AI (Useful Sensors)
+  family: moonshine
+  params: 61.5M
+  weights_gb: 0.25
+  license: other (Moonshine community licence)
+  arabic_support: native
+  languages_note: Arabic incl. code-switching; FLEURS WER 5.63 (vendor)
+  model_type: moonshine
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: unknown
+  released: 2025-09
+  downloads_30d: 192
+  source_urls:
+  - https://huggingface.co/UsefulSensors/moonshine-base-ar
+  - https://github.com/moonshine-ai/moonshine
+  priority: 2
+  notes: MoonshineForConditionalGeneration; edge-oriented; 'tiny-ar' sibling (27M).
+- hf_id: UsefulSensors/moonshine-tiny-ar
+  name: Moonshine tiny Arabic
+  org: Moonshine AI (Useful Sensors)
+  family: moonshine
+  params: 27M
+  weights_gb: 0.11
+  license: other (Moonshine community licence)
+  arabic_support: native
+  languages_note: Arabic
+  model_type: moonshine
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  streaming: chunked
+  timestamps: unknown
+  released: 2025-09
+  downloads_30d: 617
+  source_urls:
+  - https://huggingface.co/UsefulSensors/moonshine-tiny-ar
+  priority: 3
+  notes: ''
+- hf_id: stepfun-ai/Step-Audio-2-mini
+  name: Step-Audio 2 mini
+  org: StepFun
+  family: step-audio
+  params: 8.3B
+  weights_gb: 16.6
+  license: apache-2.0
+  arabic_support: multilingual-includes-ar
+  languages_note: Card evaluates ASR on FLEURS Arabic (WER) alongside zh/yue/ja/en
+  model_type: step_audio_2
+  transformers_native: true
+  needs_remote_code: true
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-08
+  downloads_30d: 3636
+  source_urls:
+  - https://huggingface.co/stepfun-ai/Step-Audio-2-mini
+  - https://github.com/stepfun-ai/Step-Audio2
+  priority: 3
+  notes: Audio-LLM with trust_remote_code; Arabic is an evaluated language in the tech report but not a headline one.
+- hf_id: moonshotai/Kimi-Audio-7B-Instruct
+  name: Kimi-Audio 7B Instruct
+  org: Moonshot AI
+  family: kimi-audio
+  params: 9.8B
+  weights_gb: 19.5
+  license: mit
+  arabic_support: unverified
+  languages_note: Card lists en/zh only; vLLM implementation whitelists 11 Whisper languages incl. Arabic
+  model_type: Kimi-Audio (Whisper encoder + Qwen2 LLM; custom code)
+  transformers_native: false
+  needs_remote_code: true
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2025-04
+  downloads_30d: 11348
+  source_urls:
+  - https://huggingface.co/moonshotai/Kimi-Audio-7B-Instruct
+  - https://github.com/MoonshotAI/Kimi-Audio
+  priority: 3
+  notes: Needs kimia_infer package; Arabic untested publicly.
+- hf_id: yayaiu6/Verto-Arabic-ASR
+  name: Verto Arabic ASR (INT8 ONNX of Metro-ASR-Small)
+  org: yayaiu6 (community)
+  family: conformer-ctc-community
+  params: unknown (Conformer-CTC small)
+  weights_gb: 0.0
+  license: mit
+  arabic_support: native
+  languages_note: Egyptian Arabic + code-switching; Casablanca WER 75.4 all dialects / 30.7 Egyptian
+  model_type: Conformer CTC (ONNX Runtime Web, custom decoding)
+  transformers_native: false
+  needs_remote_code: true
+  nemo: false
+  gated: false
+  streaming: 'no'
+  timestamps: 'no'
+  released: 2026-10
+  downloads_30d: 44
+  source_urls:
+  - https://huggingface.co/yayaiu6/Verto-Arabic-ASR
+  - https://huggingface.co/mohammedaly22/Metro-ASR-Small
+  priority: 3
+  notes: Browser-oriented INT8 export; base mohammedaly22/Metro-ASR-Small (metro-asr custom library, MIT) is the trainable original. Low priority.
+excluded:
+- hf_id: Qwen/Qwen2-Audio-7B-Instruct
+  name: Qwen2-Audio 7B Instruct
+  family: qwen-audio
+  reason: Card lists only 'en'; paper's 8 speech languages are zh/en/yue/fr/it/es/de/ja - Arabic not supported.
+  hf_exists: true
+  downloads_30d: 188602
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct
+- hf_id: Qwen/Qwen3-ForcedAligner-0.6B
+  name: Qwen3-ForcedAligner 0.6B
+  family: qwen-asr
+  reason: Forced aligner (timestamps), not an ASR model; its 11 languages do not include Arabic.
+  hf_exists: true
+  downloads_30d: 396375
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B
+- hf_id: Qwen/Qwen3-Omni-30B-A3B-Captioner
+  name: Qwen3-Omni Captioner
+  family: qwen-omni
+  reason: Audio captioning head, not transcription.
+  hf_exists: true
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Captioner
+- hf_id: microsoft/VibeVoice-ASR-Streaming-7B
+  name: VibeVoice-ASR Streaming 7B
+  family: microsoft-vibevoice
+  reason: Streaming variant lists 10 languages (zh en fr de it ja ko pt ru es); Arabic absent.
+  hf_exists: true
+  downloads_30d: 1658
+  source_urls:
+  - https://huggingface.co/microsoft/VibeVoice-ASR-Streaming-7B
+- hf_id: microsoft/Phi-4-multimodal-instruct
+  name: Phi-4-multimodal-instruct
+  family: microsoft-phi
+  reason: 'Audio languages: en zh de fr it ja es pt only; Arabic is text-only.'
+  hf_exists: true
+  downloads_30d: 127637
+  source_urls:
+  - https://huggingface.co/microsoft/Phi-4-multimodal-instruct
+- hf_id: ibm-granite/granite-speech-3.3-8b
+  name: Granite Speech 3.3 8B
+  family: ibm-granite
+  reason: Speech inputs en/fr/de/es/pt only (granite-4.0-1b-speech adds ja); no Arabic.
+  hf_exists: true
+  downloads_30d: 8114
+  source_urls:
+  - https://huggingface.co/ibm-granite/granite-speech-3.3-8b
+- hf_id: kyutai/stt-2.6b-en
+  name: Kyutai STT 2.6B
+  family: kyutai
+  reason: English-only (stt-1b-en_fr = en+fr).
+  hf_exists: true
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/kyutai/stt-2.6b-en
+- hf_id: FunAudioLLM/SenseVoiceSmall
+  name: SenseVoice Small
+  family: funaudiollm
+  reason: zh/en/yue/ja/ko only.
+  hf_exists: true
+  downloads_30d: 21075
+  source_urls:
+  - https://huggingface.co/FunAudioLLM/SenseVoiceSmall
+- hf_id: funasr/paraformer-zh
+  name: Paraformer
+  family: funaudiollm
+  reason: Mandarin (and en) only.
+  hf_exists: true
+  downloads_30d: 1882
+  source_urls:
+  - https://huggingface.co/funasr/paraformer-zh
+- hf_id: FunAudioLLM/Fun-ASR-Nano-2512-hf
+  name: Fun-ASR Nano 2512 (non-MLT)
+  family: funaudiollm
+  reason: Front-matter languages zh/en/ja/yue; use the MLT variant (included) for Arabic.
+  hf_exists: true
+  downloads_30d: 157886
+  source_urls:
+  - https://huggingface.co/FunAudioLLM/Fun-ASR-Nano-2512-hf
+- hf_id: FireRedTeam/FireRedASR-AED-L
+  name: FireRedASR AED-L / LLM-L
+  family: fireredasr
+  reason: Mandarin, Chinese dialects and English only.
+  hf_exists: true
+  downloads_30d: 285
+  source_urls:
+  - https://huggingface.co/FireRedTeam/FireRedASR-AED-L
+- hf_id: moonshotai/Kimi-Audio-7B
+  name: Kimi-Audio 7B (base)
+  family: kimi-audio
+  reason: Base model; Instruct variant kept as unverified probe instead.
+  hf_exists: true
+  source_urls:
+  - https://huggingface.co/moonshotai/Kimi-Audio-7B
+- hf_id: openbmb/MiniCPM-o-4_5
+  name: MiniCPM-o 4.5 (and 2.6)
+  family: minicpm-o
+  reason: ASR benchmarks and docs cover zh/en only; no Arabic claim.
+  hf_exists: true
+  downloads_30d: 436065
+  source_urls:
+  - https://huggingface.co/openbmb/MiniCPM-o-4_5
+- hf_id: zai-org/glm-4-voice-9b
+  name: GLM-4-Voice 9B
+  family: glm
+  reason: Chinese/English speech only; no license field.
+  hf_exists: true
+  downloads_30d: 988
+  source_urls:
+  - https://huggingface.co/zai-org/glm-4-voice-9b
+- hf_id: zai-org/GLM-ASR-Nano-2512
+  name: GLM-ASR Nano 2512
+  family: glm
+  reason: Languages zh/en (+Cantonese/dialects); no Arabic.
+  hf_exists: true
+  downloads_30d: 39697
+  source_urls:
+  - https://huggingface.co/zai-org/GLM-ASR-Nano-2512
+- hf_id: LiquidAI/LFM2.5-Audio-1.5B
+  name: LFM2.5-Audio 1.5B
+  family: liquid
+  reason: 'Supported language: English only.'
+  hf_exists: true
+  downloads_30d: 6840
+  source_urls:
+  - https://huggingface.co/LiquidAI/LFM2.5-Audio-1.5B
+- hf_id: nvidia/parakeet-ctc-1.1b
+  name: Parakeet-CTC 1.1B
+  family: nvidia-parakeet
+  reason: Public HF checkpoint is English-only. The 'Parakeet-CTC-XXL-1.1B-Universal/Concat' rows on the Elm board (avg WER 52.0 / 46.5) are not on HF (nvidia/parakeet-ctc-1.1b-universal
+    and -concat return 401/404); treat as unverified.
+  hf_exists: true
+  downloads_30d: 75704
+  source_urls:
+  - https://huggingface.co/nvidia/parakeet-ctc-1.1b
+- hf_id: nvidia/parakeet-tdt-0.6b-v3
+  name: Parakeet-TDT 0.6B v3
+  family: nvidia-parakeet
+  reason: 25 European languages; no Arabic.
+  hf_exists: true
+  downloads_30d: 615050
+  source_urls:
+  - https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3
+- hf_id: nvidia/canary-1b-v2
+  name: Canary 1B v2 (and canary-1b, canary-1b-flash)
+  family: nvidia-canary
+  reason: 25 European languages; no Arabic.
+  hf_exists: true
+  downloads_30d: 188130
+  source_urls:
+  - https://huggingface.co/nvidia/canary-1b-v2
+- hf_id: nvidia/canary-qwen-2.5b
+  name: Canary-Qwen 2.5B
+  family: nvidia-canary
+  reason: English only.
+  hf_exists: true
+  downloads_30d: 36054
+  source_urls:
+  - https://huggingface.co/nvidia/canary-qwen-2.5b
+- hf_id: distil-whisper/distil-large-v3
+  name: Distil-Whisper large-v3
+  family: whisper
+  reason: English-only distillation.
+  hf_exists: true
+  downloads_30d: 591321
+  source_urls:
+  - https://huggingface.co/distil-whisper/distil-large-v3
+- hf_id: facebook/w2v-bert-2.0
+  name: w2v-BERT 2.0 (base)
+  family: wav2vec2-xlsr-hubert
+  reason: Pretrained encoder without CTC head; fine-tunes (whitefox123) included instead.
+  hf_exists: true
+  downloads_30d: 1092446
+  source_urls:
+  - https://huggingface.co/facebook/w2v-bert-2.0
+- hf_id: facebook/seamless-m4t-large
+  name: SeamlessM4T v1 large (fairseq2 original)
+  family: meta-seamless
+  reason: Original fairseq2 checkpoint; transformers port facebook/hf-seamless-m4t-large included instead.
+  hf_exists: true
+  downloads_30d: 0
+  source_urls:
+  - https://huggingface.co/facebook/seamless-m4t-large
+- hf_id: mohammedaly22/Metro-ASR-Small
+  name: Metro-ASR Small
+  family: conformer-ctc-community
+  reason: Custom 'metro-asr' library, repo ~7 GB of checkpoints, Egyptian-only; INT8 derivative Verto kept at priority 3 as the representative.
+  hf_exists: true
+  downloads_30d: 46
+  source_urls:
+  - https://huggingface.co/mohammedaly22/Metro-ASR-Small
+- hf_id: kamalaitbrahim/nassem-asr-darija
+  name: Nassem ASR Darija (MoulSot MLX Q4)
+  family: qwen-asr-arabic-finetune
+  reason: MLX 4-bit repack of atlasia/moulsot.v0.3 (included); Apple-only runtime.
+  hf_exists: true
+  downloads_30d: 26
+  source_urls:
+  - https://huggingface.co/kamalaitbrahim/nassem-asr-darija
+- hf_id: Msaied2026/arabic-asr
+  name: Msaied2026 arabic-asr
+  family: cohere-transcribe-arabic-finetune
+  reason: Card is a verbatim copy of Cohere Transcribe Arabic; unclear whether weights differ from the base. 28 dl/30d.
+  hf_exists: true
+  source_urls:
+  - https://huggingface.co/Msaied2026/arabic-asr
+- hf_id: NightPrince/Nemo-Arabic-STT-Diacritized
+  name: Nemo-Arabic-STT-Diacritized
+  family: nvidia-nemo-arabic-finetune
+  reason: 'Pipeline repo: unmodified nvidia pcd checkpoint + CATT diacritizer; no new ASR weights.'
+  hf_exists: true
+  downloads_30d: 19
+  source_urls:
+  - https://huggingface.co/NightPrince/Nemo-Arabic-STT-Diacritized
+- hf_id: Muno459/fastconformer-quran-streaming
+  name: FastConformer Quran streaming
+  family: nvidia-nemo-arabic-finetune
+  reason: Gated, empty card, Quran-only; offline sibling listed at priority 3.
+  hf_exists: false
+  source_urls:
+  - https://huggingface.co/Muno459/fastconformer-quran-streaming
+- hf_id: hawzhin/Kurdish-OmniASR-7B-Champion
+  name: Kurdish OmniASR 7B
+  family: meta-omnilingual-asr
+  reason: Kurdish (Arabic script) fine-tune, not Arabic.
+  hf_exists: true
+  source_urls:
+  - https://huggingface.co/hawzhin/Kurdish-OmniASR-7B-Champion
+- hf_id: ai4bharat/indic-seamless
+  name: IndicSeamless
+  family: meta-seamless
+  reason: Indic languages only.
+  hf_exists: false
+  source_urls:
+  - https://huggingface.co/ai4bharat/indic-seamless
+- hf_id: Qwen/Qwen3-Omni-30B-A3B-Thinking
+  name: Qwen3-Omni Thinking
+  family: qwen-omni
+  reason: Reasoning variant; Instruct covers ASR.
+  hf_exists: true
+  source_urls:
+  - https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Thinking
+- hf_id: fixie-ai/ultravox-v0_6-gemma-3-27b
+  name: Ultravox v0.6 Gemma-3-27B (and llama-3.3-70b)
+  family: ultravox
+  reason: Same recipe as the 8B entries; too large for marginal value. Listed for completeness.
+  hf_exists: true
+  source_urls:
+  - https://huggingface.co/fixie-ai/ultravox-v0_6-gemma-3-27b
+- hf_id: TII/Falcon-ASR
+  name: Falcon-ASR 1.6B (TII, Oct 2026)
+  family: tii-falcon
+  reason: Announced 2026-10-06 with 20.92 avg WER on the Elm sets, but no weights on HF (tiiuae org has no ASR repo; search 'falcon-asr' empty); demo-only, license
+    undisclosed.
+  hf_exists: false
+  source_urls:
+  - https://www.marktechpost.com/2026/10/11/tii-falcon-asr-arabic-speech-recognition/
+  - https://huggingface.co/tiiuae
+- hf_id: CNTXT/Munsit
+  name: Munsit-1 (CNTXT AI)
+  family: munsit
+  reason: Conformer-CTC Arabic ASR (26.68 avg WER vendor claim) offered via API only; no open weights found on HF (no cntxt org/repos).
+  hf_exists: false
+  source_urls:
+  - https://munsit.cntxt.tech
+- hf_id: elyadata/*
+  name: Elyadata NADI-2025 SeamlessM4T-v2 dialect fine-tunes
+  family: meta-seamless
+  reason: Elyadata & LIA ranked 2nd in NADI-2025 ASR with per-dialect SeamlessM4T-v2 fine-tunes, but no 'elyadata' HF org/models exist.
+  hf_exists: false
+  source_urls:
+  - https://arxiv.org/abs/2511.10090
+- hf_id: nvidia/stt_ar_conformer_ctc_large
+  name: NVIDIA Conformer-CTC Large Arabic (NGC)
+  family: nvidia-nemo-arabic
+  reason: Elm rows 'nvidia-conformer-ctc-large-arabic (lm/greedy)' come from NGC; HF id returns 401/404. FastConformer pc/pcd HF repos included instead.
+  hf_exists: false
+  source_urls:
+  - https://catalog.ngc.nvidia.com/orgs/nvidia/teams/nemo/models/stt_ar_conformer_ctc_large
+- hf_id: hf-audio/open_asr_leaderboard (multilingual track)
+  name: Open ASR Leaderboard multilingual track
+  family: leaderboard
+  reason: Multilingual track covers de/fr/it/es/pt only (Oct 2025 blog + arXiv 2510.06961); no Arabic track to mine.
+  hf_exists: false
+  source_urls:
+  - https://huggingface.co/blog/open-asr-leaderboard
+  - https://arxiv.org/abs/2510.06961
