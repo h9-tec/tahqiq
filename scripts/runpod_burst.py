@@ -202,34 +202,27 @@ def _save(state: dict) -> None:
 
 
 SEED_SCRIPT = """set -e
-export TAHQIQ_AUDIO_SSH='{ssh}'
-export TAHQIQ_AUDIO_KEY=$(cat <<'KEYEOF'
-{key}KEYEOF
-)
-pip install -q paramiko
-mkdir -p /vol/audio /vol/manifests /vol/hf && cd /vol
+export HF_TOKEN='{token}' HF_HUB_DISABLE_XET=1 HF_HOME=/workspace/hf
+pip install -q huggingface_hub
+mkdir -p /vol/audio /vol/manifests && cd /vol && rm -f /vol/*.tar
 python - <<'PY'
-import io, os, tarfile, time, paramiko
-user, host = os.environ["TAHQIQ_AUDIO_SSH"].split("@", 1)
-key = paramiko.Ed25519Key.from_private_key(io.StringIO(os.environ["TAHQIQ_AUDIO_KEY"]))
-t = paramiko.Transport((host, 22)); t.connect(username=user, pkey=key); s = paramiko.SFTPClient.from_transport(t)
-for name in s.listdir("manifests"):
-    with s.open(f"manifests/{name}", "rb") as f, open(f"/vol/manifests/{name}", "wb") as o: o.write(f.read())
-for name in s.listdir("audio_tars"):
-    ds = name[:-4]
+import os, tarfile, time
+from huggingface_hub import hf_hub_download, list_repo_files
+repo = "HeshamHaroon/tahqiq-audio-private"; tok = os.environ["HF_TOKEN"]
+files = list_repo_files(repo, repo_type="dataset", token=tok)
+for f in files:
+    if f.startswith("manifests/"):
+        p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
+        open("/vol/manifests/" + os.path.basename(f), "wb").write(open(p, "rb").read())
+for f in sorted(files):
+    if not f.startswith("audio_tars/"): continue
+    ds = os.path.basename(f)[:-4]
     if os.path.isdir(f"/vol/audio/{ds}") and os.listdir(f"/vol/audio/{ds}"): print("have", ds, flush=True); continue
-    t0 = time.time()
-    with s.open(f"audio_tars/{name}", "rb") as f, open(f"/vol/{name}", "wb") as o:
-        f.prefetch()
-        while True:
-            b = f.read(8_000_000)
-            if not b: break
-            o.write(b)
-    tarfile.open(f"/vol/{name}").extractall("/vol/audio", filter="data"); os.remove(f"/vol/{name}")
+    t0 = time.time(); p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
+    tarfile.open(p).extractall("/vol/audio", filter="data"); os.remove(p)
     print(ds, "done", round(time.time()-t0), "s", flush=True)
-t.close()
 PY
-du -sh /vol/audio/*; echo SEED_DONE
+du -sh /vol/audio/*; ls /vol/manifests; echo SEED_DONE
 """
 
 
@@ -248,7 +241,7 @@ def cmd_seed(gpu: str, pod_id: str | None = None) -> None:
             break
     else:
         terminate(pod_id); raise SystemExit("seed pod never came up")
-    script = SEED_SCRIPT.replace("{ssh}", os.environ["TAHQIQ_AUDIO_SSH"]).replace("{key}", Path(os.environ["TAHQIQ_AUDIO_KEY_PATH"]).read_text())
+    script = SEED_SCRIPT.replace("{token}", os.environ["HF_TOKEN"])
     rc = subprocess.run(["ssh", *ssh_opts(*addr), "bash -s"], input=script.encode()).returncode
     terminate(pod_id)
     print("seed rc", rc)
