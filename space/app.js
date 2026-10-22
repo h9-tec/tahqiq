@@ -1,5 +1,32 @@
 /* Harfiyyan static Space: reads board.json from the results dataset; submits via an HF discussion using OAuth. */
-import { oauthLoginUrl, oauthHandleRedirectIfPresent } from "https://esm.sh/@huggingface/hub@2.6.11";
+/* OAuth (PKCE) against huggingface.co, no library: HF injects window.huggingface.variables in static Spaces. */
+const HFV = (window.huggingface && window.huggingface.variables) || {};
+const OAUTH = { clientId: HFV.OAUTH_CLIENT_ID, scopes: (HFV.OAUTH_SCOPES || "openid profile write-discussions"), provider: (HFV.OPENID_PROVIDER_URL || "https://huggingface.co") };
+const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const rand = n => b64url(crypto.getRandomValues(new Uint8Array(n)));
+async function oauthLoginUrl() {
+  if (!OAUTH.clientId) throw new Error("OAuth is not configured on this Space (hf_oauth: true in README)");
+  const verifier = rand(32), state = rand(16);
+  const challenge = b64url(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier)));
+  localStorage.setItem("hf_pkce", JSON.stringify({ verifier, state }));
+  const redirect = location.origin + location.pathname;
+  const q = new URLSearchParams({ client_id: OAUTH.clientId, redirect_uri: redirect, response_type: "code", scope: OAUTH.scopes, state, code_challenge: challenge, code_challenge_method: "S256" });
+  return `${OAUTH.provider}/oauth/authorize?${q}`;
+}
+async function oauthHandleRedirectIfPresent() {
+  const u = new URL(location.href); const code = u.searchParams.get("code"), state = u.searchParams.get("state");
+  if (!code) return null;
+  const saved = JSON.parse(localStorage.getItem("hf_pkce") || "{}"); localStorage.removeItem("hf_pkce");
+  if (!saved.verifier || saved.state !== state) throw new Error("OAuth state mismatch");
+  const redirect = location.origin + location.pathname;
+  const r = await fetch(`${OAUTH.provider}/oauth/token`, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ grant_type: "authorization_code", code, redirect_uri: redirect, client_id: OAUTH.clientId, code_verifier: saved.verifier }) });
+  if (!r.ok) throw new Error("token exchange failed: " + r.status);
+  const tok = await r.json();
+  let userInfo = {};
+  try { userInfo = await fetch(`${OAUTH.provider}/oauth/userinfo`, { headers: { Authorization: `Bearer ${tok.access_token}` } }).then(x => x.json()); } catch {}
+  return { accessToken: tok.access_token, accessTokenExpiresAt: new Date(Date.now() + (tok.expires_in || 3600) * 1000).toISOString(), userInfo };
+}
 
 const RESULTS_REPO = "HeshamHaroon/harfiyyan-results";
 const REQUESTS_REPO = "HeshamHaroon/harfiyyan-requests";
@@ -129,10 +156,11 @@ document.getElementById("show-ci").onchange = e => { S.ci = e.target.checked; re
 /* ---------- OAuth submission ---------- */
 let oauth = null;
 try { oauth = JSON.parse(localStorage.getItem("hf_oauth") || "null"); if (oauth && Date.parse(oauth.accessTokenExpiresAt) < Date.now()) oauth = null; } catch { oauth = null; }
+loadBoard();
 try {
   const fresh = await oauthHandleRedirectIfPresent();
-  if (fresh) { oauth = fresh; try { localStorage.setItem("hf_oauth", JSON.stringify(fresh)); } catch {} history.replaceState(null, "", location.pathname + location.hash); }
-} catch (e) { console.warn("oauth redirect handling failed", e); }
+  if (fresh) { oauth = fresh; try { localStorage.setItem("hf_oauth", JSON.stringify(fresh)); } catch {} history.replaceState(null, "", location.pathname + "#submit"); document.querySelector('.tabs button[data-tab="submit"]').click(); }
+} catch (e) { console.warn("oauth redirect handling failed", e); document.getElementById("submit-msg").textContent = "Sign-in failed: " + e.message; }
 
 function showAuth() {
   const ok = !!oauth;
@@ -140,7 +168,7 @@ function showAuth() {
   document.getElementById("submit-form").hidden = !ok;
   if (ok) document.getElementById("who").textContent = oauth.userInfo?.name || oauth.userInfo?.preferred_username || "you";
 }
-document.getElementById("login").onclick = async () => { location.href = await oauthLoginUrl({ scopes: "openid profile write-discussions" }); };
+document.getElementById("login").onclick = async () => { try { location.href = await oauthLoginUrl(); } catch (e) { document.querySelector("#auth .note").textContent = e.message; } };
 document.getElementById("submit-form").onsubmit = async e => {
   e.preventDefault();
   const f = new FormData(e.target); const hf_id = (f.get("hf_id") || "").trim();
@@ -160,5 +188,4 @@ document.getElementById("submit-form").onsubmit = async e => {
   } catch (err) { msg.textContent = "Could not submit: " + err.message; }
 };
 showAuth();
-loadBoard();
 setInterval(loadBoard, 5 * 60 * 1000);
