@@ -32,7 +32,7 @@ class Seamless(ASRModel):
     def transcribe(self, audio: np.ndarray) -> str:
         import torch
 
-        inputs = self.processor(audios=audio, sampling_rate=SAMPLE_RATE, return_tensors="pt").to("cuda")
+        inputs = self.processor(audio=audio, sampling_rate=SAMPLE_RATE, return_tensors="pt").to("cuda")
         inputs = {k: (v.half() if torch.is_tensor(v) and v.is_floating_point() else v) for k, v in inputs.items()}
         with torch.no_grad():
             out = self.model.generate(**inputs, tgt_lang="arb", num_beams=1, do_sample=False)
