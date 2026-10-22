@@ -61,6 +61,7 @@ def run_job(req: dict, *, exclude_gpus: set[int]) -> None:
         return
     adapter = dec.adapter or req.get("adapter") or ""
     hub.update_status(slug, "RUNNING", adapter=adapter, worker=WORKER, started_at=hub.now(), error="")
+    hub.rebuild_board()
     gpu = pick_gpu(exclude_gpus)
     py = PY_NEMO if dec.env == "nemo" else PY_MAIN
     env = {**os.environ, "CUDA_VISIBLE_DEVICES": gpu, "TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD": "1",
@@ -110,6 +111,8 @@ def main() -> None:
             new = hub.poll_discussions()
             for r in new:
                 log(f"queued from discussion: {r['slug']}")
+            if new:
+                hub.rebuild_board()
             reqs = hub.list_requests(force=True)
             todo = [r for r in reqs if r.get("status") in ("PENDING", "APPROVED")]
             todo.sort(key=lambda r: (r["status"] != "APPROVED", r.get("submitted_at", "")))
