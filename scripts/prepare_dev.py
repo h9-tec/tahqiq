@@ -51,7 +51,8 @@ def main() -> None:
         if ds == "sada":
             kw["src"] = Path(a.sada_src)
         if ds == "masc":
-            kw["src"] = Path(a.masc_src) if Path(a.masc_src).exists() else "MohamedRashad/MASC-Arabic"
+            local = Path(a.masc_src)
+            kw["src"] = local if local.exists() and any(local.glob("validation-*.parquet")) else "MohamedRashad/MASC-Arabic"
         print("==", ds, kw.get("split"), flush=True)
         mod.build(**kw)
     print("DEV_MANIFEST_SHA256", write_manifest_hash(DEV))
