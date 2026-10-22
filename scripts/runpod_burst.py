@@ -448,14 +448,16 @@ def main() -> None:
             if s.get("ip"):
                 collect_pod(s["ip"], s["port"]); print("collected", name)
         return
-    units = [u for u in units_all if not a.only or u["slug"] in a.only.split(",")]
+    # Keep the index from the full unit list so pod names (= state keys) stay stable across filtered reruns.
+    indexed = list(enumerate(units_all))
+    indexed = [(i, u) for i, u in indexed if not a.only or u["slug"] in a.only.split(",")]
     if a.skip_done:
-        units = [u for u in units if not (ROOT / "results" / u["slug"] / "run.json").exists()]
+        indexed = [(i, u) for i, u in indexed if not (ROOT / "results" / u["slug"] / "run.json").exists()]
     if getattr(a, "exclude_slow", False):
-        units = [u for u in units if not u.get("slice") == "api"]
-    print(f"{len(units)} units, {a.max_pods} pods at a time")
+        indexed = [(i, u) for i, u in indexed if not u.get("slice") == "api"]
+    print(f"{len(indexed)} units, {a.max_pods} pods at a time")
     with ThreadPoolExecutor(max_workers=max(1, a.max_pods)) as ex:
-        list(ex.map(lambda iu: run_unit(iu[1], iu[0], state), enumerate(units)))
+        list(ex.map(lambda iu: run_unit(iu[1], iu[0], state), indexed))
     print(json.dumps({k: v["status"] for k, v in state.items()}, indent=1))
 
 
