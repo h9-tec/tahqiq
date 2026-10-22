@@ -38,6 +38,7 @@ const DS_INFO = {
   commonvoice: { n: 10471, hours: 12.66, elm: 10471, dialects: "mostly unlabelled" },
   masc_clean: { n: 8612, hours: 10.49, elm: 8612, dialects: "unlabelled" },
   masc_noisy: { n: 9394, hours: 8.92, elm: 9393, dialects: "unlabelled" },
+  mgb2: { n: 5365, hours: 9.58, elm: 5365, dialects: "unlabelled (≈70% MSA broadcast)" },
 };
 const S = { slice: "full", norm: "elm", metric: "wer", ci: true, acc: false, sort: "avg", dir: 1 };
 const pct = x => (S.acc ? (100 - 100 * x) : (100 * x)).toFixed(1);
@@ -136,7 +137,7 @@ function renderDialects() {
 }
 
 function renderDatasets() {
-  document.getElementById("datasets").innerHTML = Object.entries(DS_INFO).map(([d, c]) => `<div class="card"><h3>${DS_LABEL[d] || d}</h3><div class="kv">utterances <b>${c.n.toLocaleString()}</b> · hours <b>${c.hours}</b></div><div class="kv">matched to Elm <b>${c.elm.toLocaleString()}</b></div><div class="kv">dialect labels: ${c.dialects}</div></div>`).join("") + `<div class="card"><h3>MGB-2</h3><div class="kv pending">pending (QCRI license form)</div></div>`;
+  document.getElementById("datasets").innerHTML = Object.entries(DS_INFO).map(([d, c]) => `<div class="card"><h3>${DS_LABEL[d] || d}</h3><div class="kv">utterances <b>${c.n.toLocaleString()}</b> · hours <b>${c.hours}</b></div><div class="kv">matched to Elm <b>${c.elm.toLocaleString()}</b></div><div class="kv">dialect labels: ${c.dialects}</div></div>`).join("");
 }
 
 function renderQueue() {

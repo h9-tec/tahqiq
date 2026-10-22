@@ -8,3 +8,19 @@ WARNING: Running pip as the 'root' user can result in broken permissions and con
 have casablanca
 commonvoice done 127 s
 masc_clean done 99 s
+masc_noisy done 109 s
+sada done 81 s
+409M	/vol/audio/casablanca
+1.4G	/vol/audio/commonvoice
+1.2G	/vol/audio/masc_clean
+984M	/vol/audio/masc_noisy
+1.2G	/vol/audio/sada
+MANIFEST_SHA256
+casablanca.jsonl
+commonvoice.jsonl
+masc_clean.jsonl
+masc_noisy.jsonl
+sada.jsonl
+SEED_DONE
+seed pod qhcemk2ralwqjk
+seed rc 0

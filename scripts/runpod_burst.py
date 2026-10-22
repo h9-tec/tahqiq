@@ -111,6 +111,42 @@ def ssh_opts(ip: str, port: int) -> list[str]:
     return ["-i", str(POD_KEY), "-p", str(port), "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "ConnectTimeout=20", f"root@{ip}"]
 
 
+ENSURE_DATA = """
+export HF_HUB_DISABLE_XET=1
+if mkdir /vol/.seed.lock 2>/dev/null; then
+  echo "seeding/verifying the volume (this pod holds the lock)"
+  pip install -q huggingface_hub
+python - <<'PY'
+import os, tarfile, time
+from huggingface_hub import hf_hub_download, list_repo_files
+repo = "HeshamHaroon/tahqiq-audio-private"; tok = os.environ["HF_TOKEN"]
+files = list_repo_files(repo, repo_type="dataset", token=tok)
+for f in files:
+    if f.startswith("manifests/"):
+        p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
+        open("/vol/manifests/" + os.path.basename(f), "wb").write(open(p, "rb").read())
+import json
+def expected(ds):
+    p = f"/vol/manifests/{ds}.jsonl"
+    return sum(1 for l in open(p, encoding="utf-8") if l.strip()) if os.path.exists(p) else -1
+for f in sorted(files):
+    if not f.startswith("audio_tars/"): continue
+    ds = os.path.basename(f)[:-4]
+    have = len(os.listdir(f"/vol/audio/{ds}")) if os.path.isdir(f"/vol/audio/{ds}") else 0
+    if have and have == expected(ds): print("have", ds, have, flush=True); continue
+    if have: print("incomplete", ds, have, "expected", expected(ds), "-> re-pull", flush=True); import shutil; shutil.rmtree(f"/vol/audio/{ds}")
+    t0 = time.time(); p = hf_hub_download(repo, f, repo_type="dataset", token=tok)
+    tarfile.open(p).extractall("/vol/audio", filter="data"); os.remove(p)
+    print(ds, "done", round(time.time()-t0), "s", "files", len(os.listdir(f"/vol/audio/{ds}")), "expected", expected(ds), flush=True)
+PY
+
+  touch /vol/.seed.done; rmdir /vol/.seed.lock
+else
+  echo "waiting for another pod to finish seeding"; while [ ! -f /vol/.seed.done ] || [ -d /vol/.seed.lock ]; do sleep 15; done
+fi
+"""
+
+
 def bootstrap_script(unit: dict) -> str:
     key = Path(os.environ["TAHQIQ_AUDIO_KEY_PATH"]).read_text()
     pip = ("pip install -q -U 'transformers>=5.13' accelerate soundfile scipy numpy rapidfuzz jiwer pyyaml tenacity httpx tqdm "
@@ -144,6 +180,7 @@ export TAHQIQ_RESULTS_REPO='{hub.RESULTS_REPO}' TAHQIQ_REQUESTS_REPO='{hub.REQUE
 {trc}
 apt-get update -qq >/dev/null 2>&1 && apt-get install -y -qq libsndfile1 rsync >/dev/null 2>&1 || true
 mkdir -p /workspace && cd /workspace
+{ENSURE_DATA if not unit.get("remote_code") else "while [ ! -f /vol/.seed.done ]; do sleep 15; done"}
 {pip} > /workspace/pip.log 2>&1
 python - <<'PY'
 import os, tarfile
@@ -239,8 +276,11 @@ du -sh /vol/audio/*; ls /vol/manifests; echo SEED_DONE
 
 
 def cmd_seed(gpu: str, pod_id: str | None = None) -> None:
-    for cloud in (() if pod_id else ("COMMUNITY", "SECURE")):
-        pod_id = create_pod("tahqiq-seed", gpu, cloud)
+    for g in ([gpu] + GPU_PREFS if not pod_id else []):
+        for cloud in ("COMMUNITY", "SECURE"):
+            pod_id = create_pod("tahqiq-seed", g, cloud)
+            if pod_id:
+                break
         if pod_id:
             break
     if not pod_id:
