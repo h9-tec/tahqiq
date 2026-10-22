@@ -46,6 +46,15 @@ Two groups of columns, kept apart on the board.
 
 v0 runs were made on shared NVIDIA H20 GPUs; wall times per utterance are recorded in every results line but are not a board column, because the GPUs were shared with other jobs and the numbers would not be comparable. A controlled speed column is planned.
 
+## Contamination
+
+Two signals, shown per (system, test set) cell on the board, defined in `tahqiq/contamination.py`:
+
+- **Declared (D).** `data/contamination.yaml` lists systems whose model card or paper names a test corpus (SADA, MGB-2, Common Voice, MASC, Casablanca) in their training data, with the source quoted. Such cells are marked in-domain and excluded from that system's average by default (a toggle shows the unfiltered average). Common Voice re-splits between releases, so training on any CV release counts.
+- **Anomalous advantage (A).** With at least six systems on the board, log WER is fit with an additive median polish (system effect + test-set effect). A cell whose residual is ≤ −0.30 (about 26% lower WER than the fit predicts) and whose robust z-score is ≤ −2.5 is flagged. This is the signature of a test-set leak; it is not proof, and the thresholds and the fit are published so anyone can recompute them from `board.json`.
+
+What this does not do: it cannot detect pre-training exposure to web copies of these corpora in models that do not declare their data. The only full answer is a private, freshly recorded test set, planned for v1.
+
 ## Scope and vendor policy
 
 Systems on the board in v0 are open-weight models. A later version may add the speech APIs of global vendors. Vendors domiciled in the GCC appear only after they opt in in writing. Cohere's hosted API is excluded by its terms; the open-weight Cohere Transcribe Arabic checkpoint is included. All text on the site is numeric; the board makes no claims beyond the measured values.

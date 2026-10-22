@@ -1,0 +1,48 @@
+# Declared training-data overlap with the test sets. Every entry cites where the claim comes from.
+# Dataset keys: sada, mgb2, commonvoice, masc_clean, masc_noisy, casablanca.
+# A declared cell is marked "in-domain" on the board and excluded from that system's average by default.
+declared:
+  MBZUAI_artst_asr:
+    datasets: [mgb2]
+    source: https://huggingface.co/MBZUAI/artst_asr
+    note: ArTST v1 ASR fine-tuned on MGB-2.
+  MBZUAI_artst_asr_v2:
+    datasets: [mgb2]
+    source: https://huggingface.co/MBZUAI/artst_asr_v2
+    note: ArTST v2 ASR fine-tuned on MGB-2.
+  artst_v3:
+    datasets: [mgb2]
+    source: https://huggingface.co/MBZUAI/artst_asr_v3
+    note: ArTST v3 ASR, MGB-2 in the fine-tuning mix (card).
+  wageehkhad_whisper-medium-finetuned-sada-asr:
+    datasets: [sada]
+    source: https://huggingface.co/wageehkhad/whisper-medium-finetuned-sada-asr
+    note: Fine-tuned on MohamedRashad/SADA22 (same corpus as the SADA test split).
+  jonatasgrosman_wav2vec2-large-xlsr-53-arabic:
+    datasets: [commonvoice]
+    source: https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-arabic
+    note: Fine-tuned on Common Voice 6.1 Arabic; CV re-splits between releases, so overlap with the CV 18 test split is likely.
+  elgeish_wav2vec2-large-xlsr-53-arabic:
+    datasets: [commonvoice]
+    source: https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-arabic
+    note: Fine-tuned on Common Voice Arabic (earlier release).
+  speechbrain_asr-wav2vec2-commonvoice-14-ar:
+    datasets: [commonvoice]
+    source: https://huggingface.co/speechbrain/asr-wav2vec2-commonvoice-14-ar
+    note: Trained on Common Voice 14 Arabic.
+  whitefox123_w2v-bert-2.0-arabic-4:
+    datasets: [commonvoice]
+    source: https://huggingface.co/whitefox123/w2v-bert-2.0-arabic-4
+    note: Fine-tuned on Common Voice Arabic.
+  arbml_whisper-largev2-ar:
+    datasets: [commonvoice]
+    source: https://huggingface.co/arbml/whisper-largev2-ar
+    note: Fine-tuned on Common Voice Arabic.
+  nvidia_fastconformer_ar_pc:
+    datasets: [masc_clean, masc_noisy, commonvoice]
+    source: https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pc_v1.0
+    note: Card lists MASC (690 h) and Mozilla Common Voice 17 Arabic (65 h) as training data; CV re-splits between releases, so overlap with the CV 18 test split is likely.
+  nvidia_fastconformer_ar_pcd:
+    datasets: [masc_clean, masc_noisy, commonvoice]
+    source: https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pcd_v1.0
+    note: Same training mix as the pc checkpoint (MASC, Common Voice 17, FLEURS).

@@ -100,3 +100,8 @@ dialog button { background: var(--fg); color: var(--bg); border: 0; border-radiu
 
 .foot { margin: 48px auto 36px; color: var(--muted); font-size: .78rem; font-family: var(--mono); border-top: 1px solid var(--line); padding-top: 12px; }
 @media (max-width: 640px) { .brand h1 { font-size: 1.6rem; } .glyph { font-size: 2rem; } th, td { padding: 6px 8px; } }
+
+.flag { font-family: var(--mono); font-size: .66rem; margin-left: 3px; padding: 0 3px; border: 1px solid var(--line); border-radius: 2px; color: var(--muted); }
+.flag.decl { border-color: var(--accent-2); color: var(--accent-2); }
+.flag.anom { border-color: var(--bad); color: var(--bad); }
+td.excluded { color: var(--muted); }

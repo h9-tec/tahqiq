@@ -136,8 +136,14 @@ def rebuild_board(*, force: bool = True) -> dict:
     scores = load_all_scores(force=force)
     queue = [{k: r.get(k) for k in ("slug", "hf_id", "display_name", "status", "submitted_at", "updated_at", "error", "submitted_by")}
              for r in list_requests(force=force)]
+    try:
+        from .contamination import contamination_report
+
+        contamination = contamination_report(scores)
+    except Exception as e:  # noqa: BLE001
+        contamination = {"error": f"{type(e).__name__}: {e}"}
     board = {"generated_at": now(), "results_repo": RESULTS_REPO, "requests_repo": REQUESTS_REPO,
-             "models": scores, "queue": queue}
+             "models": scores, "queue": queue, "contamination": contamination}
     _api().upload_file(path_or_fileobj=json.dumps(board, ensure_ascii=False).encode("utf-8"),
                        path_in_repo="board.json", repo_id=RESULTS_REPO, repo_type="dataset",
                        commit_message=f"board: {len(scores)} models, {len(queue)} requests")

@@ -26,6 +26,7 @@ Arabic ASR numbers are mostly self-reported, scored with different normalizers o
 | Beyond WER | none | numeral probe (digits and spoken numbers), named-entity probe (people, places, organizations) |
 | Dialects | aggregate only | per-dialect columns wherever the test set carries labels |
 | Production fit | none | measured RTFx, per-file latency, peak VRAM, load time; declared streaming, timestamps, max input, license, size |
+| Contamination | ignored | declared in-domain cells marked and excluded from the average; empirical anomaly test on every cell |
 | Replication | partial | manifests with audio hashes, every hypothesis, `run.json` per system, deterministic slices |
 
 ## Test sets

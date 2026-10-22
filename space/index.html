@@ -33,10 +33,11 @@
       <div class="seg" aria-label="Metric"><button class="on" data-metric="wer">WER</button><button data-metric="cer">CER</button></div>
       <label class="chk"><input type="checkbox" id="show-ci" checked> show 95% CI</label>
       <label class="chk"><input type="checkbox" id="show-acc"> show as accuracy (100 − error)</label>
+      <label class="chk"><input type="checkbox" id="excl-decl" checked> exclude in-domain cells from the average</label>
     </div>
     <h2>Leaderboard <span class="sub" id="lb-sub"></span></h2>
     <div class="scroll"><table id="lb"><thead></thead><tbody></tbody></table></div>
-    <p class="note">Average = unweighted mean over the sets shown (Elm's convention). “Δ vs Whisper v3” = paired bootstrap difference in WER on shared utterances, Elm normalizer; negative is better than the baseline. Numeral probe: share of references containing a number where the hypothesis has the same digits. Entity probe: share of reference names/places/orgs found in the hypothesis. Every submitted system appears in every view; a row marked “common slice only” was evaluated on the ~1,000-utterance-per-set slice (the ZeroGPU submission path) and its numbers are shown in place of full-set numbers. Click a row for the model card and the per-utterance outputs.</p>
+    <p class="note">Average = unweighted mean over the sets shown (Elm's convention). “Δ vs Whisper v3” = paired bootstrap difference in WER on shared utterances, Elm normalizer; negative is better than the baseline. Numeral probe: share of references containing a number where the hypothesis has the same digits. Entity probe: share of reference names/places/orgs found in the hypothesis. Every submitted system appears in every view; a row marked “common slice only” was evaluated on the ~1,000-utterance-per-set slice (the ZeroGPU submission path) and its numbers are shown in place of full-set numbers. Contamination markers: <sup class="flag decl">D</sup> the model card declares training on the same corpus as that test set (“in-domain”; excluded from the average by default); <sup class="flag anom">A</sup> the cell is far below what the system’s own level and the set’s difficulty predict (median-polish residual ≤ −0.30, robust z ≤ −2.5), the pattern a test-set leak produces. Hover a marker for the numbers. Click a row for the model card and the per-utterance outputs.</p>
     <h2>Test sets</h2>
     <div class="cards" id="datasets"></div>
   </section>

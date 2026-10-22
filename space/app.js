@@ -40,7 +40,8 @@ const DS_INFO = {
   masc_noisy: { n: 9394, hours: 8.92, elm: 9393, dialects: "unlabelled" },
   mgb2: { n: 5365, hours: 9.58, elm: 5365, dialects: "unlabelled (≈70% MSA broadcast)" },
 };
-const S = { slice: "full", norm: "elm", metric: "wer", ci: true, acc: false, sort: "avg", dir: 1 };
+const S = { slice: "full", norm: "elm", metric: "wer", ci: true, acc: false, excl: true, sort: "avg", dir: 1 };
+const contam = (m, d) => ((board.contamination || {}).cells || {})[m] && board.contamination.cells[m][d];
 const pct = x => (S.acc ? (100 - 100 * x) : (100 * x)).toFixed(1);
 const pctRaw = x => (100 * x).toFixed(1);
 const fmtCI = c => S.acc ? `[${pct(c.hi)}, ${pct(c.lo)}]` : `[${pct(c.lo)}, ${pct(c.hi)}]`;
@@ -70,16 +71,18 @@ function rowsFor(datasets) {
   return board.models.filter(m => m.scores && (m.scores[S.slice] || m.scores.api || m.scores.full)).map(m => {
     const used = m.scores[S.slice] ? S.slice : (m.scores.api ? "api" : "full");
     const sc = m.scores[used]; m._used = used; const per = {}; let sum = 0, n = 0;
-    for (const d of datasets) { const c = sc.datasets[d] && sc.datasets[d][S.norm]; if (c) { per[d] = c[S.metric]; sum += c[S.metric].point; n++; } }
+    for (const d of datasets) { const c = sc.datasets[d] && sc.datasets[d][S.norm]; if (c) { per[d] = c[S.metric]; const k = contam(m.model_id, d); if (!(S.excl && k && k.declared)) { sum += c[S.metric].point; n++; } } }
     return { m, sc, per, avg: n ? sum / n : null, n, numeral: sc.probes?.numeral, entity: sc.probes?.entity, vs: sc.vs_baseline };
   });
 }
 
-function cell(ci) {
+function cell(ci, mid, d) {
   if (!ci) return `<td class="pending">·</td>`;
   const w = Math.min(1, ci.hi) * 60, l = Math.max(0, ci.lo) * 60;
   const bar = S.ci ? `<span class="bar"><b style="left:${l}px;width:${Math.max(1, w - l)}px"></b><i style="left:${Math.min(1, ci.point) * 60}px"></i></span>` : "";
-  return `<td class="num">${pct(ci.point)}${bar}${S.ci ? `<span class="ci">${fmtCI(ci)}</span>` : ""}</td>`;
+  const k = mid ? contam(mid, d) : null;
+  const flag = k ? `<sup class="flag ${k.declared ? "decl" : ""} ${k.anomaly ? "anom" : ""}" title="${k.declared ? "in-domain (declared): " + (k.note || "") + " " : ""}${k.anomaly ? "anomalous advantage: residual " + k.residual + ", z " + k.z + ", expected WER " + (100 * k.expected_wer).toFixed(1) : ""}">${k.declared ? "D" : ""}${k.anomaly ? "A" : ""}</sup>` : "";
+  return `<td class="num ${k && k.declared && S.excl ? "excluded" : ""}">${pct(ci.point)}${flag}${bar}${S.ci ? `<span class="ci">${fmtCI(ci)}</span>` : ""}</td>`;
 }
 const probeCell = p => p && p.n ? `<td class="num">${(100 * p.acc.point).toFixed(0)}%<span class="ci">n=${p.n}${S.ci ? " " + fmtCI(p.acc) : ""}</span></td>` : `<td class="pending">·</td>`;
 
@@ -94,7 +97,7 @@ function renderLB() {
   document.querySelector("#lb tbody").innerHTML = rows.length ? rows.map((r, i) => {
     const d = r.vs ? 100 * r.vs.delta_wer.point : null;
     const vs = r.vs ? `<td class="num delta ${d < 0 ? "neg" : "pos"}">${d > 0 ? "+" : ""}${d.toFixed(1)}${S.ci ? `<span class="ci">${fmtCI(r.vs.delta_wer)} p=${r.vs.mcnemar.p_value.toExponential(1)}</span>` : ""}</td>` : `<td class="pending">baseline</td>`;
-    return `<tr data-id="${r.m.model_id}"><td>${i + 1}</td><td><span class="model">${r.m.display_name}</span><span class="kind">${[r.m.submitted_by && r.m.submitted_by !== "maintainer" ? "community" : "", r.m._used !== S.slice ? (r.m._used === "api" ? "common slice only" : "full sets") : ""].filter(Boolean).join(" · ")}</span></td><td class="num"><b>${r.avg == null ? "·" : pct(r.avg)}</b><span class="ci">${r.n}/${datasets.length} sets</span></td>${datasets.map(d => cell(r.per[d])).join("")}${probeCell(r.numeral)}${probeCell(r.entity)}${vs}${prodCells(r.m)}</tr>`;
+    return `<tr data-id="${r.m.model_id}"><td>${i + 1}</td><td><span class="model">${r.m.display_name}</span><span class="kind">${[r.m.submitted_by && r.m.submitted_by !== "maintainer" ? "community" : "", r.m._used !== S.slice ? (r.m._used === "api" ? "common slice only" : "full sets") : ""].filter(Boolean).join(" · ")}</span></td><td class="num"><b>${r.avg == null ? "·" : pct(r.avg)}</b><span class="ci">${r.n}/${datasets.length} sets</span></td>${datasets.map(d => cell(r.per[d], r.m.model_id, d)).join("")}${probeCell(r.numeral)}${probeCell(r.entity)}${vs}${prodCells(r.m)}</tr>`;
   }).join("") : `<tr><td colspan="${th.length}" class="pending">No results published yet. The first runs are in progress.</td></tr>`;
   document.getElementById("lb-sub").textContent = `${S.slice === "full" ? "full test sets" : "common stratified slice"} · ${S.norm} normalizer · ${S.acc ? "accuracy = 100 − " + S.metric.toUpperCase() : S.metric.toUpperCase()} %`;
   document.querySelectorAll("#lb th[data-key]").forEach(h => h.onclick = () => { const k = h.dataset.key; if (!k) return; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = 1; } renderLB(); });
@@ -186,6 +189,7 @@ document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
 });
 document.getElementById("show-ci").onchange = e => { S.ci = e.target.checked; renderLB(); renderDialects(); };
 document.getElementById("show-acc").onchange = e => { S.acc = e.target.checked; S.dir = S.acc ? -1 : 1; renderLB(); renderDialects(); };
+document.getElementById("excl-decl").onchange = e => { S.excl = e.target.checked; renderLB(); };
 
 /* ---------- OAuth submission ---------- */
 let oauth = null;
