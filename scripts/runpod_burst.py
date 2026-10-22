@@ -175,7 +175,7 @@ fi
 def bootstrap_script(unit: dict) -> str:
     key = Path(os.environ["TAHQIQ_AUDIO_KEY_PATH"]).read_text()
     pip = ("pip install -q -U 'transformers>=5.13' accelerate soundfile scipy numpy rapidfuzz jiwer pyyaml tenacity httpx tqdm "
-           "python-dotenv huggingface_hub sentencepiece protobuf tiktoken paramiko")
+           "python-dotenv huggingface_hub sentencepiece protobuf tiktoken paramiko 'mistral-common[audio]'")
     if unit.get("nemo"):
         pip += " && pip install -q 'nemo_toolkit[asr]' cython packaging"
     if unit.get("omni"):
@@ -210,7 +210,7 @@ mkdir -p /workspace && cd /workspace
 python - <<'PY'
 import os, tarfile
 from huggingface_hub import hf_hub_download
-p = hf_hub_download(os.environ["TAHQIQ_RESULTS_REPO"], "code/tahqiq.tar.gz", repo_type="dataset", token=os.environ["HF_TOKEN"])
+p = hf_hub_download(os.environ["TAHQIQ_RESULTS_REPO"], "code/tahqiq.tar.gz", repo_type="dataset", token=os.environ.get("HF_TOKEN"))
 tarfile.open(p).extractall("/workspace", filter="data")
 PY
 cd /workspace/tahqiq && export PYTHONPATH=/workspace/tahqiq && (pip install -q -e . --no-deps || true)

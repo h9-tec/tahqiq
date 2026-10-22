@@ -122,7 +122,7 @@
  },
  "tahqiq-0-openai_whisper-sma": {
   "pod": "a4zy7u0587zytp",
-  "status": "CREATED",
+  "status": "NO_SSH",
   "unit": {
    "slug": "openai_whisper-small",
    "nemo": false,
@@ -165,7 +165,8 @@
   "port": 31959
  },
  "tahqiq-2-openai_whisper-lar": {
-  "status": "NO_GPU",
+  "pod": "6u1znnafs1e4ph",
+  "status": "RUNNING",
   "unit": {
    "slug": "openai_whisper-large-v2",
    "nemo": false,
@@ -182,11 +183,13 @@
     "sada"
    ],
    "timing": true
-  }
+  },
+  "ip": "38.80.152.148",
+  "port": 31532
  },
  "tahqiq-4-whisper_large_v3_t": {
   "pod": "o64o8l3fngagkw",
-  "status": "RUNNING",
+  "status": "FINISHED (terminated)",
   "unit": {
    "slug": "whisper_large_v3_turbo",
    "nemo": false,
@@ -207,7 +210,7 @@
  },
  "tahqiq-9-facebook_omniASR-L": {
   "pod": "b1gbo1n63ctthd",
-  "status": "CREATED",
+  "status": "NO_SSH",
   "unit": {
    "slug": "facebook_omniASR-LLM-1B",
    "nemo": false,
@@ -280,7 +283,8 @@
   }
  },
  "tahqiq-13-audarai_Audar-ASR-": {
-  "status": "NO_GPU",
+  "pod": "9j9y952oh2z7qn",
+  "status": "FAILED rc=1 (terminated)",
   "unit": {
    "slug": "audarai_Audar-ASR-V1-Flash",
    "nemo": false,
@@ -297,10 +301,13 @@
     "sada"
    ],
    "timing": true
-  }
+  },
+  "ip": "38.80.152.146",
+  "port": 30902
  },
  "tahqiq-7-seamless_m4t_v2_la": {
-  "status": "NO_GPU",
+  "pod": "3wph53j1tmwfu6",
+  "status": "RUNNING",
   "unit": {
    "slug": "seamless_m4t_v2_large",
    "nemo": false,
@@ -312,10 +319,13 @@
     "mgb2"
    ],
    "timing": false
-  }
+  },
+  "ip": "38.80.152.148",
+  "port": 30873
  },
  "tahqiq-16-nvidia_fastconform": {
-  "status": "NO_GPU",
+  "pod": "2o3igx32uxhoth",
+  "status": "RUNNING",
   "unit": {
    "slug": "nvidia_fastconformer_ar_pc",
    "nemo": true,
@@ -330,7 +340,9 @@
     "sada"
    ],
    "timing": true
-  }
+  },
+  "ip": "38.80.152.148",
+  "port": 31949
  },
  "tahqiq-17-nvidia_fastconform": {
   "pod": "y45rexwmngzzn3",
@@ -377,7 +389,8 @@
   "port": 31310
  },
  "tahqiq-19-mistralai_Voxtral-": {
-  "status": "NO_GPU",
+  "pod": "4khg9d1lfgt93y",
+  "status": "FINISHED (terminated)",
   "unit": {
    "slug": "mistralai_Voxtral-Mini-4B-Realtime-2602",
    "nemo": false,
@@ -391,11 +404,13 @@
     "sada"
    ],
    "timing": true
-  }
+  },
+  "ip": "38.80.152.148",
+  "port": 31629
  },
  "tahqiq-20-mistralai_Voxtral-": {
   "pod": "x1y8y3ojy9c4ep",
-  "status": "RUNNING",
+  "status": "FAILED rc=1 (terminated)",
   "unit": {
    "slug": "mistralai_Voxtral-Mini-4B-Realtime-2602",
    "nemo": false,
@@ -429,5 +444,100 @@
    ],
    "timing": true
   }
+ },
+ "tahqiq-22-mistralai_Voxtral-": {
+  "pod": "n3d6dsa4g2z3ky",
+  "status": "FAILED rc=1 (terminated)",
+  "unit": {
+   "slug": "mistralai_Voxtral-Mini-4B-Realtime-Arabic",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "mistralai/Voxtral-Mini-4B-Realtime-Arabic",
+   "display_name": "Voxtral Mini 4B Realtime Arabic",
+   "datasets": [
+    "commonvoice",
+    "masc_noisy",
+    "mgb2"
+   ],
+   "timing": false
+  },
+  "ip": "38.80.152.148",
+  "port": 31265
+ },
+ "tahqiq-23-google_gemma-4-E4B": {
+  "pod": "1ng2hrdry9y42j",
+  "status": "RUNNING",
+  "unit": {
+   "slug": "google_gemma-4-E4B-it",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "google/gemma-4-E4B-it",
+   "display_name": "Gemma 4 E4B it",
+   "datasets": [
+    "casablanca",
+    "masc_clean",
+    "sada"
+   ],
+   "timing": true
+  },
+  "ip": "38.80.152.148",
+  "port": 31336
+ },
+ "tahqiq-24-google_gemma-4-E4B": {
+  "pod": "h17fki1evgxpbf",
+  "status": "CREATED",
+  "unit": {
+   "slug": "google_gemma-4-E4B-it",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "google/gemma-4-E4B-it",
+   "display_name": "Gemma 4 E4B it",
+   "datasets": [
+    "commonvoice",
+    "masc_noisy",
+    "mgb2"
+   ],
+   "timing": false
+  }
+ },
+ "tahqiq-25-google_gemma-4-E2B": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "google_gemma-4-E2B-it",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "google/gemma-4-E2B-it",
+   "display_name": "Gemma 4 E2B it",
+   "datasets": [
+    "casablanca",
+    "masc_clean",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-26-google_gemma-4-E2B": {
+  "pod": "6rdfut3frjij5p",
+  "status": "RUNNING",
+  "unit": {
+   "slug": "google_gemma-4-E2B-it",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "google/gemma-4-E2B-it",
+   "display_name": "Gemma 4 E2B it",
+   "datasets": [
+    "commonvoice",
+    "masc_noisy",
+    "mgb2"
+   ],
+   "timing": false
+  },
+  "ip": "38.80.152.148",
+  "port": 33154
  }
 }

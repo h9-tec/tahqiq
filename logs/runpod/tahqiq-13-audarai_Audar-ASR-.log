@@ -1,0 +1,5 @@
+Warning: Permanently added '[38.80.152.146]:30902' (ED25519) to the list of known hosts.
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+  File "<frozen os>", line 679, in __getitem__
+KeyError: 'HF_TOKEN'

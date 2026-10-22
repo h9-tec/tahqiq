@@ -39,7 +39,7 @@ FLAVOR = os.environ.get("TAHQIQ_JOB_FLAVOR", "l4x1")
 TIMEOUT_S = int(os.environ.get("TAHQIQ_JOB_TIMEOUT", "7200"))
 
 PIP_MAIN = ("pip install -q -U 'transformers>=5.13' accelerate soundfile scipy numpy rapidfuzz jiwer pyyaml tenacity httpx tqdm "
-            "python-dotenv huggingface_hub sentencepiece protobuf tiktoken paramiko")
+            "python-dotenv huggingface_hub sentencepiece protobuf tiktoken paramiko 'mistral-common[audio]'")
 PIP_NEMO = "pip install -q 'nemo_toolkit[asr]' cython packaging"
 
 BOOTSTRAP = """set -e

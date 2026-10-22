@@ -16,3 +16,4 @@ sentencepiece
 protobuf
 tiktoken
 paramiko
+mistral-common[audio]

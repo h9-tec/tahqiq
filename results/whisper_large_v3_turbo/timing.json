@@ -1,0 +1,21 @@
+{
+ "slug": "whisper_large_v3_turbo",
+ "n_utts": 72,
+ "audio_s": 387.5,
+ "passes_wall_s": [
+  6.36,
+  6.44,
+  6.33
+ ],
+ "rtfx": 60.9,
+ "latency_p50_s": 0.063,
+ "latency_p95_s": 0.12,
+ "load_s": 2.7,
+ "peak_vram_gb": 1.68,
+ "gpu": "NVIDIA B200",
+ "gpu_other_processes": 0,
+ "batch_size": 1,
+ "concurrency": 1,
+ "machine": "f347a92e2bcc",
+ "measured_at": "2026-10-22T13:53:01Z"
+}
