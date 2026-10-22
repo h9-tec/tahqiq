@@ -97,3 +97,15 @@ def test_run_score_roundtrip(world, monkeypatch):
     # Cache file is the documented schema.
     line = json.loads((results / "cand" / "toy.jsonl").read_text().splitlines()[0])
     assert set(line) == {"id", "hyp", "wall_s", "attempts", "error", "run_id"}
+
+
+def test_entity_probe_containment():
+    from harfiyyan.report import entity_probe
+    from harfiyyan import io as hio
+    u = Utterance("a", "toy", "test", "0", "toy/a.wav", "0" * 64, 1.0, "سافر أحمد إلى الرياض", "", "unknown")
+    ents = {"a": ["أحمد", "الرياض"]}
+    good = {"a": hio.Prediction("a", "سافر احمد الى الرياض", 0.1)}
+    half = {"a": hio.Prediction("a", "سافر محمد الى الرياض", 0.1)}
+    assert entity_probe([u], good, ents)["k"] == 2
+    r = entity_probe([u], half, ents)
+    assert (r["k"], r["n"]) == (1, 2)

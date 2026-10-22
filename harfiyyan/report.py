@@ -19,6 +19,42 @@ from .normalize.numbers import digit_string, has_number
 BASELINE = "whisper_large_v3"
 
 
+def load_entities(path: Path) -> dict[str, list[str]]:
+    """id → list of reference entity strings (from scripts/make_entities.py); {} if absent."""
+    if not path.exists():
+        return {}
+    import json
+
+    out: dict[str, list[str]] = {}
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                d = json.loads(line)
+                if d["entities"]:
+                    out[d["id"]] = [e["text"] for e in d["entities"]]
+    return out
+
+
+def entity_probe(utts: list[Utterance], preds: dict[str, hio.Prediction], entities: dict[str, list[str]]) -> dict:
+    """Per-entity containment after tolerant normalization. Returns k, n and Wilson CI."""
+    norm = NORMALIZERS["tolerant"]
+    k = n = 0
+    for u in utts:
+        ents = entities.get(u.id)
+        p = preds.get(u.id)
+        if not ents or p is None or p.error:
+            continue
+        hyp = f" {norm(p.hyp)} "
+        for e in ents:
+            ne = norm(e)
+            if not ne:
+                continue
+            n += 1
+            k += int(f" {ne} " in hyp or ne in hyp)
+    return {"acc": proportion_ci(k, n).as_dict(), "k": k, "n": n}
+
+
 def _pairs(utts: list[Utterance], preds: dict[str, hio.Prediction], norm) -> tuple[list[str], list[str], list[Utterance]]:
     refs, hyps, kept = [], [], []
     for u in utts:
@@ -95,6 +131,11 @@ def score_model(
         n += 1
         k += int(digit_string(u.reference, map_number_words=True) == digit_string(p.hyp, map_number_words=True))
     out["probes"]["numeral"] = {"acc": proportion_ci(k, n).as_dict(), "k": k, "n": n}
+
+    # Entity probe (only when data/probes/entities.jsonl exists).
+    entities = load_entities(manifests_dir.parent / "probes" / "entities.jsonl")
+    if entities:
+        out["probes"]["entity"] = entity_probe(all_utts, all_preds, entities)
 
     # Paired comparison against the baseline on shared utterances.
     if base_preds and baseline_id != model_id:
