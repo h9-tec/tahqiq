@@ -1,7 +1,7 @@
 {
  "tahqiq-8-facebook_omniASR-L": {
   "pod": "908maponkrwedp",
-  "status": "CREATED",
+  "status": "RUNNING",
   "unit": {
    "slug": "facebook_omniASR-LLM-1B",
    "nemo": false,
@@ -15,7 +15,9 @@
     "sada"
    ],
    "timing": true
-  }
+  },
+  "ip": "38.80.152.146",
+  "port": 31228
  },
  "tahqiq-12-audarai_Audar-ASR-": {
   "status": "NO_GPU",
@@ -38,7 +40,8 @@
   }
  },
  "tahqiq-15-cohere_transcribe_": {
-  "status": "NO_GPU",
+  "pod": "kgclnhknx3e96x",
+  "status": "RUNNING",
   "unit": {
    "slug": "cohere_transcribe_arabic_07_2026",
    "nemo": false,
@@ -53,7 +56,9 @@
     "sada"
    ],
    "timing": true
-  }
+  },
+  "ip": "38.80.152.146",
+  "port": 30848
  },
  "tahqiq-14-CohereLabs_cohere-": {
   "status": "NO_GPU",
@@ -125,6 +130,173 @@
     "masc_clean",
     "masc_noisy",
     "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-9-facebook_omniASR-L": {
+  "pod": "p0yiokiuo9r8an",
+  "status": "RUNNING",
+  "unit": {
+   "slug": "facebook_omniASR-LLM-1B",
+   "nemo": false,
+   "omni": true,
+   "remote_code": false,
+   "hf_id": "facebook/omniASR-LLM-1B",
+   "display_name": "Omnilingual ASR LLM 1B",
+   "datasets": [
+    "commonvoice",
+    "masc_noisy",
+    "mgb2"
+   ],
+   "timing": false
+  },
+  "ip": "38.80.152.146",
+  "port": 31819
+ },
+ "tahqiq-2-openai_whisper-lar": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "openai_whisper-large-v2",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "openai/whisper-large-v2",
+   "display_name": "Whisper large-v2",
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-13-audarai_Audar-ASR-": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "audarai_Audar-ASR-V1-Flash",
+   "nemo": false,
+   "omni": false,
+   "remote_code": true,
+   "hf_id": "audarai/Audar-ASR-V1-Flash",
+   "display_name": "Audar-ASR V1 Flash",
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-4-whisper_large_v3_t": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "whisper_large_v3_turbo",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-7-seamless_m4t_v2_la": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "seamless_m4t_v2_large",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "datasets": [
+    "commonvoice",
+    "masc_noisy",
+    "mgb2"
+   ],
+   "timing": false
+  }
+ },
+ "tahqiq-11-qwen3_asr_0.6b": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "qwen3_asr_0.6b",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-0-openai_whisper-sma": {
+  "pod": "ije0p3pwnecteq",
+  "status": "CREATED",
+  "unit": {
+   "slug": "openai_whisper-small",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "openai/whisper-small",
+   "display_name": "Whisper small",
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-1-openai_whisper-med": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "openai_whisper-medium",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "hf_id": "openai/whisper-medium",
+   "display_name": "Whisper medium",
+   "datasets": [
+    "casablanca",
+    "commonvoice",
+    "masc_clean",
+    "masc_noisy",
+    "mgb2",
+    "sada"
+   ],
+   "timing": true
+  }
+ },
+ "tahqiq-6-seamless_m4t_v2_la": {
+  "status": "NO_GPU",
+  "unit": {
+   "slug": "seamless_m4t_v2_large",
+   "nemo": false,
+   "omni": false,
+   "remote_code": false,
+   "datasets": [
+    "casablanca",
+    "masc_clean",
     "sada"
    ],
    "timing": true
