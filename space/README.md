@@ -17,7 +17,9 @@ short_description: Arabic ASR, verified. CIs, dialects, submit any model.
 
 An independent, reproducible leaderboard for Arabic speech recognition. Open-weight models are run by one harness on six public test sets (SADA, Casablanca, Common Voice 18, MASC clean and noisy, MGB-2), scored with two published normalizers, and reported with a 95% confidence interval on every number, per-dataset and per-dialect columns, numeral and entity probes, and a production profile (RTFx, latency, VRAM, streaming, timestamps, license).
 
-**Submit any model** from the Hub in the *Submit a model* tab. It is evaluated on Hugging Face compute and appears here with a results thread.
+**Submit any model** from the Hub in the *Submit a model* tab. It is evaluated on ZeroGPU on the common slice of all six sets and appears here with a results thread, usually within the hour.
+
+**Contamination is checked, not assumed.** Every cell can carry up to six markers: declared training overlap (D), cross-set anomaly (A), transcript-convention fingerprint (F), dev-vs-test gap (G), perturbation gap (P), likelihood probe (L). Thresholds and inputs are published; a private matched test set follows in v1.
 
 - Results: [HeshamHaroon/tahqiq-results](https://huggingface.co/datasets/HeshamHaroon/tahqiq-results)
 - Queue: [HeshamHaroon/tahqiq-requests](https://huggingface.co/datasets/HeshamHaroon/tahqiq-requests)
