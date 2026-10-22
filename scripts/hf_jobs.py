@@ -35,7 +35,7 @@ from tahqiq.models.auto import detect  # noqa: E402
 
 AUDIO_REPO = os.environ.get("TAHQIQ_AUDIO_REPO", "HeshamHaroon/tahqiq-audio-private")
 IMAGE = os.environ.get("TAHQIQ_JOB_IMAGE", "pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime")
-FLAVOR = os.environ.get("TAHQIQ_JOB_FLAVOR", "h100")
+FLAVOR = os.environ.get("TAHQIQ_JOB_FLAVOR", "l4x1")
 TIMEOUT_S = int(os.environ.get("TAHQIQ_JOB_TIMEOUT", "7200"))
 
 PIP_MAIN = ("pip install -q -U 'transformers>=5.13' accelerate soundfile scipy numpy rapidfuzz jiwer pyyaml tenacity httpx tqdm "
@@ -63,10 +63,10 @@ def _api() -> HfApi:
 
 
 def _audio_secrets() -> dict:
-    """Read-only SFTP access to the audio host, passed as job secrets (never stored on the Hub)."""
+    """SFTP fallback for the audio (only when TAHQIQ_JOBS_USE_SSH=1); default is the private HF dataset."""
     key_path = os.environ.get("TAHQIQ_AUDIO_KEY_PATH")
     ssh = os.environ.get("TAHQIQ_AUDIO_SSH")
-    if not (key_path and ssh):
+    if os.environ.get("TAHQIQ_JOBS_USE_SSH") != "1" or not (key_path and ssh):
         return {}
     return {"TAHQIQ_AUDIO_SSH": ssh, "TAHQIQ_AUDIO_KEY": Path(key_path).read_text(encoding="utf-8")}
 
@@ -126,7 +126,7 @@ def cmd_poll() -> None:
         extra = f"--adapter {dec.adapter}" if dec.adapter and dec.adapter != "nemo" else ""
         jid = launch(req["slug"], req["hf_id"], req.get("display_name"), nemo=(dec.env == "nemo"), extra_args=extra)
         r = hub.update_status(req["slug"], "RUNNING", adapter=dec.adapter, worker=f"hf-jobs:{jid}", started_at=hub.now(), error="")
-        hub.notify(r, f"Running on Hugging Face Jobs ({FLAVOR}). Results land here when done.")
+        hub.notify(r, f"Running on Hugging Face Jobs ({FLAVOR}). Results land here when done (typically 1 to 3 hours).")
     hub.rebuild_board()
 
 

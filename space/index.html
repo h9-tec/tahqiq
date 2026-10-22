@@ -11,7 +11,7 @@
 <header class="hero">
   <div class="wrap">
     <div class="brand"><span class="glyph">تحقيق</span><h1>Tahqiq</h1></div>
-    <p class="tag"><em>Tahqiq</em> (تحقيق): the slowest, most exact recitation, every letter given its full right; also the Arabic word for verification. Open models on the same public test sets as Elm's leaderboard, re-run with one harness, two published normalizers, numeral and entity probes, and a 95% confidence interval on every number. Submit any open model below and it gets queued on our GPUs.</p>
+    <p class="tag"><em>Tahqiq</em> (تحقيق): the slowest, most exact recitation, every letter given its full right; also the Arabic word for verification. Open models on the same public test sets as Elm's leaderboard, re-run with one harness, two published normalizers, numeral and entity probes, and a 95% confidence interval on every number. Submit any open model below; it is evaluated on Hugging Face Jobs.</p>
     <div class="pills" id="meta-pills"></div>
   </div>
 </header>
@@ -54,7 +54,7 @@
 
   <section id="tab-submit" class="tab">
     <h2>Submit a model</h2>
-    <p>Any public Hugging Face model with a transformers-native ASR architecture (Whisper, wav2vec2/HuBERT CTC, Qwen3-ASR, Cohere Transcribe, Voxtral) or a NeMo <code>.nemo</code> checkpoint, up to 24 GB of weights. Repositories that need <code>trust_remote_code</code> are parked for manual review first. The run takes 1 to 6 hours on our GPUs; results appear here and in the queue thread.</p>
+    <p>Any public Hugging Face model with a transformers-native ASR architecture (Whisper, wav2vec2/HuBERT CTC, Qwen3-ASR, Cohere Transcribe, Voxtral) or a NeMo <code>.nemo</code> checkpoint, up to 24 GB of weights. Repositories that need <code>trust_remote_code</code> are parked for manual review first. Each submission runs as a Hugging Face Job on an L4 GPU (1 to 3 hours); results appear here and in the queue thread.</p>
     <div id="auth"><button id="login" class="primary">Sign in with Hugging Face to submit</button><p class="note">We only ask for permission to open a discussion in the requests repo on your behalf. Nothing else.</p></div>
     <form id="submit-form" class="form" hidden>
       <p class="note">Signed in as <b id="who"></b>.</p>

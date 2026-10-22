@@ -1,14 +1,5 @@
-seed pod qhcemk2ralwqjk
-Traceback (most recent call last):
-  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 339, in <module>
-    main()
-  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 310, in main
-    cmd_seed(a.gpu, a.pod_id); return
-    ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/hesham/tahqiq/scripts/runpod_burst.py", line 253, in cmd_seed
-    rc = subprocess.call(["ssh", *ssh_opts(*addr), "bash -s"], input=script.encode())
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/hesham/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/subprocess.py", line 389, in call
-    with Popen(*popenargs, **kwargs) as p:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: Popen.__init__() got an unexpected keyword argument 'input'
+Warning: Permanently added '[38.80.152.249]:34152' (ED25519) to the list of known hosts.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: python -m pip install --upgrade pip

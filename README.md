@@ -8,7 +8,7 @@
 
 1. Open the [Space](https://huggingface.co/spaces/HeshamHaroon/tahqiq), tab **Submit a model**, sign in with Hugging Face (it only asks for permission to open a discussion).
 2. Paste the model id (`owner/name`). Transformers-native ASR architectures (Whisper, wav2vec2/HuBERT CTC, Qwen3-ASR, Cohere Transcribe, Voxtral) and NeMo `.nemo` checkpoints up to 24 GB run automatically; repositories that need `trust_remote_code` wait for a maintainer.
-3. A worker on our GPUs runs it on all test sets, scores it, and answers in the request thread with the numbers and a link to every per-utterance output. Typical turnaround: 1 to 6 hours.
+3. A scheduled Hugging Face Job picks it up within 10 minutes and runs it on an L4 GPU on all test sets, scores it, measures timing on the idle GPU, and answers in the request thread with the numbers and a link to every per-utterance output. Typical turnaround: 1 to 3 hours.
 
 ## Leaderboard snapshot
 

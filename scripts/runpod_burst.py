@@ -54,7 +54,6 @@ for slug in ["whisper_large_v3", "qwen3_asr_1.7b", "qwen3_asr_0.6b", "seamless_m
 for slug in ["whisper_large_v3_turbo", "mms_1b_all"]:
     UNITS.append({"slug": slug, "datasets": _ALL, "timing": True})
 UNITS.append({"slug": "nvidia_fastconformer_ar_pc", "datasets": _ALL, "timing": True, "nemo": True, "then": "nvidia_fastconformer_ar_pcd"})
-UNITS.append({"slug": "openai_whisper-tiny", "datasets": _ALL, "timing": True, "hf_id": "openai/whisper-tiny", "display_name": "whisper-tiny"})
 
 
 def _key() -> str:
