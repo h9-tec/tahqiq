@@ -1,14 +1,21 @@
-"""Queue runner for the shared H20 box: evaluates many Hub models, one worker per GPU, publishing each when done.
+"""Queue runner for the H20 box: one model per GPU at a time, accuracy run + latency pass on the same GPU.
 
-    python scripts/box_queue.py plan  [--priority 2,3]              # list what would run
-    python scripts/box_queue.py run   --gpus 1,2,4,5 [--priority 2,3] [--only a,b] [--exclude c]
+    python scripts/box_queue.py plan   [--priority 1,2,3]
+    python scripts/box_queue.py run    --gpus 0,1,2,3,4,5,6,7 [--priority 1,2,3] [--retime-board] [--retry]
     python scripts/box_queue.py status
 
-Units come from data/candidates.yaml (same builder as the RunPod burst, but one unit per slug and no
-timing pass: the box is shared, so RTFx/latency are measured elsewhere). State in logs/box_queue.json
-(resumable: finished slugs are skipped; FAILED ones are retried only with --retry). Models that need
-custom code, an unsupported architecture, or the omnilingual-asr env are listed as SKIPPED with the reason.
-Each unit: `python -m tahqiq.runner --model <slug> ...` then `scripts/publish.py <slug> ...`, log in logs/box/<slug>.log.
+Rules (so the Production numbers are comparable):
+  * one worker thread per GPU, and a worker runs exactly one model at a time; nothing else from Tahqiq
+    touches that GPU (TAHQIQ_EXCLUSIVE_GPU=1 is recorded in timing.json);
+  * every eval unit = runner (accuracy, resumable cache) -> scripts/timing.py on the same GPU
+    (waits for other tenants to go idle, samples their SM% during the passes) -> scripts/publish.py;
+  * --retime-board adds a timing-only unit for every model already on the board whose timing.json was
+    not measured on this box's GPU type, so every model on the board is timed on the same hardware.
+
+Units come from data/candidates.yaml. Slow LLM-style models deferred by the user (Gemma, Voxtral Realtime,
+omniASR) and models without an adapter are SKIPPED with a reason. A unit is claimed only by a GPU whose free
+memory fits it (1.3 x weights + 10 GB), so large models wait for a roomy GPU instead of crashing.
+State: logs/box_queue.json (file-locked; resumable). Logs: logs/box/<slug>.log.
 """
 
 from __future__ import annotations
@@ -34,9 +41,11 @@ load_dotenv(ROOT / ".env")
 STATE = ROOT / "logs" / "box_queue.json"
 LOGS = ROOT / "logs" / "box"
 UV = os.environ.get("TAHQIQ_UV", "/root/.local/bin/uv")
-LOCK = threading.Lock()
+DEFERRED = ("google_gemma-4", "Voxtral-Mini-4B-Realtime", "omniASR")   # user: slow LLM-type models later
+WAIT_QUIET_S = 1200
 
 
+# ---------------------------------------------------------------- state (shared, file-locked)
 def _load() -> dict:
     return json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
 
@@ -49,8 +58,6 @@ def _save(state: dict) -> None:
 
 
 class _FileLock:
-    """Cross-process lock so several queue processes (different GPU sets) can share the state file."""
-
     def __enter__(self):
         import fcntl
         STATE.parent.mkdir(parents=True, exist_ok=True)
@@ -64,74 +71,11 @@ class _FileLock:
         self.f.close()
 
 
-def _update(slug: str, **fields) -> dict:
-    """Read-modify-write one unit's entry under the file lock; returns the fresh state."""
+def _update(key: str, **fields) -> None:
     with _FileLock():
         st = _load()
-        st.setdefault(slug, {}).update(fields)
+        st.setdefault(key, {}).update(fields)
         _save(st)
-        return st
-
-
-def _claim(queue: list[dict], gpu: int) -> dict | None:
-    """Atomically take the next PENDING unit (queue order) for this GPU."""
-    with _FileLock():
-        st = _load()
-        for u in queue:
-            if st.get(u["slug"], {}).get("status") == "PENDING":
-                st[u["slug"]].update({"status": "WAITING_GPU", "gpu": gpu})
-                _save(st)
-                return u
-    return None
-
-
-def build_units(priorities: set[int], max_weight_gb: float) -> tuple[list[dict], list[tuple]]:
-    import yaml
-    from runpod_burst import units_from_candidates
-
-    cands = (yaml.safe_load((ROOT / "data" / "candidates.yaml").read_text(encoding="utf-8")) or {}).get("models") or []
-    meta = {c["hf_id"]: c for c in cands if c.get("hf_id")}
-    hi = max(priorities)
-    units_hi = units_from_candidates(ROOT / "data" / "candidates.yaml", max_priority=hi, split_over_gb=10_000)
-    lo_slugs = set()
-    for p in range(1, min(priorities)):
-        lo_slugs |= {u["slug"] for u in units_from_candidates(ROOT / "data" / "candidates.yaml", max_priority=p, split_over_gb=10_000)}
-    units, skipped = [], []
-    for u in units_hi:
-        if u["slug"] in lo_slugs:
-            continue
-        c = meta.get(u.get("hf_id"), {})
-        w = float(c.get("weights_gb") or 0)
-        if u.get("omni"):
-            skipped.append((u["slug"], "omnilingual-asr env not installed on the box")); continue
-        if u.get("remote_code") and not u.get("adapter"):
-            skipped.append((u["slug"], "custom code without a dedicated adapter")); continue
-        if w > max_weight_gb:
-            skipped.append((u["slug"], f"weights {w} GB > {max_weight_gb} GB")); continue
-        u["weights_gb"] = w
-        u["timing"] = False
-        units.append(u)
-    units.sort(key=lambda u: u["weights_gb"])
-    return units, skipped
-
-
-def unit_cmds(u: dict) -> tuple[str, str]:
-    slug = u["slug"]
-    extra = ""
-    if u.get("hf_id"):
-        extra += f" --hf-id {u['hf_id']}"
-    if u.get("display_name"):
-        extra += f" --display-name {shlex.quote(u['display_name'])}"
-    run_extra = extra + (f" --adapter {u['adapter']}" if u.get("adapter") else "") + (" --batch 1" if u.get("nemo") else "")
-    if u.get("nemo"):
-        py = ".venv-nemo/bin/python"
-    elif u.get("transformers_spec"):
-        py = f"{UV} run --no-sync --with 'transformers{u['transformers_spec']}' --with librosa python"
-    else:
-        py = ".venv/bin/python"
-    run = f"{py} -m tahqiq.runner --model {slug}{run_extra}"
-    pub = f".venv/bin/python scripts/publish.py {slug}{extra}"
-    return run, pub
 
 
 def gpu_free_gb(gpu: int) -> float:
@@ -140,91 +84,201 @@ def gpu_free_gb(gpu: int) -> float:
     return float(out or 0) / 1024
 
 
-def worker(gpu: int, queue: list[dict], state: dict) -> None:
+def need_gb(u: dict) -> float:
+    w = float(u.get("weights_gb") or 0) or 6.0   # registry slugs carry no size; assume a mid-size model
+    return 1.3 * w + 10
+
+
+def _claim(queue: list[dict], gpu: int) -> tuple[dict | None, bool]:
+    """Take the first PENDING unit that fits this GPU's free memory. Returns (unit, any_pending_left)."""
+    free = gpu_free_gb(gpu)
+    with _FileLock():
+        st = _load()
+        pending = [u for u in queue if st.get(u["key"], {}).get("status") == "PENDING"]
+        for u in pending:
+            if need_gb(u) <= free:
+                st[u["key"]].update({"status": "RUNNING", "gpu": gpu, "started": time.strftime("%Y-%m-%dT%H:%M:%S")})
+                _save(st)
+                return u, True
+        return None, bool(pending)
+
+
+# ---------------------------------------------------------------- units
+def _cands() -> dict:
+    import yaml
+    c = (yaml.safe_load((ROOT / "data" / "candidates.yaml").read_text(encoding="utf-8")) or {}).get("models") or []
+    return {x["hf_id"]: x for x in c if x.get("hf_id")}
+
+
+def board_models() -> list[dict]:
+    from huggingface_hub import hf_hub_download
+
+    from tahqiq import hub
+    p = hf_hub_download(hub.RESULTS_REPO, "board.json", repo_type="dataset", token=os.environ.get("HF_TOKEN"), force_download=True)
+    return json.loads(Path(p).read_text(encoding="utf-8")).get("models") or []
+
+
+def build_units(priorities: set[int], max_weight_gb: float, on_board: set[str]) -> tuple[list[dict], list[tuple]]:
+    from runpod_burst import units_from_candidates
+
+    meta = _cands()
+    seen, units, skipped = set(), [], []
+    for u in units_from_candidates(ROOT / "data" / "candidates.yaml", max_priority=max(priorities), split_over_gb=10_000):
+        slug = u["slug"]
+        if slug in seen:
+            continue
+        seen.add(slug)
+        hf = u.get("hf_id")
+        if not hf:   # registry slugs carry no hf_id in the unit; look it up for size/priority
+            try:
+                from tahqiq.models import registry
+                hf = registry.build(slug).hf_id
+            except Exception:
+                hf = None
+        c = meta.get(hf, {})
+        pri = int(c.get("priority", 1)) if c else 1
+        if pri not in priorities or slug in on_board:
+            continue
+        w = float(c.get("weights_gb") or 0)
+        if any(d in slug for d in DEFERRED):
+            skipped.append((slug, "deferred by user (slow LLM-type model)")); continue
+        if u.get("omni"):
+            skipped.append((slug, "omnilingual-asr env not installed on the box")); continue
+        if u.get("remote_code") and not u.get("adapter"):
+            skipped.append((slug, "custom code without a dedicated adapter")); continue
+        if w > max_weight_gb:
+            skipped.append((slug, f"weights {w} GB > {max_weight_gb} GB")); continue
+        units.append({**u, "key": slug, "kind": "eval", "weights_gb": w, "priority": pri})
+    # long jobs first (priority-1 leftovers are the big/slow ones), then small to large
+    units.sort(key=lambda u: (u["priority"] != 1, u["weights_gb"]))
+    return units, skipped
+
+
+def retime_units(models: list[dict], gpu_name: str) -> list[dict]:
+    meta = _cands()
+    out = []
+    for m in models:
+        t = m.get("timing") or {}
+        if gpu_name and gpu_name in str(t.get("gpu") or "") and t.get("exclusive_gpu"):
+            continue
+        slug = m["model_id"]
+        c = meta.get(m.get("hf_id"), {})
+        u = {"slug": slug, "key": f"timing:{slug}", "kind": "timing", "hf_id": m.get("hf_id"), "display_name": m.get("display_name"),
+             "weights_gb": float(c.get("weights_gb") or 0), "nemo": bool(c.get("nemo")) or slug.startswith("nvidia_"),
+             "adapter": c.get("adapter"), "transformers_spec": c.get("transformers_spec")}
+        out.append(u)
+    return out
+
+
+def _py(u: dict) -> str:
+    if u.get("nemo"):
+        return ".venv-nemo/bin/python"
+    if u.get("transformers_spec"):
+        return f"{UV} run --no-sync --with 'transformers{u['transformers_spec']}' --with librosa python"
+    return ".venv/bin/python"
+
+
+def unit_cmds(u: dict) -> list[tuple[str, str, bool]]:
+    """[(label, command, required)]; a non-required step may fail without failing the unit."""
+    slug = u["slug"]
+    ident = ""
+    if u.get("hf_id"):
+        ident += f" --hf-id {u['hf_id']}"
+    if u.get("display_name"):
+        ident += f" --display-name {shlex.quote(u['display_name'])}"
+    adapter = f" --adapter {u['adapter']}" if u.get("adapter") else ""
+    py = _py(u)
+    steps = []
+    if u["kind"] == "eval":
+        steps.append(("run", f"{py} -m tahqiq.runner --model {slug}{ident}{adapter}" + (" --batch 1" if u.get("nemo") else ""), True))
+    steps.append(("timing", f"{py} scripts/timing.py {slug}{ident}{adapter} --wait-quiet {WAIT_QUIET_S}", u["kind"] == "timing"))
+    steps.append(("publish", f".venv/bin/python scripts/publish.py {slug}{ident}", True))
+    return steps
+
+
+# ---------------------------------------------------------------- worker
+def worker(gpu: int, queue: list[dict]) -> None:
     while True:
-        unit = _claim(queue, gpu)
+        unit, left = _claim(queue, gpu)
         if unit is None:
-            return
-        need = 2.5 * unit["weights_gb"] + 6
-        waited = 0
-        while gpu_free_gb(gpu) < need and waited < 3600:
-            time.sleep(60); waited += 60
-        run, pub = unit_cmds(unit)
+            if not left:
+                return
+            time.sleep(60)   # pending units exist but none fits this GPU right now
+            continue
         log = LOGS / f"{unit['slug']}.log"
-        env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(gpu), HF_HUB_DISABLE_XET="1", TOKENIZERS_PARALLELISM="false",
-                   TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD="1", PYTHONPATH=str(ROOT))
+        env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(gpu), TAHQIQ_PHYS_GPU=str(gpu), TAHQIQ_EXCLUSIVE_GPU="1",
+                   HF_HUB_DISABLE_XET="1", TOKENIZERS_PARALLELISM="false", TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD="1", PYTHONPATH=str(ROOT))
         env.pop("TAHQIQ_TRUST_REMOTE_CODE", None)
-        _update(unit["slug"], status="RUNNING", started=time.strftime("%Y-%m-%dT%H:%M:%S"), pid=os.getpid())
-        print(f"[gpu{gpu}] start {unit['slug']} ({unit['weights_gb']} GB)", flush=True)
-        t0 = time.time()
+        print(f"[gpu{gpu}] start {unit['kind']} {unit['slug']} ({unit['weights_gb']} GB)", flush=True)
+        t0, rc, failed_step = time.time(), 0, None
         with open(log, "ab") as f:
-            f.write(f"\n==== {time.strftime('%F %T')} gpu{gpu}\n{run}\n".encode())
-            f.flush()
-            rc = subprocess.call(run, shell=True, cwd=ROOT, env=env, stdout=f, stderr=subprocess.STDOUT)
-            if rc == 0:
-                f.write(f"\n==== publish\n{pub}\n".encode()); f.flush()
-                rc = subprocess.call(pub, shell=True, cwd=ROOT, env=env, stdout=f, stderr=subprocess.STDOUT)
-                if rc != 0:
-                    rc = 1000 + rc  # distinguishes a publish failure from a runner failure
-        _update(unit["slug"], status="DONE" if rc == 0 else f"FAILED rc={rc}", rc=rc,
-                ended=time.strftime("%Y-%m-%dT%H:%M:%S"), minutes=round((time.time() - t0) / 60, 1))
-        print(f"[gpu{gpu}] {unit['slug']}: {'done' if rc == 0 else 'FAILED rc=' + str(rc)} in {round((time.time() - t0) / 60)} min", flush=True)
+            for label, cmd, required in unit_cmds(unit):
+                f.write(f"\n==== {time.strftime('%F %T')} gpu{gpu} {label}\n{cmd}\n".encode()); f.flush()
+                r = subprocess.call(cmd, shell=True, cwd=ROOT, env=env, stdout=f, stderr=subprocess.STDOUT)
+                if r != 0 and required:
+                    rc, failed_step = r, label
+                    break
+                if r != 0:
+                    f.write(f"\n==== {label} failed rc={r}; continuing without it\n".encode())
+        status = "DONE" if rc == 0 else f"FAILED {failed_step} rc={rc}"
+        _update(unit["key"], status=status, ended=time.strftime("%Y-%m-%dT%H:%M:%S"), minutes=round((time.time() - t0) / 60, 1))
+        print(f"[gpu{gpu}] {unit['slug']}: {status} in {round((time.time() - t0) / 60)} min", flush=True)
 
 
+# ---------------------------------------------------------------- cli
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["plan", "run", "status"])
-    ap.add_argument("--priority", default="2,3")
-    ap.add_argument("--gpus", default="1,2,4,5")
+    ap.add_argument("--priority", default="1,2,3")
+    ap.add_argument("--gpus", default="0,1,2,3,4,5,6,7")
     ap.add_argument("--max-weight-gb", type=float, default=60.0)
     ap.add_argument("--only", default=None)
     ap.add_argument("--exclude", default=None)
     ap.add_argument("--retry", action="store_true", help="re-run FAILED units too")
-    ap.add_argument("--reset-running", action="store_true", help="treat RUNNING/WAITING_GPU entries as pending (after killing a previous queue)")
+    ap.add_argument("--retime-board", action="store_true", help="timing-only units for board models not timed on this GPU type")
+    ap.add_argument("--gpu-name", default="H20")
     a = ap.parse_args()
-    state = _load()
     if a.cmd == "status":
         from collections import Counter
-        print(Counter(v["status"].split(" ")[0] for v in state.values()))
-        for k, v in state.items():
-            if v["status"] not in ("PENDING",):
-                print(f"  {v['status']:<16} gpu{v.get('gpu', '-')}  {k}  {v.get('minutes', '')}")
+        st = _load()
+        print(Counter(v["status"].split(" ")[0] for v in st.values()))
+        for k, v in st.items():
+            if v["status"] not in ("PENDING", "SKIPPED"):
+                print(f"  {v['status']:<22} gpu{v.get('gpu', '-')}  {k}  {v.get('minutes', '')}")
         return
-    pri = {int(p) for p in a.priority.split(",")}
-    units, skipped = build_units(pri, a.max_weight_gb)
+    models = board_models()
+    on_board = {m["model_id"] for m in models}
+    units, skipped = build_units({int(p) for p in a.priority.split(",")}, a.max_weight_gb, on_board)
+    if a.retime_board:
+        units = retime_units(models, a.gpu_name) + units
     if a.only:
         units = [u for u in units if u["slug"] in a.only.split(",")]
     if a.exclude:
         units = [u for u in units if u["slug"] not in a.exclude.split(",")]
-    done = {k for k, v in state.items() if v.get("status") == "DONE"} | {p.parent.name for p in (ROOT / "results").glob("*/.published")}
-    queue = []
-    for u in units:
-        s = state.get(u["slug"], {}).get("status", "")
-        if u["slug"] in done or (s.startswith("FAILED") and not a.retry):
-            continue
-        queue.append(u)
+    st = _load()
+    queue = [u for u in units if not (st.get(u["key"], {}).get("status") == "DONE"
+                                     or (st.get(u["key"], {}).get("status", "").startswith("FAILED") and not a.retry))]
     if a.cmd == "plan":
-        print(f"{len(queue)} to run, {len(units) - len(queue)} already done/failed, {len(skipped)} skipped")
+        print(f"{len(queue)} to run ({sum(u['kind'] == 'timing' for u in queue)} timing-only), "
+              f"{len(units) - len(queue)} done/failed, {len(skipped)} skipped")
         for u in queue:
-            print(f"  {u['weights_gb']:>5} GB  {'nemo ' if u.get('nemo') else ''}{u.get('adapter') or ''} {u['slug']}  <- {u.get('hf_id', 'registry')}")
+            print(f"  {u['kind']:<6} {u['weights_gb']:>5} GB  need {need_gb(u):>5.1f}  {u['slug']}")
         for s, why in skipped:
             print(f"  skip {s}: {why}")
         return
     LOGS.mkdir(parents=True, exist_ok=True)
     with _FileLock():
-        state = _load()
+        st = _load()
         for u in queue:
-            cur = state.get(u["slug"], {}).get("status", "")
-            if a.reset_running or cur not in ("RUNNING", "WAITING_GPU"):   # another queue process may be on it
-                state[u["slug"]] = {"status": "PENDING", "hf_id": u.get("hf_id"), "weights_gb": u["weights_gb"]}
+            st[u["key"]] = {"status": "PENDING", "kind": u["kind"], "hf_id": u.get("hf_id"), "weights_gb": u["weights_gb"]}
         for s, why in skipped:
-            state.setdefault(s, {"status": "SKIPPED", "why": why})
-        _save(state)
+            st.setdefault(s, {"status": "SKIPPED", "why": why})
+        _save(st)
     gpus = [int(g) for g in a.gpus.split(",")]
-    print(f"{len(queue)} units on GPUs {gpus}", flush=True)
-    threads = [threading.Thread(target=worker, args=(g, queue, state), daemon=True) for g in gpus]
+    print(f"{len(queue)} units on GPUs {gpus}, one model per GPU", flush=True)
+    threads = [threading.Thread(target=worker, args=(g, queue), daemon=True) for g in gpus]
     for t in threads:
-        t.start(); time.sleep(5)
+        t.start(); time.sleep(3)
     for t in threads:
         t.join()
     from collections import Counter

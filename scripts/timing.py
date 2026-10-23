@@ -8,7 +8,9 @@ manifests, ~60 utterances of 3-15 s across all sets), one warm-up pass, then 3 t
 batch size 1, concurrency 1. RTFx = total audio seconds / total wall seconds, median over
 passes. Latency = wall seconds per utterance, p50 and p95 over all timed utterances. Peak VRAM
 from torch.cuda.max_memory_allocated. The number of other processes on the GPU at the time is
-recorded, because the box is shared; a measurement with other jobs present is flagged.
+recorded, because the box is shared; a measurement with other jobs present is flagged. With TAHQIQ_PHYS_GPU
+set, other processes' SM utilisation is sampled during the timed passes (resident-but-idle neighbours
+count 0) and --wait-quiet waits for them to go idle first.
 Writes results/<slug>/timing.json.
 """
 
@@ -16,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -52,7 +55,75 @@ def gpu_neighbours() -> int:
         return -1
 
 
-def measure(slug: str, *, hf_id: str | None = None, display_name: str | None = None, adapter: str | None = None, passes: int = 3) -> dict:
+def others_sm_pct(phys_gpu: int | None) -> float | None:
+    """SM utilisation (%) of OTHER processes on the physical GPU, from one `nvidia-smi pmon` sample.
+    Resident-but-idle neighbours (loaded models waiting for requests) count 0."""
+    if phys_gpu is None:
+        return None
+    try:
+        out = subprocess.check_output(["nvidia-smi", "pmon", "-i", str(phys_gpu), "-c", "1", "-s", "u"], text=True, timeout=30)
+    except Exception:
+        return None
+    mine, total = os.getpid(), 0.0
+    for line in out.splitlines():
+        parts = line.split()
+        if not parts or parts[0].startswith("#") or len(parts) < 4:
+            continue
+        try:
+            pid = int(parts[1])
+        except ValueError:
+            continue
+        if pid == mine:
+            continue
+        sm = parts[3]
+        total += float(sm) if sm.replace(".", "", 1).isdigit() else 0.0
+    return total
+
+
+class _Sampler:
+    """Samples other processes' SM% every few seconds while the timed passes run."""
+
+    def __init__(self, phys_gpu: int | None, every_s: float = 3.0):
+        import threading
+
+        self.phys, self.every, self.samples = phys_gpu, every_s, []
+        self._stop = threading.Event()
+        self._t = threading.Thread(target=self._loop, daemon=True)
+
+    def _loop(self) -> None:
+        while not self._stop.is_set():
+            v = others_sm_pct(self.phys)
+            if v is not None:
+                self.samples.append(v)
+            self._stop.wait(self.every)
+
+    def __enter__(self):
+        if self.phys is not None:
+            self._t.start()
+        return self
+
+    def __exit__(self, *a):
+        self._stop.set()
+        if self._t.is_alive():
+            self._t.join(timeout=40)
+
+
+def wait_quiet(phys_gpu: int | None, max_wait_s: int, threshold: float = 5.0) -> float:
+    """Block until other processes use < threshold % SM on our GPU (3 samples in a row); returns seconds waited."""
+    if phys_gpu is None or max_wait_s <= 0:
+        return 0.0
+    t0, quiet = time.time(), 0
+    while time.time() - t0 < max_wait_s:
+        v = others_sm_pct(phys_gpu)
+        quiet = quiet + 1 if (v is not None and v < threshold) else 0
+        if quiet >= 3:
+            break
+        time.sleep(10)
+    return round(time.time() - t0, 1)
+
+
+def measure(slug: str, *, hf_id: str | None = None, display_name: str | None = None, adapter: str | None = None, passes: int = 3,
+            wait_quiet_s: int = 0) -> dict:
     """Timing pass; returns the timing dict and writes results/<slug>/timing.json."""
     utts = [u for p in manifest_paths(MANIFESTS) for u in load_manifest(p) if u.in_timing_slice]
     utts.sort(key=lambda u: u.id)
@@ -74,12 +145,16 @@ def measure(slug: str, *, hf_id: str | None = None, display_name: str | None = N
     load_s = time.perf_counter() - t0
     for u in utts[:5]:
         model.transcribe_path(AUDIO / u.audio_rel)
+    phys = int(os.environ["TAHQIQ_PHYS_GPU"]) if os.environ.get("TAHQIQ_PHYS_GPU", "").isdigit() else None
+    waited = wait_quiet(phys, wait_quiet_s)
     passes_wall, lat = [], []
-    for _ in range(passes):
-        t1 = time.perf_counter()
-        for u in utts:
-            lat.append(model.transcribe_path(AUDIO / u.audio_rel).wall_s)
-        passes_wall.append(time.perf_counter() - t1)
+    with _Sampler(phys) as sampler:
+        for _ in range(passes):
+            t1 = time.perf_counter()
+            for u in utts:
+                lat.append(model.transcribe_path(AUDIO / u.audio_rel).wall_s)
+            passes_wall.append(time.perf_counter() - t1)
+    other_sm = sampler.samples
     peak = gpu = None
     try:
         peak = round(torch.cuda.max_memory_allocated() / 1e9, 2)
@@ -96,6 +171,11 @@ def measure(slug: str, *, hf_id: str | None = None, display_name: str | None = N
         "latency_p50_s": round(float(np.percentile(lat_a, 50)), 3),
         "latency_p95_s": round(float(np.percentile(lat_a, 95)), 3),
         "load_s": round(load_s, 1), "peak_vram_gb": peak, "gpu": gpu, "gpu_other_processes": neighbours,
+        # compute actually used by other processes during the timed passes (resident-but-idle neighbours = 0)
+        "gpu_other_sm_pct_mean": round(float(np.mean(other_sm)), 1) if other_sm else None,
+        "gpu_other_sm_pct_max": round(float(np.max(other_sm)), 1) if other_sm else None,
+        "waited_for_quiet_s": waited,
+        "exclusive_gpu": os.environ.get("TAHQIQ_EXCLUSIVE_GPU") == "1",   # no other Tahqiq job on this GPU
         "batch_size": 1, "concurrency": 1, "machine": platform.node(),
         "measured_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
@@ -112,8 +192,10 @@ def main() -> None:
     ap.add_argument("--display-name", default=None)
     ap.add_argument("--adapter", default=None)
     ap.add_argument("--passes", type=int, default=3)
+    ap.add_argument("--wait-quiet", type=int, default=0, help="seconds to wait for other processes on the GPU to go idle (needs TAHQIQ_PHYS_GPU)")
     args = ap.parse_args()
-    print(json.dumps(measure(args.slug, hf_id=args.hf_id, display_name=args.display_name, adapter=args.adapter, passes=args.passes)))
+    print(json.dumps(measure(args.slug, hf_id=args.hf_id, display_name=args.display_name, adapter=args.adapter, passes=args.passes,
+                             wait_quiet_s=args.wait_quiet)))
 
 
 if __name__ == "__main__":
