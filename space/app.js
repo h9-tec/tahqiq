@@ -105,9 +105,20 @@ function renderLB() {
 }
 
 function fmtParams(p) { if (!p) return "·"; return p >= 1000 ? (p / 1000).toFixed(1) + "B" : p + "M"; }
+// A timing is "contended" when other processes actually used the GPU during the timed passes.
+// New measurements sample their SM% (resident-but-idle neighbours count 0); older ones only counted processes.
+function contended(t) {
+  if (t.gpu_other_sm_pct_mean != null) return t.gpu_other_sm_pct_mean > 5;
+  return t.gpu_other_processes > 0;
+}
+function contendNote(t) {
+  return t.gpu_other_sm_pct_mean != null ? `other processes used ${t.gpu_other_sm_pct_mean}% of the GPU (mean) during measurement`
+    : `${t.gpu_other_processes} other processes on the GPU during measurement`;
+}
+function gpuShort(t) { return (t.gpu || "").replace(/^NVIDIA\s+/, "").replace(/\s+\d+GB.*$/, ""); }
 function prodCells(m) {
   const t = m.timing || {}, p = m.profile || {};
-  const warn = t.gpu_other_processes > 0 ? " (shared)" : "";
+  const warn = contended(t) ? " (shared)" : "";
   return `<td class="num">${t.rtfx != null ? t.rtfx + "×" + warn : "·"}</td><td class="num">${fmtParams(p.params_m) === "·" && p.params_label ? p.params_label : fmtParams(p.params_m)}</td><td>${p.streaming && p.streaming !== "unknown" ? p.streaming : "·"}</td>`;
 }
 function renderProd() {
@@ -116,7 +127,8 @@ function renderProd() {
   document.querySelector("#prod thead").innerHTML = "<tr>" + th.map((t, i) => `<th class="${i >= 1 && i <= 4 ? "measured" : i >= 5 ? "declared" : ""}">${t}</th>`).join("") + "</tr>";
   document.querySelector("#prod tbody").innerHTML = rows.length ? rows.map(m => {
     const t = m.timing || {}, p = m.profile || {};
-    const warn = t.gpu_other_processes > 0 ? ` <span class="ci" title="${t.gpu_other_processes} other processes on the GPU during measurement">shared GPU</span>` : "";
+    const warn = contended(t) ? ` <span class="ci" title="${contendNote(t)}">shared GPU</span>`
+      : (t.gpu ? ` <span class="ci" title="${t.exclusive_gpu ? "one model per GPU; " : ""}${contendNote(t)}">${gpuShort(t)}</span>` : "");
     const has = t.rtfx != null;
     return `<tr data-id="${m.model_id}"><td><span class="model">${m.display_name}</span></td>
       <td class="num">${has ? t.rtfx + "×" + warn : "pending"}</td>
