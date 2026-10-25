@@ -79,7 +79,7 @@ models:
     license: apache-2.0
     params: 2B
     streaming: chunked
-    timestamps: unknown
+    timestamps: 'no'   # card: "The model does not feature either of these" (timestamps, diarization)
     max_audio: feature extractor splits long audio into chunks automatically
     languages: Arabic (dialects), English, Arabic-English code-switching
     arabic_only: true
@@ -130,8 +130,9 @@ models:
     hf: https://huggingface.co/facebook/seamless-m4t-v2-large
     license: cc-by-nc-4.0
     params: 2.3B
-    streaming: no (SeamlessStreaming is a separate model)
-    timestamps: no
+    streaming: 'no'
+    streaming_note: SeamlessStreaming is a separate model
+    timestamps: 'no'
     max_audio: short utterances; no built-in long-form
     languages: ~100 (speech input)
     arabic_only: false
@@ -143,8 +144,9 @@ models:
     hf: https://huggingface.co/mistralai/Voxtral-Mini-3B-2507
     license: apache-2.0
     params: 3B
-    streaming: no (Voxtral Realtime is a separate model)
-    timestamps: no
+    streaming: 'no'
+    streaming_note: Voxtral Realtime is a separate model
+    timestamps: 'no'
     max_audio: up to 30 min (32k context)
     languages: 8 listed + others
     arabic_only: false
@@ -196,7 +198,7 @@ models:
     license: apache-2.0
     params: 2B
     streaming: chunked
-    timestamps: unknown
+    timestamps: 'no'   # card: "The model does not feature either of these" (timestamps, diarization)
     max_audio: feature extractor chunks long audio automatically
     languages: multilingual (includes Arabic)
     arabic_only: false
@@ -222,7 +224,7 @@ models:
     license: apache-2.0
     params: 4.4B
     streaming: native
-    timestamps: no
+    timestamps: 'no'
     max_audio: streaming; configurable delay
     languages: multilingual
     arabic_only: false
@@ -235,7 +237,7 @@ models:
     license: apache-2.0
     params: 4.4B
     streaming: native
-    timestamps: no
+    timestamps: 'no'
     max_audio: streaming; 480 ms configured delay in the card
     languages: Arabic MSA + 15 dialect codes, code-switching
     arabic_only: true
@@ -247,8 +249,8 @@ models:
     hf: https://huggingface.co/google/gemma-4-E4B-it
     license: apache-2.0
     params: 8B (4.5B effective)
-    streaming: no
-    timestamps: no
+    streaming: 'no'
+    timestamps: 'no'
     max_audio: audio in a 128K-token context; prompt-based transcription
     languages: 140+ (multilingual LLM)
     arabic_only: false
@@ -260,8 +262,8 @@ models:
     hf: https://huggingface.co/google/gemma-4-E2B-it
     license: apache-2.0
     params: 5.1B (2.3B effective)
-    streaming: no
-    timestamps: no
+    streaming: 'no'
+    timestamps: 'no'
     max_audio: audio in a 128K-token context; prompt-based transcription
     languages: 140+ (multilingual LLM)
     arabic_only: false
@@ -273,8 +275,8 @@ models:
     hf: https://huggingface.co/facebook/omniASR-LLM-1B
     license: apache-2.0
     params: 2.3B
-    streaming: no
-    timestamps: no
+    streaming: 'no'
+    timestamps: 'no'
     max_audio: 40 s per utterance (card)
     languages: 1,600+ (lang-conditioned)
     arabic_only: false
@@ -286,9 +288,10 @@ models:
     hf: https://huggingface.co/audarai/Audar-ASR-V1-Turbo
     license: other (custom)
     params: 1.7B
-    streaming: native (per card)
-    timestamps: unknown
-    max_audio: unknown
+    streaming: native
+    streaming_note: per card
+    timestamps: not stated in the card
+    max_audio: 30 s encoder window; longer audio chunked client-side (card)
     languages: Arabic (Emirati/Gulf focus), English
     arabic_only: true
     declared_source: https://huggingface.co/audarai/Audar-ASR-V1-Turbo
@@ -299,9 +302,1025 @@ models:
     hf: https://huggingface.co/audarai/Audar-ASR-V1-Flash
     license: other (custom)
     params: 0.6B
-    streaming: native (per card)
-    timestamps: unknown
-    max_audio: unknown
+    streaming: native
+    streaming_note: per card
+    timestamps: not stated in the card
+    max_audio: 30 s encoder window; longer audio chunked client-side (card)
     languages: Arabic (Emirati/Gulf focus)
     arabic_only: true
     declared_source: https://huggingface.co/audarai/Audar-ASR-V1-Flash
+
+  # ---- 2026-10-25: board models that had no declared fields; read from each card, else the architecture
+  # ---- default for that family (basis says which). CTC models count as chunked, like MMS.
+  Abdelkareem_Ara-nemotron-3.5-asr-streaming-0.6b:
+    name: Ara-Nemotron 3.5 ASR (Egyptian adapter)
+    org: Abdelkareem
+    kind: open
+    hf: https://huggingface.co/Abdelkareem/Ara-nemotron-3.5-asr-streaming-0.6b
+    license: cc-by-4.0
+    params: 0.6B (+64-dim adapter)
+    streaming: native
+    timestamps: word (base model default)
+    max_audio: cache-aware streaming; unbounded
+    languages: Arabic (Egyptian)
+    arabic_only: true
+    declared_source: https://huggingface.co/Abdelkareem/Ara-nemotron-3.5-asr-streaming-0.6b
+    basis: card
+  AndrewMcDowell_wav2vec2-xls-r-1b-arabic:
+    name: wav2vec2 XLS-R 1B Arabic
+    org: AndrewMcDowell
+    kind: open
+    hf: https://huggingface.co/AndrewMcDowell/wav2vec2-xls-r-1b-arabic
+    license: apache-2.0
+    params: 1B
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Common Voice 8)
+    arabic_only: true
+    declared_source: https://huggingface.co/AndrewMcDowell/wav2vec2-xls-r-1b-arabic
+    basis: architecture default (card silent)
+  Byne_whisper-large-v3-arabic:
+    name: Whisper large-v3 Arabic (Byne)
+    org: Byne
+    kind: open
+    hf: https://huggingface.co/Byne/whisper-large-v3-arabic
+    license: apache-2.0
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (training data unspecified)
+    arabic_only: true
+    declared_source: https://huggingface.co/Byne/whisper-large-v3-arabic
+    basis: architecture default (card silent)
+  IbrahimAmin_code-switched-egyptian-arabic-whisper-small:
+    name: Whisper small Egyptian code-switched
+    org: IbrahimAmin
+    kind: open
+    hf: https://huggingface.co/IbrahimAmin/code-switched-egyptian-arabic-whisper-small
+    license: apache-2.0
+    params: 244M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Egyptian) + English, code-switched
+    arabic_only: true
+    declared_source: https://huggingface.co/IbrahimAmin/code-switched-egyptian-arabic-whisper-small
+    basis: architecture default (card silent)
+  IbrahimAmin_egyptian-arabic-wav2vec2-xlsr-53:
+    name: wav2vec2 XLSR-53 Egyptian (IbrahimAmin)
+    org: IbrahimAmin
+    kind: open
+    hf: https://huggingface.co/IbrahimAmin/egyptian-arabic-wav2vec2-xlsr-53
+    license: apache-2.0
+    params: 315M
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Egyptian primary; MSA, Gulf, Levantine)
+    arabic_only: true
+    declared_source: https://huggingface.co/IbrahimAmin/egyptian-arabic-wav2vec2-xlsr-53
+    basis: architecture default (card silent)
+  Laith05_roma-whisper-small-levantine:
+    name: Whisper small Levantine (Laith05)
+    org: Laith05
+    kind: open
+    hf: https://huggingface.co/Laith05/roma-whisper-small-levantine
+    license: apache-2.0
+    params: 244M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: 'Arabic (Levantine: Jordan, Palestine)'
+    arabic_only: true
+    declared_source: https://huggingface.co/Laith05/roma-whisper-small-levantine
+    basis: architecture default (card silent)
+  MAdel121_whisper-small-egyptian-arabic:
+    name: Whisper small Egyptian (MAdel121)
+    org: MAdel121
+    kind: open
+    hf: https://huggingface.co/MAdel121/whisper-small-egyptian-arabic
+    license: mit
+    params: 244M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Egyptian)
+    arabic_only: true
+    declared_source: https://huggingface.co/MAdel121/whisper-small-egyptian-arabic
+    basis: architecture default (card silent)
+  MohamedGomaa30_stt_ar_fastconformer_casablanca_nadi:
+    name: FastConformer Arabic Casablanca-NADI fine-tune
+    org: MohamedGomaa30
+    kind: open
+    hf: https://huggingface.co/MohamedGomaa30/stt_ar_fastconformer_casablanca_nadi
+    license: cc-by-4.0
+    params: 115M
+    streaming: chunked
+    timestamps: word
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (8 dialects, Casablanca-NADI)
+    arabic_only: true
+    declared_source: https://huggingface.co/MohamedGomaa30/stt_ar_fastconformer_casablanca_nadi
+    basis: architecture default (card silent)
+  MohamedRashad_Arabic-Whisper-CodeSwitching-Edition:
+    name: Arabic Whisper Code-Switching Edition
+    org: MohamedRashad
+    kind: open
+    hf: https://huggingface.co/MohamedRashad/Arabic-Whisper-CodeSwitching-Edition
+    license: gpl-3.0
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic + English, code-switched (Whisper large-v2 base)
+    arabic_only: true
+    declared_source: https://huggingface.co/MohamedRashad/Arabic-Whisper-CodeSwitching-Edition
+    basis: architecture default (card silent)
+  Muno459_fastconformer-quran:
+    name: FastConformer Quran (Muno459)
+    org: Muno459
+    kind: open
+    hf: https://huggingface.co/Muno459/fastconformer-quran
+    license: other (NPL-1.1, no-profit)
+    params: 115M
+    streaming: chunked
+    streaming_note: offline model; separate streaming repo
+    timestamps: word (CTC frame alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Quranic recitation, Hafs; diacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/Muno459/fastconformer-quran
+    basis: card
+  NAMAA-Space_Cohere-Speech-Tashkeel-2B:
+    name: NAMAA Cohere-Speech-Tashkeel 2B
+    org: NAMAA
+    kind: open
+    hf: https://huggingface.co/NAMAA-Space/Cohere-Speech-Tashkeel-2B
+    license: apache-2.0
+    params: 2B
+    streaming: chunked
+    timestamps: 'no (card: inherits base, no timestamps)'
+    max_audio: feature extractor chunks long audio automatically
+    languages: Arabic (fully diacritized output)
+    arabic_only: true
+    declared_source: https://huggingface.co/NAMAA-Space/Cohere-Speech-Tashkeel-2B
+    basis: card
+  NAMAA-Space_EgypTalk-ASR-v2:
+    name: NAMAA EgypTalk-ASR v2
+    org: NAMAA
+    kind: open
+    hf: https://huggingface.co/NAMAA-Space/EgypTalk-ASR-v2
+    license: cc-by-4.0
+    params: 115M
+    streaming: chunked
+    streaming_note: card says 'streaming-capable'; base is offline hybrid
+    timestamps: word
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Egyptian; some MSA)
+    arabic_only: true
+    declared_source: https://huggingface.co/NAMAA-Space/EgypTalk-ASR-v2
+    basis: architecture default (card silent)
+  NightPrince_stt-arabic-whisper-finetuned-diactires:
+    name: Whisper small Arabic diacritized (NightPrince)
+    org: NightPrince
+    kind: open
+    hf: https://huggingface.co/NightPrince/stt-arabic-whisper-finetuned-diactires
+    license: apache-2.0
+    params: 244M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Quranic recitation; diacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/NightPrince/stt-arabic-whisper-finetuned-diactires
+    basis: architecture default (card silent)
+  Nuwaisir_Quran_speech_recognizer:
+    name: Quran speech recognizer (wav2vec2)
+    org: Nuwaisir
+    kind: open
+    hf: https://huggingface.co/Nuwaisir/Quran_speech_recognizer
+    license: none stated
+    params: 315M
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Quranic recitation)
+    arabic_only: true
+    declared_source: https://huggingface.co/Nuwaisir/Quran_speech_recognizer
+    basis: architecture default (card silent)
+  RamaBashar22_nemotron-3.5-asr-streaming-0.6b-jordanian:
+    name: Nemotron 3.5 ASR Jordanian
+    org: RamaBashar22
+    kind: open
+    hf: https://huggingface.co/RamaBashar22/nemotron-3.5-asr-streaming-0.6b-jordanian
+    license: OpenMDW-1.1
+    params: 637M
+    streaming: native
+    timestamps: word (base model default)
+    max_audio: cache-aware streaming; 80-1120 ms chunks selectable at runtime
+    languages: Arabic (Jordanian)
+    arabic_only: true
+    declared_source: https://huggingface.co/RamaBashar22/nemotron-3.5-asr-streaming-0.6b-jordanian
+    basis: card
+  Rlamas_Cohere-Jordanian-Dialect:
+    name: Cohere Jordanian Dialect
+    org: Rlamas
+    kind: open
+    hf: https://huggingface.co/Rlamas/Cohere-Jordanian-Dialect
+    license: apache-2.0
+    params: 2B
+    streaming: chunked
+    streaming_note: 'offline; card: no streaming inference'
+    timestamps: 'no (base Cohere Transcribe Arabic card: no timestamps)'
+    max_audio: feature extractor chunks long audio (base); card warns of repetition loops on long clips
+    languages: Arabic (Jordanian focus), English
+    arabic_only: true
+    declared_source: https://huggingface.co/Rlamas/Cohere-Jordanian-Dialect
+    basis: card
+  Seif-Eldeen-Sameh_whisper-medium-arabic-codeswitched:
+    name: Whisper medium Arabic code-switched
+    org: Seif-Eldeen-Sameh
+    kind: open
+    hf: https://huggingface.co/Seif-Eldeen-Sameh/whisper-medium-arabic-codeswitched
+    license: apache-2.0
+    params: 769M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Egyptian) + English, code-switched
+    arabic_only: true
+    declared_source: https://huggingface.co/Seif-Eldeen-Sameh/whisper-medium-arabic-codeswitched
+    basis: architecture default (card silent)
+  TBOGamer22_wav2vec2-quran-phonetics:
+    name: wav2vec2 Quran phonetics
+    org: TBOGamer22
+    kind: open
+    hf: https://huggingface.co/TBOGamer22/wav2vec2-quran-phonetics
+    license: apache-2.0
+    params: 95M
+    streaming: chunked
+    timestamps: char (CTC forced alignment, per card)
+    max_audio: no fixed limit (memory-bound); trained on single-word clips
+    languages: Arabic (Quranic recitation; phonetic output, not Arabic script)
+    arabic_only: true
+    declared_source: https://huggingface.co/TBOGamer22/wav2vec2-quran-phonetics
+    basis: card
+  abdullahtb_FastConformer-Arabic-SADA-Finetune-SAREI:
+    name: FastConformer Arabic SADA fine-tune (SAREI)
+    org: abdullahtb
+    kind: open
+    hf: https://huggingface.co/abdullahtb/FastConformer-Arabic-SADA-Finetune-SAREI
+    license: apache-2.0
+    params: 115M
+    streaming: chunked
+    timestamps: word
+    max_audio: no fixed limit (memory-bound)
+    languages: 'Arabic (Saudi: Najdi, Hijazi, Khaleeji)'
+    arabic_only: true
+    declared_source: https://huggingface.co/abdullahtb/FastConformer-Arabic-SADA-Finetune-SAREI
+    basis: architecture default (card silent)
+  arbml_wav2vec2-large-xlsr-53-arabic-egyptian:
+    name: wav2vec2 XLSR-53 Egyptian (ArBML)
+    org: ArBML
+    kind: open
+    hf: https://huggingface.co/arbml/wav2vec2-large-xlsr-53-arabic-egyptian
+    license: apache-2.0
+    params: 315M
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Egyptian per repo name; card is an unfilled template)
+    arabic_only: true
+    declared_source: https://huggingface.co/arbml/wav2vec2-large-xlsr-53-arabic-egyptian
+    basis: architecture default (card silent)
+  arbml_whisper-largev2-ar:
+    name: ArBML Whisper large-v2 Arabic (CV11)
+    org: ArBML
+    kind: open
+    hf: https://huggingface.co/arbml/whisper-largev2-ar
+    license: apache-2.0
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (MSA broadcast, MGB-2)
+    arabic_only: true
+    declared_source: https://huggingface.co/arbml/whisper-largev2-ar
+    basis: architecture default (card silent)
+  arbml_whisper-medium-ar:
+    name: ArBML Whisper medium Arabic
+    org: ArBML
+    kind: open
+    hf: https://huggingface.co/arbml/whisper-medium-ar
+    license: apache-2.0
+    params: 769M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (MSA broadcast, MGB-2)
+    arabic_only: true
+    declared_source: https://huggingface.co/arbml/whisper-medium-ar
+    basis: architecture default (card silent)
+  arbml_whisper-small-ar:
+    name: ArBML Whisper small Arabic
+    org: ArBML
+    kind: open
+    hf: https://huggingface.co/arbml/whisper-small-ar
+    license: apache-2.0
+    params: 244M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (MSA broadcast, MGB-2)
+    arabic_only: true
+    declared_source: https://huggingface.co/arbml/whisper-small-ar
+    basis: architecture default (card silent)
+  boumehdi_wav2vec2-large-xlsr-moroccan-darija:
+    name: wav2vec2 XLSR Moroccan Darija (boumehdi)
+    org: boumehdi
+    kind: open
+    hf: https://huggingface.co/boumehdi/wav2vec2-large-xlsr-moroccan-darija
+    license: apache-2.0
+    params: 315M
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Moroccan Darija)
+    arabic_only: true
+    declared_source: https://huggingface.co/boumehdi/wav2vec2-large-xlsr-moroccan-darija
+    basis: architecture default (card silent)
+  deepdml_whisper-large-v3-turbo-ar-quran-mix-norm:
+    name: Whisper large-v3-turbo Quran mix-norm (deepdml)
+    org: deepdml
+    kind: open
+    hf: https://huggingface.co/deepdml/whisper-large-v3-turbo-ar-quran-mix-norm
+    license: apache-2.0
+    params: 809M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Quranic recitation)
+    arabic_only: true
+    declared_source: https://huggingface.co/deepdml/whisper-large-v3-turbo-ar-quran-mix-norm
+    basis: architecture default (card silent)
+  dev-ahmedhany_whisper-large-v3-arabic-ft-v3:
+    name: Whisper large-v3 Arabic ft v3 (dev-ahmedhany)
+    org: dev-ahmedhany
+    kind: open
+    hf: https://huggingface.co/dev-ahmedhany/whisper-large-v3-arabic-ft-v3
+    license: apache-2.0
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (MSA, Egyptian, Levantine, Gulf)
+    arabic_only: true
+    declared_source: https://huggingface.co/dev-ahmedhany/whisper-large-v3-arabic-ft-v3
+    basis: architecture default (card silent)
+  elgeish_wav2vec2-large-xlsr-53-arabic:
+    name: wav2vec2 XLSR-53 Arabic (elgeish)
+    org: elgeish
+    kind: open
+    hf: https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-arabic
+    license: apache-2.0
+    params: 315M
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (MSA; Buckwalter-transliterated output)
+    arabic_only: true
+    declared_source: https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-arabic
+    basis: architecture default (card silent)
+  elgeish_wav2vec2-large-xlsr-53-levantine-arabic:
+    name: wav2vec2 XLSR-53 Levantine (elgeish)
+    org: elgeish
+    kind: open
+    hf: https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-levantine-arabic
+    license: apache-2.0
+    params: 315M
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Arabic Speech Corpus, MSA; Buckwalter output)
+    arabic_only: true
+    declared_source: https://huggingface.co/elgeish/wav2vec2-large-xlsr-53-levantine-arabic
+    basis: architecture default (card silent)
+  facebook_mms-1b-fl102:
+    name: MMS-1b-fl102
+    org: Meta
+    kind: open
+    hf: https://huggingface.co/facebook/mms-1b-fl102
+    license: cc-by-nc-4.0
+    params: 1B
+    streaming: chunked
+    timestamps: char
+    max_audio: no hard limit (CTC); memory-bound
+    languages: 102 (FLEURS; adapter per language)
+    arabic_only: false
+    declared_source: https://huggingface.co/facebook/mms-1b-fl102
+    basis: architecture default (card silent)
+  facebook_mms-1b-l1107:
+    name: MMS-1b-l1107
+    org: Meta
+    kind: open
+    hf: https://huggingface.co/facebook/mms-1b-l1107
+    license: cc-by-nc-4.0
+    params: 1B
+    streaming: chunked
+    timestamps: char
+    max_audio: no hard limit (CTC); memory-bound
+    languages: 1,107 (adapter per language)
+    arabic_only: false
+    declared_source: https://huggingface.co/facebook/mms-1b-l1107
+    basis: architecture default (card silent)
+  jonatasgrosman_wav2vec2-large-xlsr-53-arabic:
+    name: wav2vec2 XLSR-53 Arabic (jonatasgrosman)
+    org: jonatasgrosman
+    kind: open
+    hf: https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-arabic
+    license: apache-2.0
+    params: 315M
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (MSA; Common Voice + Arabic Speech Corpus)
+    arabic_only: true
+    declared_source: https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-arabic
+    basis: architecture default (card silent)
+  lemuralabs_lemura-arabic-asr-lite:
+    name: Lemura Arabic ASR Lite (FastConformer-CTC)
+    org: Lemura Labs
+    kind: open
+    hf: https://huggingface.co/lemuralabs/lemura-arabic-asr-lite
+    license: cc-by-4.0
+    params: 115M
+    streaming: chunked
+    streaming_note: CTC offline; card's 'real-time' is throughput
+    timestamps: word (NeMo CTC timestamps)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (MSA, Gulf, Egyptian, Levantine, Maghrebi)
+    arabic_only: true
+    declared_source: https://huggingface.co/lemuralabs/lemura-arabic-asr-lite
+    basis: architecture default (card silent)
+  mistralai_Voxtral-Small-24B-2507:
+    name: Voxtral Small 24B (2507)
+    org: Mistral AI
+    kind: open
+    hf: https://huggingface.co/mistralai/Voxtral-Small-24B-2507
+    license: apache-2.0
+    params: 24B
+    streaming: 'no'
+    streaming_note: Voxtral Realtime is a separate model
+    timestamps: 'no'
+    max_audio: up to 30 min transcription, 40 min understanding (32k context)
+    languages: 8 listed + others (auto language detection)
+    arabic_only: false
+    declared_source: https://huggingface.co/mistralai/Voxtral-Small-24B-2507
+    basis: card
+  moatazlumin_Arabic_ASR_whisper_small_with_diacritics:
+    name: Whisper small Arabic with diacritics (moatazlumin)
+    org: moatazlumin
+    kind: open
+    hf: https://huggingface.co/moatazlumin/Arabic_ASR_whisper_small_with_diacritics
+    license: apache-2.0
+    params: 244M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Quranic recitation; diacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/moatazlumin/Arabic_ASR_whisper_small_with_diacritics
+    basis: architecture default (card silent)
+  mohammed_fastconformer-quran-ar:
+    name: FastConformer Quran Arabic (mohammed)
+    org: mohammed
+    kind: open
+    hf: https://huggingface.co/mohammed/fastconformer-quran-ar
+    license: cc-by-4.0
+    params: 115M
+    streaming: native
+    streaming_note: 'per card: cache-aware mode via causal-attention switch'
+    timestamps: word
+    max_audio: 'offline: no fixed limit (memory-bound); streaming: ~1.6 s chunk latency'
+    languages: Arabic (Quranic recitation; diacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/mohammed/fastconformer-quran-ar
+    basis: card
+  mohammedaly22_whisper-large-v3-turbo-egyptian-code-switching:
+    name: Whisper large-v3-turbo Egyptian code-switching
+    org: mohammedaly22
+    kind: open
+    hf: https://huggingface.co/mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching
+    license: mit
+    params: 809M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s per segment (card); long-form by chunking
+    languages: Arabic (Egyptian) + English, code-switched
+    arabic_only: true
+    declared_source: https://huggingface.co/mohammedaly22/whisper-large-v3-turbo-egyptian-code-switching
+    basis: card
+  oddadmix_Whisperv3-tunisian-codeswitch:
+    name: Whisper large-v3 Tunisian code-switch (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/Whisperv3-tunisian-codeswitch
+    license: none stated
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Tunisian) + French/English, code-switched
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/Whisperv3-tunisian-codeswitch
+    basis: architecture default (card silent)
+  oddadmix_cohere-transcribe-arabic-07-2026-dialectal-v2:
+    name: Cohere Transcribe Arabic dialectal v2 (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/cohere-transcribe-arabic-07-2026-dialectal-v2
+    license: apache-2.0
+    params: 2.07B
+    streaming: chunked
+    timestamps: 'no (base Cohere Transcribe Arabic card: no timestamps)'
+    max_audio: feature extractor chunks long audio automatically (base)
+    languages: Arabic (13 dialects, undiacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/cohere-transcribe-arabic-07-2026-dialectal-v2
+    basis: architecture default (card silent)
+  oddadmix_nemotron-3.5-asr-arabic-dialectal-v2:
+    name: Nemotron 3.5 ASR Arabic dialectal v2 (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/nemotron-3.5-asr-arabic-dialectal-v2
+    license: other (unspecified)
+    params: 638M
+    streaming: native
+    timestamps: word (base model default)
+    max_audio: cache-aware streaming; unbounded
+    languages: Arabic (13 dialects, undiacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/nemotron-3.5-asr-arabic-dialectal-v2
+    basis: card
+  oddadmix_whisper-large-v3-arabic-dialectal-v2:
+    name: Whisper large-v3 Arabic dialectal v2 (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/whisper-large-v3-arabic-dialectal-v2
+    license: apache-2.0
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (13 dialects, undiacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/whisper-large-v3-arabic-dialectal-v2
+    basis: architecture default (card silent)
+  oddadmix_whisper-large-v3-turbo-arabic-dialectal-v2:
+    name: Whisper large-v3-turbo Arabic dialectal v2 (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/whisper-large-v3-turbo-arabic-dialectal-v2
+    license: apache-2.0
+    params: 809M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (13 dialects, undiacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/whisper-large-v3-turbo-arabic-dialectal-v2
+    basis: architecture default (card silent)
+  oddadmix_whisper-medium-arabic-dialectal-v2:
+    name: Whisper medium Arabic dialectal v2 (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/whisper-medium-arabic-dialectal-v2
+    license: apache-2.0
+    params: 769M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (13 dialects, undiacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/whisper-medium-arabic-dialectal-v2
+    basis: architecture default (card silent)
+  oddadmix_whisper-small-arabic-dialectal-v2:
+    name: Whisper small Arabic dialectal v2 (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/whisper-small-arabic-dialectal-v2
+    license: apache-2.0
+    params: 244M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (13 dialects, undiacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/whisper-small-arabic-dialectal-v2
+    basis: architecture default (card silent)
+  omarxadel_hubert-large-arabic-egyptian:
+    name: HuBERT large Egyptian (omarxadel)
+    org: omarxadel
+    kind: open
+    hf: https://huggingface.co/omarxadel/hubert-large-arabic-egyptian
+    license: cc-by-nc-4.0
+    params: 315M
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Egyptian)
+    arabic_only: true
+    declared_source: https://huggingface.co/omarxadel/hubert-large-arabic-egyptian
+    basis: architecture default (card silent)
+  openai_whisper-base:
+    name: Whisper base
+    org: OpenAI
+    kind: open
+    hf: https://huggingface.co/openai/whisper-base
+    license: apache-2.0
+    params: 74M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: 99 (multilingual)
+    arabic_only: false
+    declared_source: https://huggingface.co/openai/whisper-base
+    basis: card
+  openai_whisper-large:
+    name: Whisper large (v1)
+    org: OpenAI
+    kind: open
+    hf: https://huggingface.co/openai/whisper-large
+    license: apache-2.0
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: 99 (multilingual)
+    arabic_only: false
+    declared_source: https://huggingface.co/openai/whisper-large
+    basis: card
+  othrif_wav2vec2-large-xlsr-arabic:
+    name: wav2vec2 XLSR Arabic (othrif)
+    org: othrif
+    kind: open
+    hf: https://huggingface.co/othrif/wav2vec2-large-xlsr-arabic
+    license: apache-2.0
+    params: 315M
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Common Voice)
+    arabic_only: true
+    declared_source: https://huggingface.co/othrif/wav2vec2-large-xlsr-arabic
+    basis: architecture default (card silent)
+  samil24_whisper-large-arabic-dialects-v5:
+    name: Whisper large-v3 Arabic dialects v5 (samil24)
+    org: samil24
+    kind: open
+    hf: https://huggingface.co/samil24/whisper-large-arabic-dialects-v5
+    license: apache-2.0
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (dialects; training data unspecified)
+    arabic_only: true
+    declared_source: https://huggingface.co/samil24/whisper-large-arabic-dialects-v5
+    basis: architecture default (card silent)
+  smerchi_Arabic-Morocco-Speech_To_Text:
+    name: Whisper large-v3 Moroccan (smerchi)
+    org: smerchi
+    kind: open
+    hf: https://huggingface.co/smerchi/Arabic-Morocco-Speech_To_Text
+    license: apache-2.0
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Moroccan Darija)
+    arabic_only: true
+    declared_source: https://huggingface.co/smerchi/Arabic-Morocco-Speech_To_Text
+    basis: architecture default (card silent)
+  tahaalselwii_whisper-small-yemeni:
+    name: Whisper small Yemeni
+    org: tahaalselwii
+    kind: open
+    hf: https://huggingface.co/tahaalselwii/whisper-small-yemeni
+    license: other (unspecified)
+    params: 244M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Yemeni)
+    arabic_only: true
+    declared_source: https://huggingface.co/tahaalselwii/whisper-small-yemeni
+    basis: architecture default (card silent)
+  wageehkhad_whisper-medium-finetuned-sada-asr:
+    name: Whisper medium SADA fine-tune
+    org: wageehkhad
+    kind: open
+    hf: https://huggingface.co/wageehkhad/whisper-medium-finetuned-sada-asr
+    license: apache-2.0
+    params: 769M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s segments (card); longer files chunked by the pipeline
+    languages: Arabic (Saudi, SADA22)
+    arabic_only: true
+    declared_source: https://huggingface.co/wageehkhad/whisper-medium-finetuned-sada-asr
+    basis: card
+  whitefox123_w2v-bert-2.0-arabic-4:
+    name: w2v-BERT 2.0 Arabic (whitefox123)
+    org: whitefox123
+    kind: open
+    hf: https://huggingface.co/whitefox123/w2v-bert-2.0-arabic-4
+    license: mit
+    params: 606M
+    streaming: chunked
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (training data unspecified)
+    arabic_only: true
+    declared_source: https://huggingface.co/whitefox123/w2v-bert-2.0-arabic-4
+    basis: architecture default (card silent)
+  ychafiqui_whisper-medium-darija:
+    name: Whisper medium Darija (ychafiqui)
+    org: ychafiqui
+    kind: open
+    hf: https://huggingface.co/ychafiqui/whisper-medium-darija
+    license: apache-2.0
+    params: 769M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Moroccan Darija)
+    arabic_only: true
+    declared_source: https://huggingface.co/ychafiqui/whisper-medium-darija
+    basis: architecture default (card silent)
+
+  # ---- 2026-10-25: models fixed after failing on the box (same rules as above)
+  tarteel-ai_whisper-tiny-ar-quran:
+    name: Whisper tiny Quran (Tarteel)
+    org: Tarteel AI
+    kind: open
+    hf: https://huggingface.co/tarteel-ai/whisper-tiny-ar-quran
+    license: apache-2.0
+    params: 39M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Quranic recitation)
+    arabic_only: true
+    declared_source: https://huggingface.co/tarteel-ai/whisper-tiny-ar-quran
+    basis: architecture default (card silent)
+  tarteel-ai_whisper-base-ar-quran:
+    name: Whisper base Quran (Tarteel)
+    org: Tarteel AI
+    kind: open
+    hf: https://huggingface.co/tarteel-ai/whisper-base-ar-quran
+    license: apache-2.0
+    params: 74M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Quranic recitation)
+    arabic_only: true
+    declared_source: https://huggingface.co/tarteel-ai/whisper-base-ar-quran
+    basis: architecture default (card silent)
+  speechbrain_asr-wav2vec2-dvoice-darija:
+    name: wav2vec2 XLSR DVoice Darija (SpeechBrain)
+    org: SpeechBrain
+    kind: open
+    hf: https://huggingface.co/speechbrain/asr-wav2vec2-dvoice-darija
+    license: apache-2.0
+    params: 315M
+    streaming: chunked
+    streaming_note: offline CTC (XLSR-53 + 2 DNN layers)
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Moroccan Darija)
+    arabic_only: true
+    declared_source: https://huggingface.co/speechbrain/asr-wav2vec2-dvoice-darija
+    basis: architecture default (card silent)
+  asafaya_hubert-large-arabic-transcribe:
+    name: HuBERT large Arabic transcribe (asafaya)
+    org: asafaya
+    kind: open
+    hf: https://huggingface.co/asafaya/hubert-large-arabic-transcribe
+    license: mit
+    params: 315M
+    streaming: chunked
+    streaming_note: offline CTC
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (card is empty)
+    arabic_only: true
+    declared_source: https://huggingface.co/asafaya/hubert-large-arabic-transcribe
+    basis: architecture default (card silent)
+  speechbrain_asr-wav2vec2-commonvoice-14-ar:
+    name: wav2vec2 XLSR CommonVoice 14 Arabic (SpeechBrain)
+    org: SpeechBrain
+    kind: open
+    hf: https://huggingface.co/speechbrain/asr-wav2vec2-commonvoice-14-ar
+    license: apache-2.0
+    params: 315M
+    streaming: chunked
+    streaming_note: offline CTC (XLSR-53 + 2 DNN layers)
+    timestamps: char (CTC alignment)
+    max_audio: no fixed limit (memory-bound)
+    languages: Arabic (Common Voice 14)
+    arabic_only: true
+    declared_source: https://huggingface.co/speechbrain/asr-wav2vec2-commonvoice-14-ar
+    basis: architecture default (card silent)
+  oddadmix_qwen3-asr-0.6b-arabic-dialectal-v2:
+    name: Qwen3-ASR 0.6B Arabic dialectal v2 (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/qwen3-asr-0.6b-arabic-dialectal-v2
+    license: apache-2.0
+    params: 0.6B
+    streaming: native
+    streaming_note: inherited from base Qwen3-ASR (card silent)
+    timestamps: no (separate Qwen3-ForcedAligner model)
+    max_audio: long audio supported (streaming/offline unified)
+    languages: Arabic (13 dialects, undiacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/qwen3-asr-0.6b-arabic-dialectal-v2
+    basis: architecture default (card silent)
+  oddadmix_qwen3-asr-1.7b-arabic-dialectal-v2:
+    name: Qwen3-ASR 1.7B Arabic dialectal v2 (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/qwen3-asr-1.7b-arabic-dialectal-v2
+    license: apache-2.0
+    params: 1.7B
+    streaming: native
+    streaming_note: inherited from base Qwen3-ASR (card silent)
+    timestamps: no (separate Qwen3-ForcedAligner model)
+    max_audio: long audio supported (streaming/offline unified)
+    languages: Arabic (13 dialects, undiacritized)
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/qwen3-asr-1.7b-arabic-dialectal-v2
+    basis: architecture default (card silent)
+  naazimsnh02_whisper-large-v3-turbo-ar-quran:
+    name: Whisper large-v3-turbo Quran (naazimsnh02)
+    org: naazimsnh02
+    kind: open
+    hf: https://huggingface.co/naazimsnh02/whisper-large-v3-turbo-ar-quran
+    license: apache-2.0
+    params: 809M
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s chunks; long audio via pipeline chunking (card)
+    languages: Arabic (Quranic recitation)
+    arabic_only: true
+    declared_source: https://huggingface.co/naazimsnh02/whisper-large-v3-turbo-ar-quran
+    basis: card
+  Zaid_whisper-large-mgb2-ar-16k:
+    name: Whisper large-v2 MGB-2 Arabic (Zaid)
+    org: Zaid
+    kind: open
+    hf: https://huggingface.co/Zaid/whisper-large-mgb2-ar-16k
+    license: none stated
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (MGB-2 per repo name; repo has no model card)
+    arabic_only: true
+    declared_source: https://huggingface.co/Zaid/whisper-large-mgb2-ar-16k
+    basis: architecture default (card silent)
+  vadimbelsky_qwen3-asr-arabic-uae:
+    name: Qwen3-ASR 1.7B UAE Emirati (vadimbelsky)
+    org: vadimbelsky
+    kind: open
+    hf: https://huggingface.co/vadimbelsky/qwen3-asr-arabic-uae
+    license: apache-2.0
+    params: 2B (1.7B LLM decoder + audio encoder)
+    streaming: native
+    streaming_note: inherited from base Qwen3-ASR (card silent)
+    timestamps: no (separate Qwen3-ForcedAligner model)
+    max_audio: 'short utterances (card: training data mostly < 20 s)'
+    languages: Arabic (Emirati; trained on synthetic speech)
+    arabic_only: true
+    declared_source: https://huggingface.co/vadimbelsky/qwen3-asr-arabic-uae
+    basis: card
+  vadimbelsky_qwen3-asr-arabic-ksa:
+    name: Qwen3-ASR 1.7B KSA Saudi (vadimbelsky)
+    org: vadimbelsky
+    kind: open
+    hf: https://huggingface.co/vadimbelsky/qwen3-asr-arabic-ksa
+    license: apache-2.0
+    params: 2B (1.7B LLM decoder + audio encoder)
+    streaming: native
+    streaming_note: inherited from base Qwen3-ASR (card silent)
+    timestamps: no (separate Qwen3-ForcedAligner model)
+    max_audio: 'short utterances (card: training data mostly < 20 s)'
+    languages: Arabic (Saudi; trained on synthetic speech)
+    arabic_only: true
+    declared_source: https://huggingface.co/vadimbelsky/qwen3-asr-arabic-ksa
+    basis: card
+  lemuralabs_lemura-arabic-asr-qwen3:
+    name: Lemura Arabic ASR Qwen3 (1.7B)
+    org: Lemura Labs
+    kind: open
+    hf: https://huggingface.co/lemuralabs/lemura-arabic-asr-qwen3
+    license: apache-2.0
+    params: 1.7B
+    streaming: native
+    streaming_note: inherited from base Qwen3-ASR; card documents offline 30 s-window use only
+    timestamps: no (separate Qwen3-ForcedAligner model)
+    max_audio: 30 s window; chunk longer audio client-side (card)
+    languages: Arabic (MSA, Gulf, Egyptian, Levantine, Iraqi, Maghrebi) + English code-switching
+    arabic_only: true
+    declared_source: https://huggingface.co/lemuralabs/lemura-arabic-asr-qwen3
+    basis: card
+  atlasia_moulsot.v0.3:
+    name: MoulSot v0.3 (Atlasia)
+    org: Atlasia
+    kind: open
+    hf: https://huggingface.co/atlasia/moulsot.v0.3
+    license: apache-2.0
+    params: 1.7B
+    streaming: native
+    streaming_note: inherited from base Qwen3-ASR (card silent)
+    timestamps: no (separate Qwen3-ForcedAligner model)
+    max_audio: long audio supported (streaming/offline unified)
+    languages: Arabic (Moroccan Darija) + French/English, code-switched
+    arabic_only: true
+    declared_source: https://huggingface.co/atlasia/moulsot.v0.3
+    basis: architecture default (card silent)
+  vadimbelsky_arabic-parakeet-tdt-uae:
+    name: Parakeet TDT 1.1B Arabic UAE (vadimbelsky)
+    org: vadimbelsky
+    kind: open
+    hf: https://huggingface.co/vadimbelsky/arabic-parakeet-tdt-uae
+    license: apache-2.0
+    params: 1.1B
+    streaming: chunked
+    streaming_note: offline FastConformer-TDT (base parakeet-tdt-1.1b)
+    timestamps: word
+    max_audio: no fixed limit (memory-bound); card notes repetition on longer utterances
+    languages: Arabic (Emirati; trained on synthetic speech)
+    arabic_only: true
+    declared_source: https://huggingface.co/vadimbelsky/arabic-parakeet-tdt-uae
+    basis: architecture default (card silent)
+  AymanMansour_Whisper-Sudanese-Dialect-large-v2:
+    name: Whisper large-v2 Sudanese (AymanMansour)
+    org: AymanMansour
+    kind: open
+    hf: https://huggingface.co/AymanMansour/Whisper-Sudanese-Dialect-large-v2
+    license: apache-2.0
+    params: 1.55B
+    streaming: chunked
+    timestamps: word
+    max_audio: 30 s window; long-form by chunking
+    languages: Arabic (Sudanese per repo name; training data unspecified)
+    arabic_only: true
+    declared_source: https://huggingface.co/AymanMansour/Whisper-Sudanese-Dialect-large-v2
+    basis: architecture default (card silent)
+  google_gemma-3n-E2B-it:
+    name: Gemma 3n E2B (audio)
+    org: Google DeepMind
+    kind: open
+    hf: https://huggingface.co/google/gemma-3n-E2B-it
+    license: gemma
+    params: 6B (2B effective)
+    streaming: 'no'
+    timestamps: 'no'
+    max_audio: audio at 6.25 tokens/s in a 32K-token context; prompt-based transcription
+    languages: 140+ (multilingual LLM)
+    arabic_only: false
+    declared_source: https://huggingface.co/google/gemma-3n-E2B-it
+    basis: card
+  google_gemma-3n-E4B-it:
+    name: Gemma 3n E4B (audio)
+    org: Google DeepMind
+    kind: open
+    hf: https://huggingface.co/google/gemma-3n-E4B-it
+    license: gemma
+    params: 8B (4B effective)
+    streaming: 'no'
+    timestamps: 'no'
+    max_audio: audio at 6.25 tokens/s in a 32K-token context; prompt-based transcription
+    languages: 140+ (multilingual LLM)
+    arabic_only: false
+    declared_source: https://huggingface.co/google/gemma-3n-E4B-it
+    basis: card
+  oddadmix_MasriSwitch-Gemma3n-Transcriber-v1:
+    name: MasriSwitch Gemma 3n Transcriber v1 (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/MasriSwitch-Gemma3n-Transcriber-v1
+    license: apache-2.0 (per card; base Gemma 3n is under the Gemma license)
+    params: 8B (4B effective)
+    streaming: 'no'
+    timestamps: 'no'
+    max_audio: short segments; card recommends 20-30 s
+    languages: Arabic (Egyptian) + English, code-switched
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/MasriSwitch-Gemma3n-Transcriber-v1
+    basis: card

@@ -106,3 +106,6 @@ dialog button { background: var(--fg); color: var(--bg); border: 0; border-radiu
 .flag.anom { border-color: var(--bad); color: var(--bad); }
 td.excluded { color: var(--muted); }
 .flag.fp { border-color: var(--accent); color: var(--accent); }
+
+.dflt { color: var(--muted); margin-left: 1px; cursor: help; }
+.decl-note { border-bottom: 1px dotted var(--muted); cursor: help; }

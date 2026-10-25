@@ -119,10 +119,19 @@ function gpuShort(t) { return (t.gpu || "").replace(/^NVIDIA\s+/, "").replace(/\
 function prodCells(m) {
   const t = m.timing || {}, p = m.profile || {};
   const warn = contended(t) ? " (shared)" : "";
-  return `<td class="num">${t.rtfx != null ? t.rtfx + "×" + warn : "·"}</td><td class="num">${fmtParams(p.params_m) === "·" && p.params_label ? p.params_label : fmtParams(p.params_m)}</td><td>${p.streaming && p.streaming !== "unknown" ? p.streaming : "·"}</td>`;
+  return `<td class="num">${t.rtfx != null ? t.rtfx + "×" + warn : "·"}</td><td class="num">${fmtParams(p.params_m) === "·" && p.params_label ? p.params_label : fmtParams(p.params_m)}</td><td>${p.streaming && p.streaming !== "unknown" ? streamCell(p) : "·"}</td>`;
+}
+function esc(x) { return String(x).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;"); }
+function streamCell(p) { return p.streaming_note ? `<span class="decl-note" title="${esc(p.streaming_note)}">${p.streaming}</span>` : p.streaming; }
+// declared cell; values that are the architecture default (card silent) carry a mark explained under the table
+function declCell(p, v) {
+  if (v == null || v === "unknown" || v === "") return "unknown";
+  const dflt = String(p.basis || "").startsWith("architecture");
+  return dflt ? `${esc(v)}<span class="dflt" title="${esc(p.basis)}">*</span>` : esc(v);
 }
 function renderProd() {
-  const rows = board.models.filter(m => m.scores && (m.scores[S.slice] || m.scores.api || m.scores.full));
+  const rows = board.models.filter(m => m.scores && (m.scores[S.slice] || m.scores.api || m.scores.full))
+    .sort((a, b) => (b.timing?.rtfx ?? -1) - (a.timing?.rtfx ?? -1));
   const th = ["System", "RTFx", "Latency p50 / p95 (s)", "Peak VRAM", "Load (s)", "Params", "Weights", "License", "Released", "Streaming", "Timestamps", "Max input", "Languages"];
   document.querySelector("#prod thead").innerHTML = "<tr>" + th.map((t, i) => `<th class="${i >= 1 && i <= 4 ? "measured" : i >= 5 ? "declared" : ""}">${t}</th>`).join("") + "</tr>";
   document.querySelector("#prod tbody").innerHTML = rows.length ? rows.map(m => {
@@ -138,7 +147,7 @@ function renderProd() {
       <td class="num">${fmtParams(p.params_m) === "·" && p.params_label ? p.params_label : fmtParams(p.params_m)}</td>
       <td class="num">${p.weights_gb != null ? p.weights_gb + " GB" : "·"}</td>
       <td>${p.license || "·"}</td><td class="num">${p.created_at || "·"}</td>
-      <td>${p.streaming || "unknown"}</td><td>${p.timestamps || "unknown"}</td><td>${p.max_audio || "unknown"}</td><td>${p.languages || "unknown"}</td></tr>`;
+      <td>${p.streaming && p.streaming !== "unknown" ? streamCell(p) : "unknown"}${String(p.basis || "").startsWith("architecture") ? `<span class="dflt" title="${esc(p.basis)}">*</span>` : ""}</td><td>${declCell(p, p.timestamps)}</td><td>${declCell(p, p.max_audio)}</td><td>${declCell(p, p.languages)}</td></tr>`;
   }).join("") : `<tr><td colspan="13" class="pending">No results yet.</td></tr>`;
   document.querySelectorAll("#prod tbody tr[data-id]").forEach(tr => tr.onclick = () => openCard(tr.dataset.id));
 }

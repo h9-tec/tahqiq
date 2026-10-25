@@ -45,7 +45,7 @@
   <section id="tab-prod" class="tab">
     <h2>Production profile <span class="sub">measured on one H20 (left) · declared from the model card (right)</span></h2>
     <div class="scroll"><table id="prod"><thead></thead><tbody></tbody></table></div>
-    <p class="note"><b>Measured:</b> fixed timing slice (~60 utterances, 3 to 15 s), warm, batch 1, concurrency 1, median of 3 passes. RTFx = audio seconds per wall second. Latency = seconds per file (offline), p50 / p95. VRAM = peak allocated. “shared GPU” means other jobs were on the GPU during the measurement. <b>Declared:</b> taken from the model card, not verified by us; "unknown" until a maintainer fills it in. Streaming: native = trained and served for streaming; chunked = offline model usable with chunked pseudo-streaming.</p>
+    <p class="note"><b>Measured:</b> fixed timing slice (~60 utterances, 3 to 15 s), warm, batch 1, concurrency 1, median of 3 passes. RTFx = audio seconds per wall second. Latency = seconds per file (offline), p50 / p95. VRAM = peak allocated. “shared GPU” means other jobs were on the GPU during the measurement. <b>Declared:</b> taken from the model card, not verified by us. <span class="dflt">*</span> the card is silent, so the value is the default for the model's architecture (for example a Whisper fine-tune inherits Whisper's 30 s window and word timestamps). Streaming: native = trained and served for streaming; chunked = offline model usable with chunked pseudo-streaming; hover a value for the card's own wording. Sorted by RTFx.</p>
   </section>
 
   <section id="tab-dialects" class="tab">
