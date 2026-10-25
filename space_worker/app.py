@@ -67,7 +67,7 @@ def bootstrap() -> None:
 
 
 def ensure_audio(ds: str) -> None:
-    """Extract the common-slice files of one dataset from its tar if any are missing."""
+    """Extract the common-slice and timing-slice files of one dataset from its tar if any are missing."""
     from huggingface_hub import hf_hub_download
 
     from tahqiq.manifest import load_manifest
@@ -75,7 +75,7 @@ def ensure_audio(ds: str) -> None:
     token = os.environ["HF_TOKEN"]
     mf = CODE / "data" / "manifests" / f"{ds}.jsonl"
     audio = CODE / "audio"
-    wanted = {u.audio_rel for u in load_manifest(mf) if u.in_api_slice}
+    wanted = {u.audio_rel for u in load_manifest(mf) if u.in_api_slice or u.in_timing_slice}   # timing.py reads the timing slice
     if all((audio / rel).exists() for rel in wanted):
         return
     t0 = time.time()
@@ -83,7 +83,7 @@ def ensure_audio(ds: str) -> None:
     with tarfile.open(tar_path) as tf:
         members = [m for m in tf.getmembers() if m.name in wanted or m.name.lstrip("./") in wanted]
         tf.extractall(audio, members=members, filter="data")
-    log(f"audio/{ds}: {len(wanted)} common-slice files in {time.time() - t0:.0f}s")
+    log(f"audio/{ds}: {len(wanted)} common/timing-slice files in {time.time() - t0:.0f}s")
 
 
 # ---------- evaluation (ZeroGPU) ----------

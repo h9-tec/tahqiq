@@ -1340,3 +1340,17 @@ models:
     arabic_only: true
     declared_source: https://huggingface.co/oddadmix/Nawah-ASR-60M-Max-Arabic
     basis: card
+  Abdelrahman-M_Arabic-Asr-cohere-v2:
+    name: Arabic-Asr-cohere-v2 (Abdelrahman-M)
+    org: Abdelrahman-M
+    kind: open
+    hf: https://huggingface.co/Abdelrahman-M/Arabic-Asr-cohere-v2
+    license: apache-2.0
+    params: 2B
+    streaming: chunked
+    timestamps: 'no'   # card: "The model does not feature either of these" (timestamps, diarization)
+    max_audio: feature extractor splits long audio into chunks automatically
+    languages: Arabic (MSA + dialects, Egyptian and Gulf-weighted fine-tune)
+    arabic_only: true
+    declared_source: https://huggingface.co/Abdelrahman-M/Arabic-Asr-cohere-v2
+    basis: card

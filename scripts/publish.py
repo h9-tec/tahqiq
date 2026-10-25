@@ -34,6 +34,18 @@ MANIFESTS = ROOT / "data" / "manifests"
 RESULTS = ROOT / "results"
 
 
+def _submitter(slug: str, extra: dict | None) -> str:
+    """Hub username from the request queue for community submissions; "maintainer" for the board's own runs."""
+    if (extra or {}).get("submitted_by"):
+        return extra["submitted_by"]
+    try:
+        req = hub.get_request(slug)
+    except Exception:  # noqa: BLE001
+        req = None
+    who = (req or {}).get("submitted_by") or ""
+    return who if who and who != hub.REQUESTS_REPO.split("/")[0] else "maintainer"
+
+
 def build_scores(slug: str, *, n_boot: int = 2000, extra: dict | None = None, slices: tuple[str, ...] = ("full", "api")) -> dict:
     run = json.loads((RESULTS / slug / "run.json").read_text(encoding="utf-8"))
     current = read_manifest_hash(MANIFESTS)
@@ -101,7 +113,7 @@ def build_scores(slug: str, *, n_boot: int = 2000, extra: dict | None = None, sl
         "hf_id": (extra or {}).get("hf_id") or run.get("hf_id"),
         "kind": run.get("kind"),
         "card": cards.get(slug, {}),
-        "submitted_by": (extra or {}).get("submitted_by", "maintainer"),
+        "submitted_by": _submitter(slug, extra),
         "run": {k: run.get(k) for k in ("run_id", "git_sha", "finished", "env", "decode_params", "language_hint", "slice", "totals")},
         "manifest_sha256": current,
         "baseline": BASELINE,

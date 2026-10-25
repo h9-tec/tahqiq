@@ -46,3 +46,7 @@ declared:
     datasets: [masc_clean, masc_noisy, commonvoice]
     source: https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pcd_v1.0
     note: Same training mix as the pc checkpoint (MASC, Common Voice 17, FLEURS).
+  Abdelrahman-M_Arabic-Asr-cohere-v2:
+    datasets: [masc_clean, masc_noisy, mgb2, sada, commonvoice]
+    source: https://huggingface.co/Abdelrahman-M/Arabic-Asr-cohere-v2
+    note: Card's training mix includes MASC (mined train), MGB-2 train, SADA train and Common Voice 18 train; the card states the test splits were not used.

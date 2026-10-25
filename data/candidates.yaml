@@ -2190,6 +2190,26 @@ models:
   - https://huggingface.co/Muno459/fastconformer-quran
   priority: 3
   notes: Gated (manual), empty card; streaming sibling Muno459/fastconformer-quran-streaming.
+- hf_id: Abdelrahman-M/Arabic-Asr-cohere-v2
+  name: Arabic-Asr-cohere-v2
+  org: Abdelrahman-M (community)
+  family: cohere-transcribe
+  params: 2B
+  weights_gb: 8.26
+  license: apache-2.0
+  arabic_support: native
+  languages_note: fine-tune of Cohere Transcribe Arabic 07-2026 on ~180 h (MASC, MGB-2, SADA, CV18 train; FLEURS ar_eg, MGB-3)
+  model_type: cohere_asr
+  transformers_native: true
+  needs_remote_code: false
+  nemo: false
+  gated: false
+  released: 2026-10
+  source_urls:
+  - https://huggingface.co/Abdelrahman-M/Arabic-Asr-cohere-v2
+  priority: 2
+  adapter: cohere_asr
+  notes: Community submission (request queue, discussion 3); common slice ran on ZeroGPU, full sets + H20 timing on the box.
 - hf_id: oddadmix/Nawah-ASR-60M-Max-Arabic
   name: Nawah-ASR 60M Max Arabic
   org: oddadmix (community)
