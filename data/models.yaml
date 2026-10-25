@@ -1354,3 +1354,18 @@ models:
     arabic_only: true
     declared_source: https://huggingface.co/Abdelrahman-M/Arabic-Asr-cohere-v2
     basis: card
+  IFM_Jais-ASR:
+    name: Jais-ASR (IFM)
+    org: IFM
+    kind: open
+    hf: https://huggingface.co/IFM/Jais-ASR
+    license: apache-2.0
+    params: 5.7B
+    streaming: 'no'
+    streaming_note: card documents file transcription (Transformers, vLLM /v1/audio/transcriptions); no streaming mode described
+    timestamps: 'no'   # card: output is the transcript plus a language/dialect label
+    max_audio: no fixed limit stated; raise max_new_tokens for long recordings (truncated=True flags a cut-off transcript)
+    languages: Arabic (MSA + 19 dialects), code-switching with English, French, Spanish, Italian; optional diacritization
+    arabic_only: true
+    declared_source: https://huggingface.co/IFM/Jais-ASR
+    basis: card

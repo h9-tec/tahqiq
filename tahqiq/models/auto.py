@@ -36,6 +36,7 @@ ADAPTERS = {
     "audar": (".open.audar", "AudarASR"),      # audarai/Audar-ASR-V1-* (card recipe: custom code on transformers 4.57)
     "speechbrain": (".open.speechbrain_asr", "SpeechBrainASR"),   # hyperparams.yaml + *.ckpt repos
     "nawah_tdt": (".open.nawah_tdt", "NawahTDT"),   # oddadmix/Nawah-*: plain-torch TDT, repo's own parakeet_model.py
+    "jais_asr": (".open.jais_asr", "JaisASR"),      # IFM/Jais-ASR: remote code pinned to a reviewed revision
 }
 
 

@@ -2210,6 +2210,27 @@ models:
   priority: 2
   adapter: cohere_asr
   notes: Community submission (request queue, discussion 3); common slice ran on ZeroGPU, full sets + H20 timing on the box.
+- hf_id: IFM/Jais-ASR
+  name: Jais-ASR
+  org: IFM (Institute of Foundation Models)
+  family: jais
+  params: 5.7B
+  weights_gb: 11.44
+  license: apache-2.0
+  arabic_support: native
+  languages_note: MSA + 19 dialects; code-switching into English, French, Spanish, Italian
+  model_type: jais_asr (Qwen3-Omni audio encoder + K2-Horizon/Jais-3 decoder, custom code)
+  transformers_native: false
+  needs_remote_code: true
+  nemo: false
+  gated: false
+  released: 2026-10
+  source_urls:
+  - https://huggingface.co/IFM/Jais-ASR
+  priority: 2
+  adapter: jais_asr
+  api_first: true
+  notes: Submitted through the request queue (parked NEEDS_REVIEW for custom code); code reviewed and pinned at 1323995f.
 - hf_id: oddadmix/Nawah-ASR-60M-Max-Arabic
   name: Nawah-ASR 60M Max Arabic
   org: oddadmix (community)
