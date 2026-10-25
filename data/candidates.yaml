@@ -2211,6 +2211,8 @@ models:
   source_urls:
   - https://huggingface.co/oddadmix/Nawah-ASR-60M-Max-Arabic
   priority: 2
+  adapter: nawah_tdt
+  pip: [torchaudio]
   notes: Pure-torch custom code (no NeMo); card claims 29.86 avg WER / 13.13 CER with Elm eval.py (4th of 38). No license field. ONNX sibling -ONNX.
 - hf_id: oddadmix/Nawah-Parakeet-60M
   name: Nawah-Parakeet 60M

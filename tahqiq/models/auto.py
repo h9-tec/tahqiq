@@ -35,6 +35,7 @@ ADAPTERS = {
     "omni": (".open.omniasr", "OmniASR"),      # facebook/omniASR-* (fairseq2 package, own env)
     "audar": (".open.audar", "AudarASR"),      # audarai/Audar-ASR-V1-* (card recipe: custom code on transformers 4.57)
     "speechbrain": (".open.speechbrain_asr", "SpeechBrainASR"),   # hyperparams.yaml + *.ckpt repos
+    "nawah_tdt": (".open.nawah_tdt", "NawahTDT"),   # oddadmix/Nawah-*: plain-torch TDT, repo's own parakeet_model.py
 }
 
 
@@ -75,7 +76,9 @@ def detect(hf_id: str, *, revision: str | None = None) -> Decision:
             else:
                 d.needs_review = True
                 d.reasons.append("repository ships custom code (trust_remote_code); needs manual review")
-        if d.model_type == "qwen3_asr" and str(cfg.get("transformers_version", "")).startswith("4."):
+        if d.model_type == "parakeet_tdt" and "parakeet_model.py" in files:
+            d.adapter = "nawah_tdt"       # descriptive config; the custom-code review above still applies
+        elif d.model_type == "qwen3_asr" and str(cfg.get("transformers_version", "")).startswith("4."):
             d.adapter = "qwen3_asr_pkg"   # original release format: thinker.* weights, not loadable by the native class
         elif d.model_type in ADAPTERS:
             d.adapter = d.model_type

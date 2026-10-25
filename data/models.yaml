@@ -1325,3 +1325,18 @@ models:
     arabic_only: true
     declared_source: https://huggingface.co/oddadmix/MasriSwitch-Gemma3n-Transcriber-v1
     basis: card
+  oddadmix_Nawah-ASR-60M-Max-Arabic:
+    name: Nawah-ASR 60M Max Arabic (oddadmix)
+    org: oddadmix
+    kind: open
+    hf: https://huggingface.co/oddadmix/Nawah-ASR-60M-Max-Arabic
+    license: not stated (no license field on the card)
+    params: 62.7M
+    streaming: chunked
+    streaming_note: offline TDT; full-attention encoder decodes any length in one pass, not trained for streaming
+    timestamps: 'no'
+    max_audio: no fixed window (single pass); training spans capped at 20 s, multi-minute accuracy untested per card
+    languages: Arabic (MSA + dialects), 8,723 h, trained from scratch
+    arabic_only: true
+    declared_source: https://huggingface.co/oddadmix/Nawah-ASR-60M-Max-Arabic
+    basis: card
