@@ -15,6 +15,14 @@ import numpy as np
 from ..base import ASRModel
 
 
+# Repos with several .nemo files and none at the top level: the checkpoint the card names as the final model.
+NEMO_FILE = {
+    # card: 3-phase progressive unfreezing, "Phase 3 | All layers | ... | 0.0014" is the final phase; its
+    # from_pretrained() snippet resolves no file because the repo has no top-level .nemo
+    "mohammed/fastconformer-quran-ar": "phase3_full/phase3_full_wer0.0014.nemo",
+}
+
+
 class NemoFastConformer(ASRModel):
     kind = "open"
     decode_params = {"decoder": "rnnt", "strategy": "greedy_batch"}
@@ -44,9 +52,17 @@ class NemoFastConformer(ASRModel):
         if not nemo:
             return None
         top = [f for f in nemo if "/" not in f]
-        pick = top[0] if len(top) == 1 else nemo[0]
-        if len(nemo) > 1:
-            print(f"[nemo] {self.hf_id} has {len(nemo)} .nemo files {nemo}; using {pick}")
+        if self.hf_id in NEMO_FILE:
+            pick = NEMO_FILE[self.hf_id]
+        elif len(top) == 1:
+            pick = top[0]
+        elif len(nemo) == 1:
+            pick = nemo[0]
+        else:
+            raise RuntimeError(f"{self.hf_id} has {len(nemo)} .nemo files and no single top-level one: {nemo}; "
+                               "add the card's final checkpoint to NEMO_FILE")
+        self.nemo_file = pick
+        print(f"[nemo] {self.hf_id}: using {pick}")
         return hf_hub_download(self.hf_id, pick, token=tok)
 
     def load(self) -> None:
@@ -125,6 +141,8 @@ class NemoFastConformer(ASRModel):
             info["nemo"] = nemo.__version__
         except Exception:
             pass
+        if getattr(self, "nemo_file", None):
+            info["nemo_file"] = self.nemo_file
         if getattr(self, "config_upgraded", None):
             info["config_upgraded"] = self.config_upgraded
         return info

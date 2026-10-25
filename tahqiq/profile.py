@@ -39,6 +39,8 @@ def weight_bytes(files: list[tuple[str, int]]) -> int:
         g = [f for f in top if f[0].endswith(ext)]
         if not g:
             continue
+        if ext == ".nemo":   # each .nemo is a complete model; several are alternatives, not shards
+            return max(b for _, b in g)
         canonical = [f for f in g if _CANONICAL.match(f[0])]   # also drops Mistral's consolidated.* and stray copies
         g = canonical or [f for f in g if not _VARIANT.search(f[0])] or g
         return sum(b for _, b in g)

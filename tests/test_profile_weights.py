@@ -23,3 +23,8 @@ def test_sharded_and_consolidated():
 def test_mms_language_adapters_and_nemo():
     assert weight_bytes([("model.safetensors", 4 * GB), ("adapter.ara.safetensors", 9 * 10**6), ("adapter.eng.safetensors", 9 * 10**6)]) == 4 * GB
     assert weight_bytes([("stt_ar.nemo", GB // 2)]) == GB // 2
+
+
+def test_alternative_nemo_checkpoints_count_once():
+    files = [("phase1/a.nemo", GB // 2), ("phase3/b.nemo", GB // 2), ("phase3/c.nemo", GB // 2)]
+    assert weight_bytes(files) == GB // 2

@@ -289,6 +289,7 @@ def main() -> None:
     ap.add_argument("--retime-board", action="store_true", help="timing-only units for board models not timed on this GPU type")
     ap.add_argument("--gpu-name", default="H20")
     ap.add_argument("--contamination", action="store_true", help="dev / perturbation / likelihood passes for every board model")
+    ap.add_argument("--rerun", default=None, help="slugs already on the board to evaluate again (move their results aside first)")
     ap.add_argument("--kinds", default=None, help="only these unit kinds, e.g. 'contam' for a second queue process")
     a = ap.parse_args()
     if a.cmd == "status":
@@ -300,7 +301,8 @@ def main() -> None:
                 print(f"  {v['status']:<22} gpu{v.get('gpu', '-')}  {k}  {v.get('minutes', '')}")
         return
     models = board_models()
-    on_board = {m["model_id"] for m in models}
+    rerun = set(a.rerun.split(",")) if a.rerun else set()
+    on_board = {m["model_id"] for m in models} - rerun
     units, skipped = build_units({int(p) for p in a.priority.split(",")}, a.max_weight_gb, on_board)
     if a.retime_board:
         units = retime_units(models, a.gpu_name) + units
@@ -313,7 +315,7 @@ def main() -> None:
     if a.exclude:
         units = [u for u in units if u["slug"] not in a.exclude.split(",")]
     st = _load()
-    queue = [u for u in units if not (st.get(u["key"], {}).get("status") == "DONE"
+    queue = [u for u in units if u["key"] in rerun or not (st.get(u["key"], {}).get("status") == "DONE"
                                      or (st.get(u["key"], {}).get("status", "").startswith("FAILED") and not a.retry))]
     if a.cmd == "plan":
         print(f"{len(queue)} to run ({sum(u['kind'] == 'timing' for u in queue)} timing-only), "
