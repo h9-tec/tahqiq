@@ -2,6 +2,9 @@ transformers>=5.13
 accelerate
 soundfile
 scipy
+# backends transformers imports lazily: CohereAsrFeatureExtractor needs librosa, gemma-3n needs timm
+librosa
+timm
 numpy
 rapidfuzz
 jiwer

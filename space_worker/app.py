@@ -89,11 +89,15 @@ def ensure_audio(ds: str) -> None:
 # ---------- evaluation (ZeroGPU) ----------
 
 def _gpu_run(slug: str, hf_id: str, display_name: str, adapter: str | None, ds: str) -> str:
-    """Runs inside a ZeroGPU allocation: one dataset of the common slice."""
+    """Runs inside a ZeroGPU allocation: one dataset of the common slice. A failure comes back as {"error", "traceback"}
+    because ZeroGPU hands the caller only the exception type ("AppError: ImportError")."""
     from tahqiq.runner import run_model
 
-    run = run_model(slug, [ds], slice_name="api", manifests_dir=CODE / "data" / "manifests", audio_dir=CODE / "audio",
-                    results_dir=CODE / "results", hf_id=hf_id, display_name=display_name, adapter=adapter, write_run_json=False)
+    try:
+        run = run_model(slug, [ds], slice_name="api", manifests_dir=CODE / "data" / "manifests", audio_dir=CODE / "audio",
+                        results_dir=CODE / "results", hf_id=hf_id, display_name=display_name, adapter=adapter, write_run_json=False)
+    except Exception as e:  # noqa: BLE001
+        return json.dumps({"error": f"{type(e).__name__}: {e}", "traceback": traceback.format_exc()[-1200:]})
     return json.dumps(run["totals"])
 
 
@@ -163,6 +167,9 @@ def evaluate_dataset(slug: str, hf_id: str, display_name: str, adapter: str, ds:
     log(f"{slug}: {ds}")
     out = _gpu_run(slug, hf_id, display_name, adapter or None, ds)
     log(f"{slug}: {ds} {out}")
+    res = json.loads(out)
+    if "error" in res:
+        return fail_job(slug, res["error"], tb=res.get("traceback"))
     return out
 
 
@@ -195,19 +202,20 @@ def finalize_job(slug: str, hf_id: str, display_name: str, adapter: str, dataset
         STATE["current"] = None
 
 
-def fail_job(slug: str, e: Exception) -> str:
+def fail_job(slug: str, e: Exception | str, tb: str | None = None) -> str:
     from tahqiq import hub
 
-    tb = traceback.format_exc()[-1200:]
-    log(f"{slug}: FAILED {e}")
+    tb = tb or traceback.format_exc()[-1200:]
+    msg = " ".join((e if isinstance(e, str) else f"{type(e).__name__}: {e}").split())
+    log(f"{slug}: FAILED {msg}")
     try:
-        r = hub.update_status(slug, "FAILED", error=f"{type(e).__name__}: {e}", worker="zerogpu")
-        hub.notify(r, f"Run failed: {type(e).__name__}: {e}\n```\n{tb}\n```", close=True)
+        r = hub.update_status(slug, "FAILED", error=msg, worker="zerogpu")
+        hub.notify(r, f"Run failed: {msg}\n```\n{tb}\n```", close=True)
         hub.rebuild_board()
     except Exception:
         pass
     STATE["current"] = None
-    return f"failed: {e}"
+    return f"failed: {msg}"
 
 
 # ---------- poller ----------
@@ -239,7 +247,9 @@ def poll_once() -> str:
         return info["error"]
     try:
         for ds in info["datasets"]:
-            client.predict(slug, info["hf_id"], info["display_name"], info["adapter"], ds, api_name="/evaluate_dataset")
+            out = client.predict(slug, info["hf_id"], info["display_name"], info["adapter"], ds, api_name="/evaluate_dataset")
+            if str(out).startswith("failed"):
+                return str(out)
     except Exception as e:  # noqa: BLE001
         return fail_job(slug, e)
     return str(client.predict(slug, info["hf_id"], info["display_name"], info["adapter"], json.dumps(info["datasets"]), api_name="/finalize_job"))
