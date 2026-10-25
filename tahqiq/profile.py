@@ -17,7 +17,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 MODELS_YAML = ROOT / "data" / "models.yaml"
 
-DECLARED_FIELDS = ("streaming", "timestamps", "max_audio", "languages", "arabic_only", "declared_source", "basis", "streaming_note")
+DECLARED_FIELDS = ("streaming", "timestamps", "max_audio", "languages", "arabic_only", "declared_source", "basis", "streaming_note", "output_note")
 
 
 _WEIGHT_EXTS = (".safetensors", ".nemo", ".bin", ".pt", ".ckpt")
@@ -83,7 +83,7 @@ def hub_profile(hf_id: str | None) -> dict:
 def declared(model_id: str) -> dict:
     data = yaml.safe_load(MODELS_YAML.read_text(encoding="utf-8")) or {}
     m = (data.get("models") or {}).get(model_id) or {}
-    out = {k: m.get(k, None if k in ("basis", "streaming_note") else "unknown") for k in DECLARED_FIELDS}
+    out = {k: m.get(k, None if k in ("basis", "streaming_note", "output_note") else "unknown") for k in DECLARED_FIELDS}
     if m.get("params"):
         out["params_label"] = m["params"]
     return out

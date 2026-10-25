@@ -109,3 +109,4 @@ td.excluded { color: var(--muted); }
 
 .dflt { color: var(--muted); margin-left: 1px; cursor: help; }
 .decl-note { border-bottom: 1px dotted var(--muted); cursor: help; }
+.kind.nc { color: var(--accent-2); }

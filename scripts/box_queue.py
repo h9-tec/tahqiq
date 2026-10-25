@@ -99,7 +99,14 @@ def _claim(queue: list[dict], gpu: int) -> tuple[dict | None, bool]:
     with _FileLock():
         st = _load()
         pending = [u for u in queue if st.get(u["key"], {}).get("status") == "PENDING"]
+        if any(v.get("status") == "RUNNING" and v.get("gpu") == gpu for v in st.values()):
+            return None, bool(pending)   # one model per GPU, also across queue processes
+        evals_waiting = any(v.get("status") == "PENDING" and v.get("kind") in ("eval", "timing") for v in st.values())
         for u in pending:
+            if u["kind"] == "contam":
+                # after every eval (they carry the timing passes), and only once this model's own run is done
+                if evals_waiting or st.get(u["slug"], {}).get("status") in ("PENDING", "RUNNING"):
+                    continue
             if need_gb(u) <= free:
                 st[u["key"]].update({"status": "RUNNING", "gpu": gpu, "started": time.strftime("%Y-%m-%dT%H:%M:%S")})
                 _save(st)
@@ -176,6 +183,30 @@ def retime_units(models: list[dict], gpu_name: str) -> list[dict]:
     return out
 
 
+LIKELIHOOD_ADAPTERS = ("whisper", "cohere")   # adapters that implement reference_nll
+
+
+def contam_units(models: list[dict], extra_slugs: list[dict]) -> list[dict]:
+    """Contamination passes (common slice) for board models and models still being evaluated: dev split,
+    perturbed audio, and the likelihood probe where the decoder can score a given transcript."""
+    meta = _cands()
+    out, seen = [], set()
+    for m in [*models, *extra_slugs]:
+        slug = m.get("model_id") or m.get("slug")
+        if slug in seen:
+            continue
+        seen.add(slug)
+        if (m.get("extras") or {}).get("dev") and (m.get("extras") or {}).get("pert"):
+            continue   # already has its contamination passes
+        c = meta.get(m.get("hf_id"), {})
+        out.append({"slug": slug, "key": f"contam:{slug}", "kind": "contam", "hf_id": m.get("hf_id"),
+                    "display_name": m.get("display_name"), "weights_gb": float(c.get("weights_gb") or m.get("weights_gb") or 0),
+                    "nemo": bool(c.get("nemo") or m.get("nemo")) or slug.startswith("nvidia_"),
+                    "adapter": c.get("adapter") or m.get("adapter"), "transformers_spec": c.get("transformers_spec") or m.get("transformers_spec"),
+                    "pip": c.get("pip") or m.get("pip")})
+    return out
+
+
 def _py(u: dict) -> str:
     if u.get("nemo"):
         return ".venv-nemo/bin/python"
@@ -197,6 +228,14 @@ def unit_cmds(u: dict) -> list[tuple[str, str, bool]]:
     adapter = f" --adapter {u['adapter']}" if u.get("adapter") else ""
     py = _py(u)
     steps = []
+    if u["kind"] == "contam":
+        b1 = " --batch 1" if u.get("nemo") else ""
+        steps.append(("dev", f"{py} -m tahqiq.runner --model {slug}{ident}{adapter} --manifests-dir data/dev_manifests --results-sub dev --slice api{b1}", True))
+        steps.append(("pert", f"{py} -m tahqiq.runner --model {slug}{ident}{adapter} --manifests-dir data/pert_manifests --results-sub pert --slice api{b1}", True))
+        if any(a in (slug + str(u.get("adapter") or "") + str(u.get("hf_id") or "")).lower() for a in LIKELIHOOD_ADAPTERS):
+            steps.append(("lik", f"{py} -m tahqiq.runner --model {slug}{ident}{adapter} --likelihood --slice api", False))
+        steps.append(("publish", f".venv/bin/python scripts/publish.py {slug}{ident}", True))
+        return steps
     if u["kind"] == "eval" and u.get("api_first"):
         # slow models: score the common slice first so the row appears within hours; the full run resumes from its cache
         steps.append(("run-api", f"{py} -m tahqiq.runner --model {slug}{ident}{adapter} --slice api", True))
@@ -249,6 +288,8 @@ def main() -> None:
     ap.add_argument("--retry", action="store_true", help="re-run FAILED units too")
     ap.add_argument("--retime-board", action="store_true", help="timing-only units for board models not timed on this GPU type")
     ap.add_argument("--gpu-name", default="H20")
+    ap.add_argument("--contamination", action="store_true", help="dev / perturbation / likelihood passes for every board model")
+    ap.add_argument("--kinds", default=None, help="only these unit kinds, e.g. 'contam' for a second queue process")
     a = ap.parse_args()
     if a.cmd == "status":
         from collections import Counter
@@ -263,6 +304,10 @@ def main() -> None:
     units, skipped = build_units({int(p) for p in a.priority.split(",")}, a.max_weight_gb, on_board)
     if a.retime_board:
         units = retime_units(models, a.gpu_name) + units
+    if a.contamination:
+        units = units + contam_units(models, [u for u in units if u["kind"] == "eval"])
+    if a.kinds:
+        units = [u for u in units if u["kind"] in a.kinds.split(",")]
     if a.only:
         units = [u for u in units if u["slug"] in a.only.split(",")]
     if a.exclude:

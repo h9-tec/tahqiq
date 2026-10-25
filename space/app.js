@@ -90,14 +90,16 @@ function renderLB() {
   const datasets = allDatasets();
   const rows = rowsFor(datasets);
   const val = (r, k) => k === "rtfx" ? -(r.m.timing?.rtfx ?? -1) : k === "params" ? (r.m.profile?.params_m ?? 1e9) : k === "stream" ? (r.m.profile?.streaming ?? "zz") : k === "avg" ? (r.avg ?? 9) : k === "numeral" ? -(r.numeral?.acc.point ?? -1) : k === "entity" ? -(r.entity?.acc.point ?? -1) : k === "vs" ? (r.vs?.delta_wer.point ?? 9) : (r.per[k]?.point ?? 9);
-  rows.sort((a, b) => (val(a, S.sort) > val(b, S.sort) ? S.dir : -S.dir));
+  // systems whose output cannot be scored against Arabic references (output_note) always sort last
+  const nc = r => (r.m.profile?.output_note ? 1 : 0);
+  rows.sort((a, b) => nc(a) - nc(b) || (val(a, S.sort) > val(b, S.sort) ? S.dir : -S.dir));
   const keys = ["", "", "avg", ...datasets, "numeral", "entity", "vs", "rtfx", "params", "stream"];
   const th = ["#", "System", `Avg ${S.acc ? "accuracy" : S.metric.toUpperCase()}`, ...datasets.map(d => DS_LABEL[d] || d), "Numerals", "Entities", "Δ vs Whisper v3", "RTFx", "Params", "Streaming"];
   document.querySelector("#lb thead").innerHTML = "<tr>" + th.map((t, i) => `<th data-key="${keys[i]}" class="${keys[i] === S.sort ? "sorted" : ""}">${t}</th>`).join("") + "</tr>";
   document.querySelector("#lb tbody").innerHTML = rows.length ? rows.map((r, i) => {
     const d = r.vs ? 100 * r.vs.delta_wer.point : null;
     const vs = r.vs ? `<td class="num delta ${d < 0 ? "neg" : "pos"}">${d > 0 ? "+" : ""}${d.toFixed(1)}${S.ci ? `<span class="ci">${fmtCI(r.vs.delta_wer)} p=${r.vs.mcnemar.p_value.toExponential(1)}</span>` : ""}</td>` : `<td class="pending">baseline</td>`;
-    return `<tr data-id="${r.m.model_id}"><td>${i + 1}</td><td><span class="model">${r.m.display_name}</span><span class="kind">${[r.m.submitted_by && r.m.submitted_by !== "maintainer" ? "community" : "", r.m._used !== S.slice ? (r.m._used === "api" ? "common slice only" : "full sets") : ""].filter(Boolean).join(" · ")}</span></td><td class="num"><b>${r.avg == null ? "·" : pct(r.avg)}</b><span class="ci">${r.n}/${datasets.length} sets</span></td>${datasets.map(d => cell(r.per[d], r.m.model_id, d)).join("")}${probeCell(r.numeral)}${probeCell(r.entity)}${vs}${prodCells(r.m)}</tr>`;
+    return `<tr data-id="${r.m.model_id}"><td>${r.m.profile?.output_note ? "·" : i + 1}</td><td><span class="model">${r.m.display_name}</span>${r.m.profile?.output_note ? `<span class="kind nc" title="${esc(r.m.profile.output_note)}">not comparable: ${esc(r.m.profile.output_note.split(";")[0])}</span>` : ""}<span class="kind">${[r.m.submitted_by && r.m.submitted_by !== "maintainer" ? "community" : "", r.m._used !== S.slice ? (r.m._used === "api" ? "common slice only" : "full sets") : ""].filter(Boolean).join(" · ")}</span></td><td class="num"><b>${r.avg == null ? "·" : pct(r.avg)}</b><span class="ci">${r.n}/${datasets.length} sets</span></td>${datasets.map(d => cell(r.per[d], r.m.model_id, d)).join("")}${probeCell(r.numeral)}${probeCell(r.entity)}${vs}${prodCells(r.m)}</tr>`;
   }).join("") : `<tr><td colspan="${th.length}" class="pending">No results published yet. The first runs are in progress.</td></tr>`;
   document.getElementById("lb-sub").textContent = `${S.slice === "full" ? "full test sets" : "common stratified slice"} · ${S.norm} normalizer · ${S.acc ? "accuracy = 100 − " + S.metric.toUpperCase() : S.metric.toUpperCase()} %`;
   document.querySelectorAll("#lb th[data-key]").forEach(h => h.onclick = () => { const k = h.dataset.key; if (!k) return; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = 1; } renderLB(); });

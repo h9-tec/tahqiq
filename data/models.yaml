@@ -567,6 +567,7 @@ models:
     arabic_only: true
     declared_source: https://huggingface.co/TBOGamer22/wav2vec2-quran-phonetics
     basis: card
+    output_note: phonetic Latin output, not Arabic script; WER against Arabic references is not meaningful
   abdullahtb_FastConformer-Arabic-SADA-Finetune-SAREI:
     name: FastConformer Arabic SADA fine-tune (SAREI)
     org: abdullahtb

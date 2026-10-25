@@ -31,6 +31,11 @@ class CTCModel(ASRModel):
         self.processor = AutoProcessor.from_pretrained(self.hf_id, **kw)
         self.model = AutoModelForCTC.from_pretrained(self.hf_id, **({**kw, "ignore_mismatched_sizes": True} if kw else {})).to("cuda")
         self.model.eval()
+        from ...normalize.buckwalter import looks_like_buckwalter_vocab
+
+        self.buckwalter = looks_like_buckwalter_vocab(self.processor.tokenizer.get_vocab())
+        if self.buckwalter:   # the card's own recipe converts back with buckwalter.untrans
+            self.decode_params = {**self.decode_params, "postprocess": "buckwalter -> arabic ('/' = word delimiter)"}
 
     def transcribe_batch(self, audios: list[np.ndarray]) -> list[str]:
         import torch
@@ -39,7 +44,12 @@ class CTCModel(ASRModel):
         with torch.no_grad():
             logits = self.model(**inputs).logits
         ids = torch.argmax(logits, dim=-1)
-        return [t.strip() for t in self.processor.batch_decode(ids)]
+        texts = [t.strip() for t in self.processor.batch_decode(ids)]
+        if getattr(self, "buckwalter", False):
+            from ...normalize.buckwalter import to_arabic
+
+            texts = [to_arabic(t) for t in texts]
+        return texts
 
     def transcribe(self, audio: np.ndarray) -> str:
         return self.transcribe_batch([audio])[0]
