@@ -30,8 +30,30 @@ class Qwen3ASR(ASRModel):
 
         trc = os.environ.get("TAHQIQ_TRUST_REMOTE_CODE") == "1"
         self.processor = AutoProcessor.from_pretrained(self.hf_id, trust_remote_code=trc)
+        self._fix_chat_template()
         self.model = AutoModelForMultimodalLM.from_pretrained(self.hf_id, device_map="cuda", dtype=torch.bfloat16, trust_remote_code=trc)
         self.model.eval()
+
+    REFERENCE_TEMPLATE = "Qwen/Qwen3-ASR-0.6B-hf"
+
+    def _fix_chat_template(self) -> None:
+        """Some fine-tunes ship the training-time template, which never renders assistant turns, so the
+        language-forcing prefix (``language Arabic<asr_text>``, continue_final_message) cannot be appended.
+        Use Qwen's reference template instead: same system/user/audio tokens, plus the assistant turn."""
+        t = getattr(self.processor, "chat_template", None) or ""
+        if "assistant" in t and "m.role == 'assistant'" in t:
+            return
+        from transformers import AutoProcessor
+
+        self.processor.chat_template = AutoProcessor.from_pretrained(self.REFERENCE_TEMPLATE).chat_template
+        self.chat_template_from = self.REFERENCE_TEMPLATE
+        print(f"[qwen3_asr] {self.hf_id}: chat template taken from {self.REFERENCE_TEMPLATE}")
+
+    def env_info(self) -> dict:
+        info = super().env_info()
+        if getattr(self, "chat_template_from", None):
+            info["chat_template_from"] = self.chat_template_from
+        return info
 
     def _run(self, audio) -> list[str]:
         import torch

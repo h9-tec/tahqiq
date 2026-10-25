@@ -22,6 +22,7 @@ ADAPTERS = {
     # model_type → (adapter module, class name)
     "whisper": (".open.whisper_hf", "WhisperHF"),
     "qwen3_asr": (".open.qwen3_asr", "Qwen3ASR"),
+    "qwen3_asr_pkg": (".open.qwen3_asr_pkg", "Qwen3ASRPkg"),   # original-format Qwen3-ASR (qwen-asr package, transformers 4.57)
     "cohere_asr": (".open.cohere_transcribe", "CohereTranscribe"),
     "wav2vec2": (".open.ctc", "CTCModel"),
     "hubert": (".open.ctc", "CTCModel"),
@@ -33,6 +34,7 @@ ADAPTERS = {
     "gemma3n": (".open.gemma_audio", "GemmaAudio"),
     "omni": (".open.omniasr", "OmniASR"),      # facebook/omniASR-* (fairseq2 package, own env)
     "audar": (".open.audar", "AudarASR"),      # audarai/Audar-ASR-V1-* (card recipe: custom code on transformers 4.57)
+    "speechbrain": (".open.speechbrain_asr", "SpeechBrainASR"),   # hyperparams.yaml + *.ckpt repos
 }
 
 
@@ -59,6 +61,8 @@ def detect(hf_id: str, *, revision: str | None = None) -> Decision:
                             if s.rfilename.endswith((".safetensors", ".bin", ".pt", ".nemo", ".ckpt"))) / 1e9, 2)
     if hf_id.startswith("facebook/omniASR-"):
         d.adapter, d.env, d.model_type = "omni", "omni", "omniasr"
+    elif "hyperparams.yaml" in files and any(f.endswith(".ckpt") for f in files):
+        d.adapter, d.model_type = "speechbrain", "speechbrain"
     elif any(f.endswith(".nemo") for f in files):
         d.adapter, d.env = "nemo", "nemo"
     elif "config.json" in files:
@@ -71,7 +75,9 @@ def detect(hf_id: str, *, revision: str | None = None) -> Decision:
             else:
                 d.needs_review = True
                 d.reasons.append("repository ships custom code (trust_remote_code); needs manual review")
-        if d.model_type in ADAPTERS:
+        if d.model_type == "qwen3_asr" and str(cfg.get("transformers_version", "")).startswith("4."):
+            d.adapter = "qwen3_asr_pkg"   # original release format: thinker.* weights, not loadable by the native class
+        elif d.model_type in ADAPTERS:
             d.adapter = d.model_type
         else:
             d.needs_review = True

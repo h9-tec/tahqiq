@@ -43,6 +43,10 @@ LOGS = ROOT / "logs" / "box"
 UV = os.environ.get("TAHQIQ_UV", "/root/.local/bin/uv")
 DEFERRED = ("google_gemma-4", "Voxtral-Mini-4B-Realtime", "omniASR")   # user: slow LLM-type models later
 WAIT_QUIET_S = 1200
+# extra packages run in a uv overlay on the project env; pin torch to the project's build or uv pulls a newer
+# one built for a CUDA the box driver does not support
+TORCH_PIN = os.environ.get("TAHQIQ_TORCH_PIN", "torch==2.13.0+cu129")
+TORCH_INDEX = os.environ.get("TAHQIQ_TORCH_INDEX", "https://download.pytorch.org/whl/cu129")
 
 
 # ---------------------------------------------------------------- state (shared, file-locked)
@@ -140,6 +144,8 @@ def build_units(priorities: set[int], max_weight_gb: float, on_board: set[str]) 
         if pri not in priorities or slug in on_board:
             continue
         w = float(c.get("weights_gb") or 0)
+        if c.get("duplicate_of"):
+            skipped.append((slug, f"same weights as {c['duplicate_of']}, already on the board")); continue
         if any(d in slug for d in DEFERRED):
             skipped.append((slug, "deferred by user (slow LLM-type model)")); continue
         if u.get("omni"):
@@ -148,7 +154,7 @@ def build_units(priorities: set[int], max_weight_gb: float, on_board: set[str]) 
             skipped.append((slug, "custom code without a dedicated adapter")); continue
         if w > max_weight_gb:
             skipped.append((slug, f"weights {w} GB > {max_weight_gb} GB")); continue
-        units.append({**u, "key": slug, "kind": "eval", "weights_gb": w, "priority": pri})
+        units.append({**u, "key": slug, "kind": "eval", "weights_gb": w, "priority": pri, "api_first": bool(c.get("api_first"))})
     # long jobs first (priority-1 leftovers are the big/slow ones), then small to large
     units.sort(key=lambda u: (u["priority"] != 1, u["weights_gb"]))
     return units, skipped
@@ -165,7 +171,7 @@ def retime_units(models: list[dict], gpu_name: str) -> list[dict]:
         c = meta.get(m.get("hf_id"), {})
         u = {"slug": slug, "key": f"timing:{slug}", "kind": "timing", "hf_id": m.get("hf_id"), "display_name": m.get("display_name"),
              "weights_gb": float(c.get("weights_gb") or 0), "nemo": bool(c.get("nemo")) or slug.startswith("nvidia_"),
-             "adapter": c.get("adapter"), "transformers_spec": c.get("transformers_spec")}
+             "adapter": c.get("adapter"), "transformers_spec": c.get("transformers_spec"), "pip": c.get("pip")}
         out.append(u)
     return out
 
@@ -173,8 +179,10 @@ def retime_units(models: list[dict], gpu_name: str) -> list[dict]:
 def _py(u: dict) -> str:
     if u.get("nemo"):
         return ".venv-nemo/bin/python"
-    if u.get("transformers_spec"):
-        return f"{UV} run --no-sync --with 'transformers{u['transformers_spec']}' --with librosa python"
+    extra = ([f"transformers{u['transformers_spec']}"] if u.get("transformers_spec") else []) + list(u.get("pip") or [])
+    if extra:
+        withs = " ".join(f"--with {shlex.quote(x)}" for x in [*extra, "librosa", TORCH_PIN])
+        return f"{UV} run --no-sync {withs} --extra-index-url {TORCH_INDEX} --index-strategy unsafe-best-match python"
     return ".venv/bin/python"
 
 
@@ -189,6 +197,10 @@ def unit_cmds(u: dict) -> list[tuple[str, str, bool]]:
     adapter = f" --adapter {u['adapter']}" if u.get("adapter") else ""
     py = _py(u)
     steps = []
+    if u["kind"] == "eval" and u.get("api_first"):
+        # slow models: score the common slice first so the row appears within hours; the full run resumes from its cache
+        steps.append(("run-api", f"{py} -m tahqiq.runner --model {slug}{ident}{adapter} --slice api", True))
+        steps.append(("publish-api", f".venv/bin/python scripts/publish.py {slug}{ident} --slices api", True))
     if u["kind"] == "eval":
         steps.append(("run", f"{py} -m tahqiq.runner --model {slug}{ident}{adapter}" + (" --batch 1" if u.get("nemo") else ""), True))
     steps.append(("timing", f"{py} scripts/timing.py {slug}{ident}{adapter} --wait-quiet {WAIT_QUIET_S}", u["kind"] == "timing"))

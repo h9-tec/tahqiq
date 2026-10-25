@@ -480,7 +480,7 @@ def units_from_candidates(path: Path, *, max_priority: int = 1, split_over_gb: f
         omni = hf_id.startswith("facebook/omniASR-")
         remote = bool(c.get("needs_remote_code"))
         if slug not in registry.REGISTRY and not (nemo or omni):
-            if str(c.get("model_type", "")) not in ADAPTERS:
+            if str(c.get("adapter") or c.get("model_type", "")) not in ADAPTERS:
                 skipped.append((hf_id, c.get("model_type"), "no adapter"))
                 continue
         big = float(c.get("weights_gb") or 0) > split_over_gb
@@ -489,6 +489,8 @@ def units_from_candidates(path: Path, *, max_priority: int = 1, split_over_gb: f
             base["adapter"] = str(c["adapter"])
         if c.get("transformers_spec"):
             base["transformers_spec"] = str(c["transformers_spec"])
+        if c.get("pip"):
+            base["pip"] = [str(x) for x in c["pip"]]
         if slug not in registry.REGISTRY:
             base.update({"hf_id": hf_id, "display_name": c.get("name") or hf_id})
         if big:

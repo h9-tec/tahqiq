@@ -1379,6 +1379,9 @@ models:
   priority: 3
   notes: Community conversion (github ahmedadelattia/omnilingual_to_hf); 300M sibling exists.
 - hf_id: Qwen/Qwen3-ASR-1.7B
+  duplicate_of: qwen3_asr_1.7b   # same weights as Qwen/Qwen3-ASR-1.7B-hf
+  adapter: qwen3_asr_pkg
+  pip: [qwen-asr]
   name: Qwen3-ASR 1.7B
   org: Alibaba Qwen
   family: qwen-asr
@@ -1404,6 +1407,9 @@ models:
   notes: Original checkpoint for `qwen-asr` package / vLLM (vLLM-based batch + streaming serving). Timestamps only via separate Qwen3-ForcedAligner-0.6B, which does
     NOT list Arabic. Elm avg WER 33.4.
 - hf_id: Qwen/Qwen3-ASR-0.6B
+  duplicate_of: qwen3_asr_0.6b   # same weights as Qwen/Qwen3-ASR-0.6B-hf; kept to validate the qwen-asr adapter
+  adapter: qwen3_asr_pkg
+  pip: [qwen-asr]
   name: Qwen3-ASR 0.6B
   org: Alibaba Qwen
   family: qwen-asr
@@ -1543,6 +1549,8 @@ models:
   priority: 3
   notes: Non-commercial research licence on 3B.
 - hf_id: vadimbelsky/qwen3-asr-arabic-uae
+  adapter: qwen3_asr_pkg   # original Qwen3-ASR format (thinker.* weights)
+  pip: [qwen-asr]
   name: Qwen3-ASR 1.7B UAE Arabic
   org: vadimbelsky (community)
   family: qwen-asr-arabic-finetune
@@ -1565,6 +1573,8 @@ models:
   priority: 2
   notes: 47.8k dl/30d; KSA sibling vadimbelsky/qwen3-asr-arabic-ksa.
 - hf_id: vadimbelsky/qwen3-asr-arabic-ksa
+  adapter: qwen3_asr_pkg
+  pip: [qwen-asr]
   name: Qwen3-ASR 1.7B KSA Arabic
   org: vadimbelsky (community)
   family: qwen-asr-arabic-finetune
@@ -1587,6 +1597,8 @@ models:
   priority: 3
   notes: ''
 - hf_id: lemuralabs/lemura-arabic-asr-qwen3
+  adapter: qwen3_asr_pkg
+  pip: [qwen-asr]
   name: Lemura Arabic ASR (Qwen3-ASR 1.7B)
   org: Lemura Labs
   family: qwen-asr-arabic-finetune
@@ -1653,6 +1665,8 @@ models:
   priority: 3
   notes: ONNX port by OpenVoiceOS.
 - hf_id: atlasia/moulsot.v0.3
+  adapter: qwen3_asr_pkg
+  pip: [qwen-asr]
   name: MoulSot v0.3 (Darija)
   org: AtlasIA
   family: qwen-asr-arabic-finetune
@@ -2386,6 +2400,8 @@ models:
   priority: 1
   notes: ''
 - hf_id: google/gemma-3n-E4B-it
+  api_first: true   # ~1.5 s/utt unbatched: common slice (~2.5 h) before the full sets (~19 h)
+  pip: [timm]
   name: Gemma 3n E4B it
   org: Google DeepMind
   family: google-gemma
@@ -2408,6 +2424,8 @@ models:
   priority: 3
   notes: Gated (Gemma terms). 30 s audio clips, 6.25 tok/s. Fine-tune oddadmix/MasriSwitch-Gemma3n-Transcriber-v1 shows Egyptian transcription is feasible.
 - hf_id: google/gemma-3n-E2B-it
+  api_first: true   # ~1.5 s/utt unbatched: common slice (~2.5 h) before the full sets (~19 h)
+  pip: [timm]   # Gemma3n vision tower imports timm at load
   name: Gemma 3n E2B it
   org: Google DeepMind
   family: google-gemma
@@ -2430,6 +2448,8 @@ models:
   priority: 3
   notes: Gated.
 - hf_id: oddadmix/MasriSwitch-Gemma3n-Transcriber-v1
+  api_first: true   # ~1.5 s/utt unbatched: common slice (~2.5 h) before the full sets (~19 h)
+  pip: [timm]
   name: MasriSwitch Gemma-3n Transcriber v1
   org: oddadmix (community)
   family: google-gemma
@@ -2705,6 +2725,9 @@ models:
   priority: 3
   notes: ''
 - hf_id: asafaya/hubert-large-arabic-transcribe
+  adapter: speechbrain   # SpeechBrain repo (hyperparams.yaml + model.ckpt), not a Transformers CTC head
+  pip: ['speechbrain==0.5.16']   # hyperparams use 0.5 class paths (lobes.models.huggingface_wav2vec)
+  transformers_spec: '==4.57.6'
   name: HuBERT large Arabic transcribe (asafaya)
   org: asafaya
   family: wav2vec2-xlsr-hubert
@@ -2728,6 +2751,9 @@ models:
   priority: 2
   notes: Elm avg WER 45.5 (best of the SSL-CTC group). Empty card; asafaya/hubert-large-arabic-ft does not exist.
 - hf_id: speechbrain/asr-wav2vec2-commonvoice-14-ar
+  adapter: speechbrain
+  pip: [speechbrain]
+  transformers_spec: '==4.57.6'
   name: SpeechBrain wav2vec2 CommonVoice-14 Arabic
   org: SpeechBrain
   family: wav2vec2-xlsr-hubert
@@ -2751,6 +2777,9 @@ models:
   priority: 2
   notes: Needs speechbrain toolkit (EncoderASR.from_hparams). Elm avg WER 65.7.
 - hf_id: speechbrain/asr-wav2vec2-dvoice-darija
+  adapter: speechbrain
+  pip: [speechbrain]
+  transformers_spec: '==4.57.6'
   name: SpeechBrain wav2vec2 DVoice Darija
   org: SpeechBrain / AIOX Labs
   family: wav2vec2-xlsr-hubert

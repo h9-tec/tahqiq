@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 import yaml
@@ -16,7 +17,32 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 MODELS_YAML = ROOT / "data" / "models.yaml"
 
-DECLARED_FIELDS = ("streaming", "timestamps", "max_audio", "languages", "arabic_only", "declared_source")
+DECLARED_FIELDS = ("streaming", "timestamps", "max_audio", "languages", "arabic_only", "declared_source", "basis")
+
+
+_WEIGHT_EXTS = (".safetensors", ".nemo", ".bin", ".pt", ".ckpt")
+# training leftovers that are not the model: optimizer/scheduler state, intermediate checkpoints, trainer logs
+_TRAINING = re.compile(r"(^|/)(optimizer|scheduler|rng_state|scaler|training_args|trainer_state)[^/]*$"
+                       r"|(^|/)(checkpoint-\d+|checkpoints?|runs|train_state|last-checkpoint)/")
+_VARIANT = re.compile(r"\.(fp32|fp16|bf16)(-\d+-of-\d+)?\.[a-z]+$")   # transformers weight variants: extra copies
+_CANONICAL = re.compile(r"^(model|pytorch_model)(-\d+-of-\d+)?\.(safetensors|bin)$")
+_LANG_ADAPTER = re.compile(r"^adapter\.[^/]+\.(safetensors|bin)$")     # MMS per-language adapters, not the base model
+
+
+def weight_bytes(files: list[tuple[str, int]]) -> int:
+    """Size of ONE copy of the weights: repos often carry the same model as safetensors + bin, fp32 + fp16
+    variants, consolidated + sharded files, or training checkpoints; summing everything over-counts (one repo
+    showed 113 GB for a 1.5 GB model)."""
+    w = [(n, b) for n, b in files if n.endswith(_WEIGHT_EXTS) and not _TRAINING.search(n) and not _LANG_ADAPTER.match(n)]
+    top = [f for f in w if "/" not in f[0]] or w
+    for ext in _WEIGHT_EXTS:
+        g = [f for f in top if f[0].endswith(ext)]
+        if not g:
+            continue
+        canonical = [f for f in g if _CANONICAL.match(f[0])]   # also drops Mistral's consolidated.* and stray copies
+        g = canonical or [f for f in g if not _VARIANT.search(f[0])] or g
+        return sum(b for _, b in g)
+    return 0
 
 
 def hub_profile(hf_id: str | None) -> dict:
@@ -29,8 +55,7 @@ def hub_profile(hf_id: str | None) -> dict:
         info = api.model_info(hf_id, files_metadata=True)
     except Exception as e:  # noqa: BLE001
         return {"hub_error": f"{type(e).__name__}: {str(e)[:120]}"}
-    weights = sum((s.size or 0) for s in info.siblings or []
-                  if s.rfilename.endswith((".safetensors", ".bin", ".pt", ".nemo", ".ckpt")))
+    weights = weight_bytes([(s.rfilename, s.size or 0) for s in info.siblings or []])
     params = None
     st = getattr(info, "safetensors", None)
     if st and getattr(st, "total", None):

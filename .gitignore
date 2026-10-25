@@ -30,3 +30,4 @@ logs/
 
 # worker space scratch
 space_worker/code/
+GIT_SHA

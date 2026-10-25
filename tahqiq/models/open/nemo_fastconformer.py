@@ -54,7 +54,7 @@ class NemoFastConformer(ASRModel):
 
         path = self._nemo_file()
         if path:
-            self.asr_model = nemo_asr.models.ASRModel.restore_from(path, map_location="cuda")
+            self.asr_model = self._restore(path)
         else:
             self.asr_model = nemo_asr.models.ASRModel.from_pretrained(model_name=self.hf_id, map_location="cuda")
         self.asr_model.eval()
@@ -62,6 +62,45 @@ class NemoFastConformer(ASRModel):
             self.asr_model.change_decoding_strategy(decoder_type="rnnt")
         except Exception:
             pass
+
+    def _restore(self, path: str):
+        """restore_from, and on a config written by another NeMo version (e.g. a boosting_tree node without
+        key_phrase_items_list), fill the missing keys with the current defaults and restore again."""
+        import nemo.collections.asr as nemo_asr
+
+        try:
+            return nemo_asr.models.ASRModel.restore_from(path, map_location="cuda")
+        except Exception as e:  # noqa: BLE001
+            if "not in struct" not in str(e) and "abstract class" not in str(e):
+                raise
+        cfg = nemo_asr.models.ASRModel.restore_from(path, return_config=True)
+        self.config_upgraded = self._upgrade_config(cfg)
+        print(f"[nemo] {self.hf_id}: config keys added for this NeMo version: {self.config_upgraded}")
+        return nemo_asr.models.ASRModel.restore_from(path, override_config_path=cfg, map_location="cuda")
+
+    @staticmethod
+    def _upgrade_config(cfg) -> list[str]:
+        from nemo.collections.asr.parts.context_biasing.boosting_graph_batched import BoostingTreeModelConfig
+        from omegaconf import DictConfig, OmegaConf, open_dict
+
+        defaults = OmegaConf.to_container(OmegaConf.structured(BoostingTreeModelConfig))
+        added: list[str] = []
+
+        def walk(node, where: str) -> None:
+            if not isinstance(node, DictConfig):
+                return
+            for k in list(node.keys()):
+                v = node._get_node(k)
+                if k == "boosting_tree" and isinstance(v, DictConfig):
+                    with open_dict(v):
+                        for dk, dv in defaults.items():
+                            if dk not in v:
+                                v[dk] = dv
+                                added.append(f"{where}{k}.{dk}")
+                walk(v, f"{where}{k}.")
+
+        walk(cfg, "")
+        return added
 
     @staticmethod
     def _text(hyp) -> str:
@@ -86,6 +125,8 @@ class NemoFastConformer(ASRModel):
             info["nemo"] = nemo.__version__
         except Exception:
             pass
+        if getattr(self, "config_upgraded", None):
+            info["config_upgraded"] = self.config_upgraded
         return info
 
 

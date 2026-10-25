@@ -34,6 +34,28 @@ class WhisperHF(ASRModel):
             self.hf_id, dtype=self._dtype, low_cpu_mem_usage=True
         ).to(self._device)
         self.model.eval()
+        self._fix_generation_config()
+
+    # (d_model, decoder_layers, num_mel_bins) -> the OpenAI checkpoint whose generation config matches
+    _BASES = {(384, 4, 80): "openai/whisper-tiny", (512, 6, 80): "openai/whisper-base", (768, 12, 80): "openai/whisper-small",
+              (1024, 24, 80): "openai/whisper-medium", (1280, 32, 80): "openai/whisper-large-v2",
+              (1280, 32, 128): "openai/whisper-large-v3", (1280, 4, 128): "openai/whisper-large-v3-turbo"}
+
+    def _fix_generation_config(self) -> None:
+        """Older fine-tunes ship a generation config without lang_to_id/task_to_id, so generate(language=...)
+        refuses it. Take the config of the OpenAI checkpoint with the same shape (special tokens are shared)."""
+        gc = self.model.generation_config
+        if getattr(gc, "lang_to_id", None) and getattr(gc, "task_to_id", None):
+            return
+        from transformers import GenerationConfig
+
+        c = self.model.config
+        base = self._BASES.get((c.d_model, c.decoder_layers, c.num_mel_bins))
+        if base is None:
+            raise RuntimeError(f"{self.hf_id}: generation config lacks lang_to_id and no OpenAI base matches its shape")
+        self.model.generation_config = GenerationConfig.from_pretrained(base)
+        self.generation_config_from = base
+        print(f"[whisper] {self.hf_id}: generation config taken from {base}")
 
     def _generate(self, audios: list[np.ndarray]) -> list[str]:
         import torch
@@ -43,6 +65,12 @@ class WhisperHF(ASRModel):
         with torch.no_grad():
             ids = self.model.generate(feats, do_sample=False, **self.decode_params)
         return [t.strip() for t in self.processor.batch_decode(ids, skip_special_tokens=True)]
+
+    def env_info(self) -> dict:
+        info = super().env_info()
+        if getattr(self, "generation_config_from", None):
+            info["generation_config_from"] = self.generation_config_from
+        return info
 
     def transcribe(self, audio: np.ndarray) -> str:
         if len(audio) > 30 * SAMPLE_RATE:

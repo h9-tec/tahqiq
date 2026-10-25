@@ -33,10 +33,13 @@ RESULTS = ROOT / "results"
 
 
 def _git_sha() -> str:
+    """Commit of the code that ran. Copies without .git (the box, job bundles) carry it in a GIT_SHA file
+    written when the code is synced."""
     try:
-        return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+        return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, stderr=subprocess.DEVNULL).strip()
     except Exception:
-        return "unknown"
+        f = ROOT / "GIT_SHA"
+        return f.read_text(encoding="utf-8").strip() if f.exists() else "unknown"
 
 
 def select_utts(utts: list[Utterance], slice_name: str | None) -> list[Utterance]:
