@@ -114,6 +114,31 @@ def _claim(queue: list[dict], gpu: int) -> tuple[dict | None, bool]:
         return None, bool(pending)
 
 
+# ---------------------------------------------------------------- request queue
+def _request(slug: str, status: str, note: str = "", **fields) -> None:
+    """Mirror an eval unit's state onto its request-queue record (submissions through the Space), so the Queue tab
+    shows what the box is actually doing. Models without a request record are skipped; failures never stop the queue."""
+    try:
+        from tahqiq import hub
+        if hub.get_request(slug) is None:
+            return
+        if status == "DONE":
+            fields.setdefault("finished_at", hub.now())
+            fields.setdefault("results", hub.results_url(slug))
+        if status == "RUNNING" and "started_at" not in fields and not note.startswith("common slice published"):
+            fields["started_at"] = hub.now()
+        hub.update_status(slug, status, error=note, worker="h20-box", **fields)
+        hub.rebuild_board()
+    except Exception as e:  # noqa: BLE001
+        print(f"[request] {slug}: {type(e).__name__}: {e}", flush=True)
+
+
+def _last_error(log: Path) -> str:
+    lines = [l.strip() for l in log.read_text(encoding="utf-8", errors="replace").splitlines()[-200:] if l.strip()]
+    errs = [l for l in lines if "Error" in l or "error:" in l]
+    return (errs or lines or [""])[-1][:300]
+
+
 # ---------------------------------------------------------------- units
 def _cands() -> dict:
     import yaml
@@ -261,6 +286,9 @@ def worker(gpu: int, queue: list[dict]) -> None:
                    HF_HUB_DISABLE_XET="1", TOKENIZERS_PARALLELISM="false", TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD="1", PYTHONPATH=str(ROOT))
         env.pop("TAHQIQ_TRUST_REMOTE_CODE", None)
         print(f"[gpu{gpu}] start {unit['kind']} {unit['slug']} ({unit['weights_gb']} GB)", flush=True)
+        if unit["kind"] == "eval":
+            _request(unit["slug"], "RUNNING", f"H20 GPU {gpu}: " + ("common slice first, then full sets + timing" if unit.get("api_first")
+                                                                   else "full sets, then timing"))
         t0, rc, failed_step = time.time(), 0, None
         with open(log, "ab") as f:
             for label, cmd, required in unit_cmds(unit):
@@ -269,10 +297,15 @@ def worker(gpu: int, queue: list[dict]) -> None:
                 if r != 0 and required:
                     rc, failed_step = r, label
                     break
+                if r == 0 and label == "publish-api":
+                    _request(unit["slug"], "RUNNING", f"common slice published; full sets + timing running on H20 GPU {gpu}")
                 if r != 0:
                     f.write(f"\n==== {label} failed rc={r}; continuing without it\n".encode())
         status = "DONE" if rc == 0 else f"FAILED {failed_step} rc={rc}"
         _update(unit["key"], status=status, ended=time.strftime("%Y-%m-%dT%H:%M:%S"), minutes=round((time.time() - t0) / 60, 1))
+        if unit["kind"] == "eval":
+            _request(unit["slug"], "DONE" if rc == 0 else "FAILED",
+                     "" if rc == 0 else f"{failed_step} step failed on the H20 box: {_last_error(log)}")
         print(f"[gpu{gpu}] {unit['slug']}: {status} in {round((time.time() - t0) / 60)} min", flush=True)
 
 
@@ -333,6 +366,9 @@ def main() -> None:
         for s, why in skipped:
             st.setdefault(s, {"status": "SKIPPED", "why": why})
         _save(st)
+    for u in queue:
+        if u["kind"] == "eval":
+            _request(u["slug"], "QUEUED", "waiting for a free H20 GPU (one model per GPU)")
     gpus = [int(g) for g in a.gpus.split(",")]
     print(f"{len(queue)} units on GPUs {gpus}, one model per GPU", flush=True)
     threads = [threading.Thread(target=worker, args=(g, queue), daemon=True) for g in gpus]

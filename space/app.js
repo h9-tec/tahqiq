@@ -53,7 +53,7 @@ async function loadBoard() {
   } catch (e) { board = { models: [], queue: [], generated_at: "" }; }
   const datasets = allDatasets();
   document.getElementById("meta-pills").innerHTML = [
-    `${board.models.length} systems`, `${datasets.length} test sets`, `${board.queue.filter(q => ["PENDING", "RUNNING", "APPROVED"].includes(q.status)).length} in queue`,
+    `${board.models.length} systems`, `${datasets.length} test sets`, `${board.queue.filter(q => ["PENDING", "QUEUED", "RUNNING", "APPROVED"].includes(q.status)).length} in queue`,
     board.generated_at ? `updated ${board.generated_at.slice(0, 16).replace("T", " ")} UTC` : "no results yet",
   ].map(t => `<span class="pill">${t}</span>`).join("");
   renderLB(); renderDialects(); renderProd(); renderDatasets(); renderQueue(); renderFoot();

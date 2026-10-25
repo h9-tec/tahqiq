@@ -23,7 +23,8 @@ from huggingface_hub import HfApi, hf_hub_download, snapshot_download
 
 REQUESTS_REPO = os.environ.get("TAHQIQ_REQUESTS_REPO", "HeshamHaroon/tahqiq-requests")
 RESULTS_REPO = os.environ.get("TAHQIQ_RESULTS_REPO", "HeshamHaroon/tahqiq-results")
-STATUSES = ("PENDING", "APPROVED", "RUNNING", "DONE", "FAILED", "NEEDS_REVIEW")
+# QUEUED: accepted for the box queue, waiting for a free GPU (the ZeroGPU poller only takes PENDING / APPROVED)
+STATUSES = ("PENDING", "APPROVED", "QUEUED", "RUNNING", "DONE", "FAILED", "NEEDS_REVIEW")
 
 
 def _api() -> HfApi:

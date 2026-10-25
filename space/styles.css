@@ -85,7 +85,7 @@ tbody tr:hover td { background: color-mix(in srgb, var(--fg) 4%, var(--bg)); }
 .form input, .form textarea { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--card); color: var(--fg); }
 button.primary { background: var(--fg); color: var(--bg); border: 0; border-radius: 3px; padding: 9px 16px; font: inherit; font-weight: 600; cursor: pointer; }
 .status { font-family: var(--mono); font-size: .75rem; }
-.s-DONE { color: var(--good); } .s-FAILED { color: var(--bad); } .s-RUNNING, .s-NEEDS_REVIEW { color: var(--accent-2); }
+.s-DONE { color: var(--good); } .s-FAILED { color: var(--bad); } .s-RUNNING, .s-NEEDS_REVIEW { color: var(--accent-2); } .s-QUEUED, .s-PENDING, .s-APPROVED { color: var(--muted); }
 
 .method p { max-width: 820px; }
 .policy { border-left: 2px solid var(--line); padding-left: 14px; color: var(--muted); }
